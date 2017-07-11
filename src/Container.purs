@@ -77,7 +77,7 @@ ui =
         H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
---        refreshMetamask
+        refreshMetamask
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
@@ -88,10 +88,10 @@ ui =
           CheckMetamask → do
             mmStatus ← MM.loggedIn <$> (H.liftEff MM.checkStatus)
             loggedIn ← H.gets _.loggedIn
---            checkMetamask loggedIn mmStatus
+            checkMetamask loggedIn mmStatus
             pure next
       RefreshMetamask next → do
---        refreshMetamask
+        refreshMetamask
         pure next
 
 loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
@@ -112,23 +112,19 @@ promptMetamask loggedIn =
                 , HP.class_ $ HH.ClassName "btn-info"]
       [ HH.text "Retry" ]]]
 
-{-
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do
   mmStatus ← MM.loggedIn <$> (H.liftEff MM.checkStatus)
   if mmStatus
-    then do _ ← H.query' CP.cp1 unit (D.RefreshDebts unit)
-            newmmStatus ← MM.loggedIn <$> (H.liftEff MM.checkStatus)
+    then do newmmStatus ← MM.loggedIn <$> (H.liftEff MM.checkStatus)
             H.modify (_ { loggedIn = newmmStatus })
     else do H.modify (_ { loggedIn = mmStatus })
--}
 
-{-
 checkMetamask ∷ ∀ e. Boolean → Boolean
               → H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 checkMetamask loggedIn mmStatus =
   if (loggedIn && mmStatus) then pure unit else refreshMetamask
--}
+
 
 startCheckInterval maybeBus ms = do
   case maybeBus of
