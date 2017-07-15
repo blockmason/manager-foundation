@@ -2,6 +2,7 @@ module Network.Eth.Metamask
        (
          checkStatus
        , loggedIn
+       , currentUserAddress
        , METAMASK
        , MetamaskStatus(..)
        ) where
@@ -22,14 +23,20 @@ instance showMetamaskStatus ∷ Show MetamaskStatus where
     LoggedOut → "Metamask is logged out."
     LoggedIn  → "Metamask is logged in."
 
-loggedIn ∷ MetamaskStatus → Boolean
-loggedIn mms = case mms of
-  LoggedOut → false
-  LoggedIn  → true
-
 foreign import checkStatusImpl ∷ ∀ e. DummyString → Eff e Boolean
+foreign import currentUserImpl ∷ ∀ e. DummyString → Eff e String
 
-checkStatus ∷ ∀ e. Eff e MetamaskStatus
+checkStatus ∷ ∀ e. Eff (metamask ∷ METAMASK | e) MetamaskStatus
 checkStatus = do
   res ← checkStatusImpl "has to pass a variable"
   if res then pure LoggedIn else pure LoggedOut
+
+currentUserAddress ∷ ∀ e. Eff (metamask ∷ METAMASK | e) String
+currentUserAddress = currentUserImpl "dummy"
+
+loggedIn ∷ ∀ e. Eff (metamask ∷ METAMASK | e) Boolean
+loggedIn = do
+  status ← checkStatus
+  case status of
+    LoggedOut → pure false
+    LoggedIn  → pure true
