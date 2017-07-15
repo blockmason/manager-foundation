@@ -16,21 +16,19 @@ exports.resolveToAddrImpl = function(callback) {
             Foundation.deployed().then(function(instance) {
                 return instance.resolveToAddresses.call(foundationId);
             }).then(function(res) {
-                //TODO: function to convert list of bytes32 to strings
-                callback(bytes2addrList(res.valueOf()))();
+                callback(res.valueOf())();
             });
         };
     };
 };
 
 exports.resolveToNameImpl = function(callback) {
-    return function(foundationId) {
+    return function(addr) {
         return function() {
             Foundation.deployed().then(function(instance) {
-                return instance.resolveToAddresses.call(foundationId);
+                return instance.resolveToName.call(addr);
             }).then(function(res) {
-                //TODO: function to convert list of bytes32 to strings
-                callback(bytes2addrList(res.valueOf()))();
+                callback(b2s(res.valueOf()))();
             });
         };
     };

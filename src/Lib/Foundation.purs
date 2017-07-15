@@ -1,13 +1,20 @@
 module Network.Eth.Foundation
        (
-         FoundationId(..)
-       , EthAddress(..)
+         FOUNDATION
+       , FoundationId(..)
+       , FoundationName(..)
+       , EthAddr(..)
        , Error(..)
+       , StringAddr
+       , StringId
+       , runMonadF
+       , idByAddr
        ) where
 
 import Prelude
 import Control.Monad.Eff           (Eff, kind Effect)
 import Control.Monad.Eff.Class     (liftEff)
+import Control.Monad.Aff.Class     (liftAff)
 import Control.Monad.Aff           (Aff, makeAff)
 import Control.Monad.Except.Trans  (ExceptT, throwError, runExceptT, lift)
 import Data.Either                 (Either(..))
@@ -16,37 +23,63 @@ import Network.Eth.Metamask        (loggedIn, currentUserAddress, METAMASK)
 
 infixr 9 compose as ∘
 foreign import data FOUNDATION ∷ Effect
+type MonadF a = ∀ e. ExceptT Error (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
+runMonadF = runExceptT
 
 type DummyVal = String
-type MonadF a = ∀ e. ExceptT Error (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
+type StringAddr = String
+type StringId = String
 
 data Error = NoMetamask
 instance showError ∷ Show Error where
   show NoMetamask = "NoMetamask: Metamask not logged in."
 
-newtype EthAddress = EthAddress String
-instance showEthAddress ∷ Show EthAddress where
-  show (EthAddress ua) = ua
-instance eqEthAddress ∷ Eq EthAddress where
-  eq (EthAddress ua1) (EthAddress ua2) = ua1 == ua2
-instance ordEthAddress ∷ Ord EthAddress where
-  compare (EthAddress ua1) (EthAddress ua2) = localeCompare ua1 ua2
-getUa ∷ EthAddress → String
-getUa (EthAddress ua) = ua
+newtype EthAddr = EthAddr StringAddr
+instance showEthAddr ∷ Show EthAddr where
+  show (EthAddr ua) = ua
+instance eqEthAddr ∷ Eq EthAddr where
+  eq (EthAddr ua1) (EthAddr ua2) = ua1 == ua2
+instance ordEthAddr ∷ Ord EthAddr where
+  compare (EthAddr ua1) (EthAddr ua2) = localeCompare ua1 ua2
+getUa ∷ EthAddr → String
+getUa (EthAddr ua) = ua
 
-newtype FoundationId = FoundationId { name      ∷ String
-                                    , addresses ∷ Array EthAddress }
+newtype FoundationName = FoundationName StringId
+instance showFoundationName ∷ Show FoundationName where
+  show (FoundationName fn) = fn
+
+newtype FoundationId = FoundationId { name      ∷ FoundationName
+                                    , addresses ∷ Array EthAddr }
+
+type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
 
 foreign import initImpl ∷ ∀ e. DummyVal → Eff (foundation ∷ FOUNDATION | e) Unit
---foreign import resolveToAddrImpl
---foreign import resolveToNameImpl
+foreign import resolveToAddrImpl ∷ AddrLookupFn
+foreign import resolveToNameImpl ∷ NameLookupFn
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
   li ← liftEff loggedIn
-  if li then liftEff $ initImpl "" else throwError NoMetamask
+  if li
+    then liftEff $ initImpl ""
+    else throwError NoMetamask
 
-currentUser ∷ MonadF EthAddress
+currentUser ∷ MonadF EthAddr
 currentUser = do
   checkAndInit
-  EthAddress <$> liftEff currentUserAddress
+  EthAddr <$> liftEff currentUserAddress
+
+{-
+idByName ∷ FoundationName → MonadF FoundationId
+idByName = do
+-}
+
+idByAddr ∷ EthAddr → MonadF FoundationName
+idByAddr (EthAddr ea) = do
+  checkAndInit
+  FoundationName <$> (liftAff $ makeAff (\err succ → resolveToNameImpl succ ea))
+
+
+
+--"0x6c48110d0f02814f5b27ab7dc9734d69494389f4"

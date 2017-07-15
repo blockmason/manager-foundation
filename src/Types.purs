@@ -10,9 +10,10 @@ import Control.Monad.Aff.Bus as Bus
 import Control.Monad.Eff.Timer (TIMER)
 import Control.Monad.Eff.Exception (EXCEPTION)
 import Network.Eth.Metamask (MetamaskStatus(..), METAMASK)
+import Network.Eth.Foundation (FOUNDATION)
 
 ------------------- App Monad(s) ---------------------------
-type AppMonad eff = (Aff (exception ∷ EXCEPTION, timer ∷ TIMER, random ∷ RANDOM, avar ∷ AVAR, console ∷ CONSOLE, ajax ∷ AJAX, metamask ∷ METAMASK | eff))
+type AppMonad eff = (Aff (exception ∷ EXCEPTION, timer ∷ TIMER, random ∷ RANDOM, avar ∷ AVAR, console ∷ CONSOLE, ajax ∷ AJAX, metamask ∷ METAMASK, foundation ∷ FOUNDATION | eff))
 
 ------------------- App State -----------------------------
 data ContainerMsg

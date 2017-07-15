@@ -21,6 +21,7 @@ import Halogen.Component.Utils (busEventSource)
 import Halogen.Query.EventSource as ES
 
 import Network.Eth.Metamask as MM
+import Network.Eth.Foundation as F
 import Foundation.Address as A
 
 data Query a
@@ -78,6 +79,8 @@ ui =
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
         refreshMetamask
+        n ← H.liftAff $ F.runMonadF $ F.idByAddr (F.EthAddr "0x6c48110d0f02814f5b27ab7dc9734d69494389f4")
+        hLog n
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
