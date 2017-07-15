@@ -18,7 +18,7 @@ infixr 9 compose as ∘
 foreign import data FOUNDATION ∷ Effect
 
 type DummyVal = String
-type MonadF a = ∀ e. ExceptT Error (Eff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
+type MonadF a = ∀ e. ExceptT Error (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
 
 data Error = NoMetamask
 instance showError ∷ Show Error where
