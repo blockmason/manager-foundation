@@ -49,9 +49,9 @@ data Error =
   | NoFoundationId
 
 instance showError ∷ Show Error where
-  show NoMetamask     = "FriendInDebtError: Metamask not logged in."
-  show InvalidDebtId  = "FriendInDebtError: InvalidDebtId"
-  show NoFoundationId = "FriendInDebtError: NoFoundationId"
+  show NoMetamask     = "NoMetamask"
+  show InvalidDebtId  = "InvalidDebtId"
+  show NoFoundationId = "NoFoundationId"
 
 newtype EthAddress = EthAddress StringAddr
 instance showEthAddress ∷ Show EthAddress where
@@ -73,6 +73,8 @@ instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = show fi.name <> ", " <> show fi.addrs
 fiGetId ∷ FoundationId → FoundationName
 fiGetId (FoundationId fi) = fi.name
+fiGetAddrs ∷ FoundationId → Array EthAddress
+fiGetAddrs (FoundationId fi) = fi.addrs
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
 type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
@@ -104,7 +106,7 @@ foundationId ∷ MonadF FoundationId
 foundationId = do
   addr ← currentAddr
   myId ← idByAddr addr
-  pure myId
+  if A.null (fiGetAddrs myId) then throwError NoFoundationId else pure myId
 
 idByName ∷ FoundationName → MonadF FoundationId
 idByName (FoundationName name) = do
