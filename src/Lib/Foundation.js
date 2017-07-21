@@ -34,6 +34,25 @@ exports.resolveToNameImpl = function(callback) {
     };
 };
 
+exports.createIdImpl = function(foundationId) {
+    return function() {
+        Foundation.deployed().then(function(instance) {
+            return instance.createId(foundationId);
+        });
+    };
+};
+
+exports.addPendingUnificationImpl = function(foundationId) {
+    return function(addr) {
+        return function() {
+            Foundation.deployed().then(function(instance) {
+                return instance.addPendingUnification(foundationId, addr);
+            });
+        };
+    };
+};
+
+/* ********** helpers ********** */
 
 var bytes2addrList = function(byteArrayList) {
     var l = [];

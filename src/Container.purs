@@ -79,8 +79,10 @@ ui =
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
         refreshMetamask
-        n ← H.liftAff $ F.runMonadF $ F.idByAddr (F.EthAddr "0x6c48110d0f02814f5b27ab7dc9734d69494389f4")
-        hLog n
+        f1 ← H.liftAff $ F.runMonadF $ F.idByAddr (F.EthAddress "0x6c48110d0f02814f5b27ab7dc9734d69494389f4")
+        f2 ← H.liftAff $ F.runMonadF $ F.idByName (F.FoundationName "timgalebach")
+        hLog f1
+        hLog f2
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
