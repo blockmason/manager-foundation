@@ -5,6 +5,7 @@ module Network.Eth.Foundation
        , FoundationName(..)
        , EthAddress(..)
        , Error(..)
+       , Wei
        , StringAddr
        , StringId
 
@@ -22,7 +23,7 @@ module Network.Eth.Foundation
        , deleteAddr
 
        , depositWei
-       , withdrawWei
+       , withdrawDeposit
        ) where
 
 import Prelude
@@ -73,8 +74,8 @@ newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
 instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = show fi.name <> ", " <> show fi.addrs
-fiGetId ∷ FoundationId → FoundationName
-fiGetId (FoundationId fi) = fi.name
+fiGetName ∷ FoundationId → FoundationName
+fiGetName (FoundationId fi) = fi.name
 fiGetAddrs ∷ FoundationId → Array EthAddress
 fiGetAddrs (FoundationId fi) = fi.addrs
 
@@ -97,8 +98,8 @@ foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATI
 foreign import addPendingUnificationImpl ∷ ∀ e. StringId → StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import depositWeiImpl ∷ ∀ e. Number → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import withdrawDepositImpl ∷ ∀ e. Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import depositWeiImpl ∷ ∀ e. StringId → Number → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
@@ -159,10 +160,10 @@ deleteAddr (EthAddress ea) = do
 
 depositWei ∷ Wei → MonadF Unit
 depositWei w = do
-  checkAndInit
-  liftEff $ depositWeiImpl (weiGet w)
+  (FoundationName name) ← (fiGetName <$> foundationId)
+  liftEff $ depositWeiImpl name (weiGet w)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
-  checkAndInit
-  liftEff $ withdrawWeiImpl
+  (FoundationName name) ← (fiGetName <$> foundationId)
+  liftEff $ withdrawDepositImpl name

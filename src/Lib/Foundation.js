@@ -83,15 +83,15 @@ exports.deleteAddrImpl = function(addr) {
     };
 };
 
-exports.depositWei = function(foundationId) {
+exports.depositWeiImpl = function(foundationId) {
     return function() {
         Foundation.deployed().then(function(instance) {
-            return instance.deposit({value: weiAmount});
+            return instance.deposit(foundationId, {value: weiAmount});
         });
     };
 };
 
-exports.withdrawDeposit = function(foundationId) {
+exports.withdrawDepositImpl = function(foundationId) {
     return function() {
         Foundation.deployed().then(function(instance) {
             return instance.withdrawDeposit(foundationId);
