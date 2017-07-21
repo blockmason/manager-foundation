@@ -34,6 +34,21 @@ exports.resolveToNameImpl = function(callback) {
     };
 };
 
+exports.areSameIdImpl = function(callback) {
+    return function(addr1) {
+        return function(addr2) {
+            return function() {
+                Foundation.deployed().then(function(instance) {
+                    return instance.areSameId.call(addr1, addr2);
+                }).then(function(res) {
+                    callback(b2s(res.valueOf()))();
+                });
+            };
+        };
+    };
+};
+
+
 exports.createIdImpl = function(foundationId) {
     return function() {
         Foundation.deployed().then(function(instance) {
@@ -49,6 +64,22 @@ exports.addPendingUnificationImpl = function(foundationId) {
                 return instance.addPendingUnification(foundationId, addr);
             });
         };
+    };
+};
+
+exports.confirmPendingUnificationImpl = function(foundationId) {
+    return function() {
+        Foundation.deployed().then(function(instance) {
+            return instance.confirmPendingUnification(foundationId);
+        });
+    };
+};
+
+exports.deleteAddrImpl = function(addr) {
+    return function() {
+        Foundation.deployed().then(function(instance) {
+            return instance.deleteAddr(addr);
+        });
     };
 };
 

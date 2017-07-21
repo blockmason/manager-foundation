@@ -66,18 +66,18 @@ fiGetId ∷ FoundationId → FoundationName
 fiGetId (FoundationId fi) = fi.name
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
+type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
 type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
 
 foreign import initImpl ∷ ∀ e. DummyVal → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import resolveToAddrImpl ∷ AddrLookupFn
 foreign import resolveToNameImpl ∷ NameLookupFn
+foreign import areSameIdImpl ∷ AddrComparisonFn
 
 foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import addPendingUnificationImpl ∷ ∀ e. StringId → StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
---confirmPendingUnificationImpl Eff
---areSameId addr1 addr2 Aff
---deleteAddr addr Eff
-
+foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
@@ -104,6 +104,11 @@ idByAddr (EthAddress ea) = do
   addrs ← liftAff $ makeAff (\err succ → resolveToAddrImpl succ name)
   pure $ FoundationId { name: FoundationName name, addrs: EthAddress <$> addrs }
 
+areSameId ∷ EthAddress → EthAddress → MonadF Boolean
+areSameId (EthAddress ea1) (EthAddress ea2) = do
+  checkAndInit
+  liftAff $ makeAff (\e s → areSameIdImpl s ea1 ea2)
+
 createId ∷ FoundationName → MonadF Unit
 createId (FoundationName fn) = do
   checkAndInit
@@ -113,3 +118,13 @@ addPendingUnification ∷ FoundationName → EthAddress → MonadF Unit
 addPendingUnification (FoundationName fn) (EthAddress ea) = do
   checkAndInit
   liftEff $ addPendingUnificationImpl fn ea
+
+confirmPendingUnification ∷ FoundationName → MonadF Unit
+confirmPendingUnification (FoundationName fn) = do
+  checkAndInit
+  liftEff $ confirmPendingUnificationImpl fn
+
+deleteAddr ∷ EthAddress → MonadF Unit
+deleteAddr (EthAddress ea) = do
+  checkAndInit
+  liftEff $ deleteAddrImpl ea
