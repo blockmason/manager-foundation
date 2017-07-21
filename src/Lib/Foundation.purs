@@ -7,10 +7,19 @@ module Network.Eth.Foundation
        , Error(..)
        , StringAddr
        , StringId
+
+       , currentAddr
+       , foundationId
+
        , runMonadF
        , idByAddr
        , idByName
-       , currentAddr
+       , areSameId
+
+       , createId
+       , addPendingUnification
+       , confirmPendingUnification
+       , deleteAddr
        ) where
 
 import Prelude
@@ -90,6 +99,12 @@ currentAddr ∷ MonadF EthAddress
 currentAddr = do
   checkAndInit
   EthAddress <$> liftEff currentUserAddress
+
+foundationId ∷ MonadF FoundationId
+foundationId = do
+  addr ← currentAddr
+  myId ← idByAddr addr
+  pure myId
 
 idByName ∷ FoundationName → MonadF FoundationId
 idByName (FoundationName name) = do

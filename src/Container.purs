@@ -83,6 +83,7 @@ ui =
         f2 ← H.liftAff $ F.runMonadF $ F.idByName (F.FoundationName "timgalebach")
         hLog f1
         hLog f2
+        (H.liftAff $ F.runMonadF $ F.foundationId) >>= hLog
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
