@@ -7,7 +7,7 @@ $routes: (
   FundIDScreen: fund-id-screen
 );
 
-/* For each key in the map, created an own class */
+// generates the hide/show rules for each page. assumes that when one page is active, no other page is.
 @each $route, $name in $routes {
   .show-#{$name} {
     @each $_route, $_name in $routes {
