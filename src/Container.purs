@@ -23,15 +23,21 @@ import Halogen.Query.EventSource as ES
 import Network.Eth.Metamask as MM
 import Network.Eth.Foundation as F
 import Foundation.Manager as MainView
+import Foundation.Routes as R
 
 data Query a
   = Init a
   | HandleMsg ContainerMsg a
   | RefreshMetamask a
+  | SetScreen String a
+  | ShowPreviousScreen a
 
+type Message = String
 type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
-             , errorBus ∷ ContainerMsgBus }
+             , errorBus ∷ ContainerMsgBus
+             , currentScreen ∷ String
+             , previousScreen ∷ String}
 
 type ChildQuery = Coproduct1 MainView.Query
 type ChildSlot = Either1 Unit
@@ -51,22 +57,18 @@ ui =
     initialState :: State
     initialState = { loggedIn: true
                    , loading: true
-                   , errorBus: Nothing }
+                   , errorBus: Nothing
+                   , currentScreen: ""
+                   , previousScreen: "" }
 
     render :: State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
       HH.div [ HP.id_ "container" ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
-      , HH.h1_ [ HH.text "FoundationID Manager" ]
-      , HH.div [ HP.class_ (HH.ClassName "row")
-               , HP.id_ "container" ]
+      , HH.div [ HP.id_ "container" ]
         [
-          HH.div_
-          [
-            HH.text "Container"
-          , HH.slot' CP.cp1 unit MainView.component state.errorBus absurd
-          ]
+          HH.slot' CP.cp1 unit MainView.component state.errorBus $ HE.input SetScreen
         ]
       ]
 
@@ -96,6 +98,14 @@ ui =
       RefreshMetamask next → do
         refreshMetamask
         pure next
+      SetScreen className next → do
+        H.modify (\state -> state {previousScreen = state.currentScreen})
+        H.modify (_ {currentScreen = className})
+        pure next
+      ShowPreviousScreen next → do
+        H.modify (\state -> state {currentScreen = state.previousScreen})
+        pure next
+
 
 loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
 loadingOverlay loading =
