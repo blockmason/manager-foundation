@@ -22,7 +22,7 @@ import Halogen.Query.EventSource as ES
 
 import Network.Eth.Metamask as MM
 import Network.Eth.Foundation as F
-import Foundation.Address as A
+import Foundation.Manager as MainView
 
 data Query a
   = Init a
@@ -33,7 +33,7 @@ type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus }
 
-type ChildQuery = Coproduct1 A.Query
+type ChildQuery = Coproduct1 MainView.Query
 type ChildSlot = Either1 Unit
 
 ui :: ∀ eff. H.Component HH.HTML Query Unit Void (AppMonad eff)
@@ -65,7 +65,7 @@ ui =
           HH.div_
           [
             HH.text "Container"
-          , HH.slot' CP.cp1 unit A.component state.errorBus absurd
+          , HH.slot' CP.cp1 unit MainView.component state.errorBus absurd
           ]
         ]
       ]

@@ -1,4 +1,4 @@
-module Foundation.Address where
+module Foundation.Manager where
 
 import Foundation.Prelude
 
@@ -18,6 +18,7 @@ type State = { loading          ∷ Boolean
              }
 
 type Input = ContainerMsgBus
+
 
 component ∷ ∀ eff. H.Component HH.HTML Query Input Void (AppMonad eff)
 component =
