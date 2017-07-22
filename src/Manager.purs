@@ -40,7 +40,14 @@ component =
   render ∷ State → H.ComponentHTML Query
   render state =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
-      []
+      [
+          page R.OverviewScreen (HH.text $ R.getContainerNameFor R.OverviewScreen)
+        , page R.ManageAddressesScreen (HH.text $ R.getContainerNameFor R.ManageAddressesScreen)
+        , page R.AddAddressScreen (HH.text $ R.getContainerNameFor R.AddAddressScreen)
+        , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
+        , page R.ExtendIDScreen (HH.text $ R.getContainerNameFor R.ExtendIDScreen)
+        , page R.FundIDScreen (HH.text $ R.getContainerNameFor R.FundIDScreen)
+      ]
 
   eval ∷ Query ~> H.ComponentDSL State Query Message (AppMonad eff)
   eval = case _ of

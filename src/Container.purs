@@ -63,10 +63,11 @@ ui =
 
     render :: State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
-      HH.div [ HP.id_ "container" ]
+      HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> state.currentScreen) ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
-      , HH.div [ HP.id_ "container" ]
+      , menu state.currentScreen
+      , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component state.errorBus $ HE.input SetScreen
         ]
@@ -148,3 +149,26 @@ startCheckInterval maybeBus ms = do
       where effToRun bus = do
               _ ← launchAff $ Bus.write CheckMetamask bus
               pure unit
+
+-- view Components
+-- menu :: String -> H.ComponentHTML Query
+menu ∷ ∀ p. String → H.HTML p Query
+menu currentScreen =
+  HH.div
+    [ HP.class_ (HH.ClassName "header-menu row")]
+    [
+        menuItem R.OverviewScreen currentScreen
+      , menuItem R.ManageAddressesScreen currentScreen
+      , menuItem R.AddAddressScreen currentScreen
+      , menuItem R.RegisterScreen currentScreen
+      , menuItem R.ExtendIDScreen currentScreen
+      , menuItem R.FundIDScreen currentScreen
+    ]
+
+menuItem :: ∀ p. R.Screen → String → H.HTML p Query
+menuItem screen currentScreen =
+  HH.a
+  [HP.href "#",
+        HP.class_ (HH.ClassName $ "col" <> if currentScreen == (R.getRouteNameFor screen) then "active" else ""),
+        HE.onClick $ HE.input_ $ SetScreen (R.getRouteNameFor screen)]
+  [ HH.text $ R.getMenuNameFor screen]

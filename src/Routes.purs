@@ -41,3 +41,19 @@ getContainerNameFor screen =
       "extend-id-screen-container"
     FundIDScreen ->
       "fund-id-screen-container"
+
+getMenuNameFor ∷ Screen -> String
+getMenuNameFor screen =
+  case screen of
+    OverviewScreen ->
+      "Overview"
+    ManageAddressesScreen ->
+      "Manage Addresses"
+    AddAddressScreen ->
+      "Add Address"
+    RegisterScreen ->
+      "Register Screen"
+    ExtendIDScreen ->
+      "Extend Foundation ID"
+    FundIDScreen ->
+      "Foundation ID Funds"

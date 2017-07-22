@@ -1,4 +1,221 @@
+/* For each key in the map, created an own class */
 @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900");
+.show-overview-screen .overview-screen-container {
+  display: none; }
+
+.show-overview-screen .overview-screen-container {
+  display: block; }
+
+.show-overview-screen .manage-addresses-screen-container {
+  display: none; }
+
+.show-overview-screen .overview-screen-container {
+  display: block; }
+
+.show-overview-screen .add-address-screen-container {
+  display: none; }
+
+.show-overview-screen .overview-screen-container {
+  display: block; }
+
+.show-overview-screen .register-screen-container {
+  display: none; }
+
+.show-overview-screen .overview-screen-container {
+  display: block; }
+
+.show-overview-screen .extend-id-screen-container {
+  display: none; }
+
+.show-overview-screen .overview-screen-container {
+  display: block; }
+
+.show-overview-screen .fund-id-screen-container {
+  display: none; }
+
+.show-overview-screen .overview-screen-container {
+  display: block; }
+
+.show-manage-addresses-screen .overview-screen-container {
+  display: none; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: block; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: none; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: block; }
+
+.show-manage-addresses-screen .add-address-screen-container {
+  display: none; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: block; }
+
+.show-manage-addresses-screen .register-screen-container {
+  display: none; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: block; }
+
+.show-manage-addresses-screen .extend-id-screen-container {
+  display: none; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: block; }
+
+.show-manage-addresses-screen .fund-id-screen-container {
+  display: none; }
+
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  display: block; }
+
+.show-add-address-screen .overview-screen-container {
+  display: none; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: block; }
+
+.show-add-address-screen .manage-addresses-screen-container {
+  display: none; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: block; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: none; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: block; }
+
+.show-add-address-screen .register-screen-container {
+  display: none; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: block; }
+
+.show-add-address-screen .extend-id-screen-container {
+  display: none; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: block; }
+
+.show-add-address-screen .fund-id-screen-container {
+  display: none; }
+
+.show-add-address-screen .add-address-screen-container {
+  display: block; }
+
+.show-register-screen .overview-screen-container {
+  display: none; }
+
+.show-register-screen .register-screen-container {
+  display: block; }
+
+.show-register-screen .manage-addresses-screen-container {
+  display: none; }
+
+.show-register-screen .register-screen-container {
+  display: block; }
+
+.show-register-screen .add-address-screen-container {
+  display: none; }
+
+.show-register-screen .register-screen-container {
+  display: block; }
+
+.show-register-screen .register-screen-container {
+  display: none; }
+
+.show-register-screen .register-screen-container {
+  display: block; }
+
+.show-register-screen .extend-id-screen-container {
+  display: none; }
+
+.show-register-screen .register-screen-container {
+  display: block; }
+
+.show-register-screen .fund-id-screen-container {
+  display: none; }
+
+.show-register-screen .register-screen-container {
+  display: block; }
+
+.show-extend-id-screen .overview-screen-container {
+  display: none; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: block; }
+
+.show-extend-id-screen .manage-addresses-screen-container {
+  display: none; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: block; }
+
+.show-extend-id-screen .add-address-screen-container {
+  display: none; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: block; }
+
+.show-extend-id-screen .register-screen-container {
+  display: none; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: block; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: none; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: block; }
+
+.show-extend-id-screen .fund-id-screen-container {
+  display: none; }
+
+.show-extend-id-screen .extend-id-screen-container {
+  display: block; }
+
+.show-fund-id-screen .overview-screen-container {
+  display: none; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: block; }
+
+.show-fund-id-screen .manage-addresses-screen-container {
+  display: none; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: block; }
+
+.show-fund-id-screen .add-address-screen-container {
+  display: none; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: block; }
+
+.show-fund-id-screen .register-screen-container {
+  display: none; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: block; }
+
+.show-fund-id-screen .extend-id-screen-container {
+  display: none; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: block; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: none; }
+
+.show-fund-id-screen .fund-id-screen-container {
+  display: block; }
+
 /* general */
 body {
   background-image: linear-gradient(-180deg, #FBDA61 0%, #002968 100%);

@@ -1,0 +1,23 @@
+$routes: (
+  OverviewScreen: overview-screen,
+  ManageAddressesScreen: manage-addresses-screen,
+  AddAddressScreen: add-address-screen,
+  RegisterScreen: register-screen,
+  ExtendIDScreen: extend-id-screen,
+  FundIDScreen: fund-id-screen
+);
+
+/* For each key in the map, created an own class */
+@each $route, $name in $routes {
+  .show-#{$name} {
+    @each $_route, $_name in $routes {
+      .#{$_name}-container {
+        display: none;
+      }
+
+      .#{$name}-container {
+        display: block;
+      }
+    }
+  }
+}
