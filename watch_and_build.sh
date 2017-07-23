@@ -1,2 +1,3 @@
 #!/bin/bash
-pulp --watch build --to static/main.js
+pulp --watch --before clear build -t static/main.js &
+node-sass --watch src/style/main.scss --output static/

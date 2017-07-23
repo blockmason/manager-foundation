@@ -5,7 +5,8 @@ module Network.Eth.Foundation
        , FoundationName(..)
        , EthAddress(..)
        , Error(..)
-       , Wei
+       , Wei(..)
+       , PendingUnification
        , StringAddr
        , StringId
 
@@ -44,6 +45,7 @@ runMonadF = runExceptT
 
 type StringAddr = String
 type StringId = String
+type PendingUnification = FoundationId
 
 -- error
 data Error =
@@ -74,6 +76,7 @@ newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
 instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = show fi.name <> ", " <> show fi.addrs
+
 fiGetName ∷ FoundationId → FoundationName
 fiGetName (FoundationId fi) = fi.name
 fiGetAddrs ∷ FoundationId → Array EthAddress

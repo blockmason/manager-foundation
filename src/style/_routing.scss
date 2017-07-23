@@ -1,0 +1,66 @@
+$routes: (
+  OverviewScreen: overview-screen,
+  ManageAddressesScreen: manage-addresses-screen,
+  AddAddressScreen: add-address-screen,
+  RegisterScreen: register-screen,
+  ExtendIDScreen: extend-id-screen,
+  FundIDScreen: fund-id-screen
+);
+
+// generates the hide/show rules for each page. assumes that when one page is active, no other page is.
+@each $route, $name in $routes {
+  .show-#{$name} {
+    @each $_route, $_name in $routes {
+      .header-menu, .home-bar { //don't show the menu in child pages
+        display: none;
+      }
+
+      .back-nav-bar { //show back bar in child pages
+        display: block;
+      }
+
+      .#{$_name}-container {
+        display: none;
+      }
+
+      .#{$name}-container {
+        display: block;
+      }
+    }
+  }
+}
+
+.show-overview-screen {
+  .header-menu, .home-bar {
+    display: block;
+  }
+
+  .back-nav-bar {
+    display: none;
+  }
+}
+
+.back-nav-bar, .home-bar {
+  background: rgba(0,0,0,0.5);
+  padding: 10px;
+}
+
+.home-bar {
+  font-weight: 100;
+  background: #333;
+  text-transform: uppercase;
+}
+
+.back-nav-bar:hover {
+  background: rgba(0,0,0,0.6);
+}
+
+.close-pop-button {
+  color: white;
+  width: 100%;
+  padding: 10px;
+  &:focus, &:hover {
+    color: white;
+    text-decoration: none;
+  }
+}

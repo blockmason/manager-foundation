@@ -1,0 +1,15 @@
+.myid-summary .card {
+  background: rgba(0,0,0,0.6);
+  margin-bottom: 10px;
+  font-size: 10px;
+
+  .card-header {
+    background: rgba(0,0,0,0.1);
+    padding: 10px 0 0 20px;
+  }
+
+  .card-header h4{
+    font-size: 12px;
+    font-weight: 100;
+  }
+}
