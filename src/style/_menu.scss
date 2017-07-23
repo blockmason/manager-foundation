@@ -1,0 +1,16 @@
+.header-menu .row{
+  padding: 5px;
+  background: rgba(0,0,0,0.1);
+  margin-bottom: 3px;
+  color: white;
+  font-weight: 100;
+
+  &:hover, &:focus {
+    background: rgba(0,0,0,0.2);
+    text-decoration: none;
+  }
+
+  &.active {
+    padding-left: 10px;
+  }
+}

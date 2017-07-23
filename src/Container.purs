@@ -58,19 +58,24 @@ ui =
     initialState = { loggedIn: true
                    , loading: true
                    , errorBus: Nothing
-                   , currentScreen: ""
-                   , previousScreen: "" }
+                   , currentScreen: "show-overview-screen"
+                   , previousScreen: "show-overview-screen" }
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
       HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> state.currentScreen) ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
-      , menu state.currentScreen
+      , HH.div [ HP.id_ "back-nav-bar", HP.class_ (HH.ClassName "row back-nav-bar")]
+        [
+          HH.a [HP.href "#", HP.class_ (HH.ClassName "close-pop-button"), HE.onClick $ HE.input_ $ ShowPreviousScreen]
+          [HH.i [ HP.class_ (HH.ClassName "fa fa-chevron-left")][], HH.text " Back"]
+        ]
       , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component state.errorBus $ HE.input SetScreen
         ]
+      , menu state.currentScreen
       ]
 
     eval ∷ Query ~> H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad eff)
@@ -155,7 +160,7 @@ startCheckInterval maybeBus ms = do
 menu ∷ ∀ p. String → H.HTML p Query
 menu currentScreen =
   HH.div
-    [ HP.class_ (HH.ClassName "header-menu row")]
+    [ HP.class_ (HH.ClassName "header-menu col")]
     [
         menuItem R.OverviewScreen currentScreen
       , menuItem R.ManageAddressesScreen currentScreen
@@ -169,6 +174,6 @@ menuItem ∷ ∀ p. R.Screen → String → H.HTML p Query
 menuItem screen currentScreen =
   HH.a
   [HP.href "#",
-        HP.class_ (HH.ClassName $ "col" <> if currentScreen == (R.getRouteNameFor screen) then "active" else ""),
+        HP.class_ (HH.ClassName $ "row " <> if currentScreen == (R.getRouteNameFor screen) then "active" else ""),
         HE.onClick $ HE.input_ $ SetScreen (R.getRouteNameFor screen)]
   [ HH.text $ R.getMenuNameFor screen]
