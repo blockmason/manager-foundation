@@ -96,7 +96,6 @@ ui =
         H.modify (_ { loading = false })
         refreshMetamask
         (H.liftAff $ F.runMonadF $ F.foundationId) >>= hLog
---        (H.liftAff $ F.runMonadF $ F.currentAddr) >>= hLog
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
@@ -143,7 +142,8 @@ refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (Ap
 refreshMetamask = do
   mmStatus ← H.liftEff MM.loggedIn
   if mmStatus
-    then do newmmStatus ← H.liftEff MM.loggedIn
+    then do _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
+            newmmStatus ← H.liftEff MM.loggedIn
             H.modify (_ { loggedIn = newmmStatus })
     else do H.modify (_ { loggedIn = mmStatus })
 

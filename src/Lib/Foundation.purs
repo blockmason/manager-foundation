@@ -9,6 +9,7 @@ module Network.Eth.Foundation
        , PendingUnification
        , StringAddr
        , StringId
+       , fiBlankId
 
        , currentAddr
        , foundationId
@@ -81,6 +82,8 @@ fiGetName ∷ FoundationId → FoundationName
 fiGetName (FoundationId fi) = fi.name
 fiGetAddrs ∷ FoundationId → Array EthAddress
 fiGetAddrs (FoundationId fi) = fi.addrs
+fiBlankId ∷ FoundationId
+fiBlankId = FoundationId { name: (FoundationName ""), addrs: [] }
 
 newtype Wei = Wei Number
 instance showWei ∷ Show Wei where

@@ -3,6 +3,7 @@ module Foundation.Manager where
 import Foundation.Prelude
 
 import Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
+import Control.Monad.Aff.Bus as Bus
 
 import Halogen as H
 import Halogen.HTML as HH
@@ -16,6 +17,7 @@ import Network.Eth.Foundation as F
 
 data Query a
   = RefreshAddress a
+  | ReloadAll a
   | HandleInput Input a
   | GoToPage R.Screen a
   | ConfirmUnification F.FoundationName a
@@ -80,6 +82,9 @@ component =
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
   eval = case _ of
     HandleInput input next → do
+      pure next
+    ReloadAll next → do
+      loadFromBlockchain
       pure next
     RefreshAddress next → do
       pure next
@@ -243,6 +248,31 @@ createIdPage state =
         ]
       )
     ]
+
+loadFromBlockchain = do
+  s ← H.get
+  H.modify (_ { loading = true })
+--  myId ← handleFoundCall s.errorBus F.fiBlankId F.foundationId
+--  hLog myId
+--  H.modify (_ { myId = myId, loading = false })
+
+{-
+--helper to query the blockchain
+--blankVal is a value to return if there's an error
+--writes a message to the error bus if there's an error
+handleFoundCall errorBus blankVal affCall = do
+  case errorBus of
+    Nothing → do
+      hLog "No bus initialized"
+      pure blankVal
+    Just b → do
+      result ← H.liftAff $ F.runMonadF affCall
+      case result of
+        Left error → do _ ← H.liftAff $ Bus.write (FoundationError error) b
+                        pure blankVal
+        Right val  → pure val
+-}
+
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"
