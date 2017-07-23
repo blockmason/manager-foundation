@@ -13,37 +13,27 @@ data Screen =
 instance eqScreen ∷ Eq Screen where
   eq screen1 screen2 = (getRouteNameFor screen1) == (getRouteNameFor screen2)
 
-getRouteNameFor ∷ Screen → String
-getRouteNameFor screen =
+getBaseName ∷ Screen → String
+getBaseName screen =
   case screen of
     OverviewScreen →
-      "show-overview-screen"
+      "overview-screen"
     ManageAddressesScreen →
-      "show-manage-addresses-screen"
+      "manage-addresses-screen"
     AddAddressScreen →
-      "show-add-address-screen"
+      "add-address-screen"
     RegisterScreen →
-      "show-register-screen"
+      "register-screen"
     ExtendIDScreen →
-      "show-extend-id-screen"
+      "extend-id-screen"
     FundIDScreen →
-      "show-fund-id-screen"
+      "fund-id-screen"
+
+getRouteNameFor ∷ Screen → String
+getRouteNameFor = (append "show-") <<< getBaseName
 
 getContainerNameFor ∷ Screen → String
-getContainerNameFor screen =
-  case screen of
-    OverviewScreen →
-      "overview-screen-container"
-    ManageAddressesScreen →
-      "manage-addresses-screen-container"
-    AddAddressScreen →
-      "add-address-screen-container"
-    RegisterScreen →
-      "register-screen-container"
-    ExtendIDScreen →
-      "extend-id-screen-container"
-    FundIDScreen →
-      "fund-id-screen-container"
+getContainerNameFor = (\x → append x "-container") <<< getBaseName
 
 getMenuNameFor ∷ Screen → String
 getMenuNameFor screen =
