@@ -63,7 +63,7 @@ ui =
                    , errorBus: Nothing
                    , currentScreen: R.OverviewScreen
                    , history: []
-                   , myId: Nothing}
+                   , myId: Just mockMe}
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
