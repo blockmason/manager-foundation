@@ -22,6 +22,7 @@ data Query a
   | InputNewAddress String a
   | AddNewAddress (Either String F.EthAddress) a
   | ExtendId a
+  | FundId a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -68,7 +69,7 @@ component =
         , page R.AddAddressScreen (addAddressPage state)
         , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
         , page R.ExtendIDScreen (extendIdPage state.expiryDate)
-        , page R.FundIDScreen (HH.text $ R.getContainerNameFor R.FundIDScreen)
+        , page R.FundIDScreen (fundsPage state)
       ]
 
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
@@ -90,6 +91,8 @@ component =
     AddNewAddress addrs next → do
       pure next
     ExtendId next → do
+      pure next
+    FundId next → do
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -196,6 +199,17 @@ extendIdPage expiryDate =
                   [ HH.text "Extend for 0.1 ETH" ])
     ]
 
+fundsPage ∷ State → H.ComponentHTML Query
+fundsPage state =
+  HH.div
+    [HP.class_ (HH.ClassName "col funds-page")]
+    [
+      (card "Balance" $ HH.text $ show state.funds <> " Wei"),
+      (card "Deposit" $
+        HH.button [ HE.onClick $ HE.input_ $ FundId
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                  [ HH.text "Deposit ETH" ])
+    ]
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"

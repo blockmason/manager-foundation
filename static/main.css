@@ -562,6 +562,31 @@
     color: #ddd;
     width: 100%; }
 
+.funds-page .card {
+  background: rgba(0, 0, 0, 0.6);
+  margin-bottom: 10px;
+  font-size: 10px; }
+  .funds-page .card .card-header {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px 0 0 20px; }
+  .funds-page .card .card-header h4 {
+    font-size: 16px;
+    font-weight: 300;
+    color: white; }
+  .funds-page .card input[type=text] {
+    width: 100%;
+    border: 1px solid white;
+    margin: 0;
+    border-radius: 5px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1); }
+  .funds-page .card .btn {
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: #ddd;
+    width: 100%; }
+
 /* general */
 body {
   background-image: linear-gradient(-180deg, #FBDA61 0%, #002968 100%);
