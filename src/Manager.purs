@@ -9,6 +9,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Data.Array as A
+import Data.String as S
 
 import Foundation.Routes as R
 import Network.Eth.Foundation as F
@@ -18,6 +19,12 @@ data Query a
   | HandleInput Input a
   | GoToPage R.Screen a
   | ConfirmUnification F.FoundationName a
+  | InputNewAddress String a
+  | InputNewName String a
+  | CreateNewId String a
+  | AddNewAddress (Either String F.EthAddress) a
+  | ExtendId a
+  | FundId a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -27,6 +34,8 @@ type State = { loading          ∷ Boolean
              , todoUnification  ∷ Array F.FoundationName
              , expiryDate       ∷ String
              , funds            ∷ F.Wei
+             , newAddress       ∷ Either String F.EthAddress
+             , newName          ∷ String
              }
 
 type ScreenChange = R.Screen
@@ -51,7 +60,10 @@ component =
                        , sentUnification: mockSentUnification
                        , todoUnification: mockTodoUnification
                        , expiryDate: randomDate
-                       , funds: F.Wei 10000.0}
+                       , funds: F.Wei 10000.0
+                       , newAddress: Left ""
+                       , newName: ""
+                     }
 
   render ∷ State → H.ComponentHTML Query
   render state =
@@ -59,10 +71,10 @@ component =
       [
           page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
         , page R.ManageAddressesScreen (addressesPage state.addresses state.sentUnification state.todoUnification)
-        , page R.AddAddressScreen (HH.text $ R.getContainerNameFor R.AddAddressScreen)
-        , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
-        , page R.ExtendIDScreen (HH.text $ R.getContainerNameFor R.ExtendIDScreen)
-        , page R.FundIDScreen (HH.text $ R.getContainerNameFor R.FundIDScreen)
+        , page R.AddAddressScreen (addAddressPage state)
+        , page R.RegisterScreen (createIdPage state)
+        , page R.ExtendIDScreen (extendIdPage state.expiryDate)
+        , page R.FundIDScreen (fundsPage state)
       ]
 
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
@@ -76,6 +88,23 @@ component =
       pure next
     ConfirmUnification name next → do
       pure next
+    InputNewAddress addrs next → do
+      if ((S.length addrs) > 41) --
+        then H.modify (_ { newAddress = Right $ F.EthAddress addrs })
+        else H.modify (_ { newAddress = Left addrs })
+      pure next
+    AddNewAddress addrs next → do
+      pure next
+    ExtendId next → do
+      pure next
+    FundId next → do
+      pure next
+    InputNewName nameStr next → do
+      H.modify (_ { newName = nameStr })
+      pure next
+    CreateNewId name next → do
+      pure next
+
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
 page screen child =
@@ -146,6 +175,74 @@ addAddressRequestBlock name =
     [HH.button [ HE.onClick $ HE.input_ $ ConfirmUnification name
                   , HP.class_ $ HH.ClassName "confirm-unification-button"]
                   [ HH.text $ "Combine with: " <> show name]]
+
+addAddressPage ∷ State → H.ComponentHTML Query
+addAddressPage state =
+  HH.div
+    [HP.class_ (HH.ClassName "col add-address-page")]
+    [
+      (card "Add new address" $  HH.div
+        [HP.class_ (HH.ClassName "col")]
+        [
+          HH.input [ HP.type_ HP.InputText
+                   , HP.value $ ""
+                   , HP.class_ $ HH.ClassName "row"
+                   , HP.placeholder $ "0x0"
+                   , HE.onValueInput
+                     (HE.input (\val → InputNewAddress val))
+                   ]
+        , HH.button [ HE.onClick $ HE.input_ $ AddNewAddress state.newAddress
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+          [ HH.text "Add Address" ]
+        ]
+      )
+    ]
+
+extendIdPage ∷ String → H.ComponentHTML Query
+extendIdPage expiryDate =
+  HH.div
+    [HP.class_ (HH.ClassName "col extend-id-page")]
+    [
+      (card "Expires" $ HH.text expiryDate),
+      (card "Extend for 1 Year" $
+        HH.button [ HE.onClick $ HE.input_ $ ExtendId
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                  [ HH.text "Extend for 0.1 ETH" ])
+    ]
+
+fundsPage ∷ State → H.ComponentHTML Query
+fundsPage state =
+  HH.div
+    [HP.class_ (HH.ClassName "col funds-page")]
+    [
+      (card "Balance" $ HH.text $ show state.funds <> " Wei"),
+      (card "Deposit" $
+        HH.button [ HE.onClick $ HE.input_ $ FundId
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                  [ HH.text "Deposit ETH" ])
+    ]
+
+createIdPage ∷ State → H.ComponentHTML Query
+createIdPage state =
+  HH.div
+    [HP.class_ (HH.ClassName "col create-id-page")]
+    [
+      (card "Make new id" $  HH.div
+        [HP.class_ (HH.ClassName "col")]
+        [
+          HH.input [ HP.type_ HP.InputText
+                   , HP.value $ ""
+                   , HP.class_ $ HH.ClassName "row"
+                   , HP.placeholder $ "some_name"
+                   , HE.onValueInput
+                     (HE.input (\val → InputNewName val))
+                   ]
+        , HH.button [ HE.onClick $ HE.input_ $ CreateNewId state.newName
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+          [ HH.text "Create Foundation ID" ]
+        ]
+      )
+    ]
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"
