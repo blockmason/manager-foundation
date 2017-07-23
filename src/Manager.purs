@@ -9,6 +9,7 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Data.Array as A
+import Data.String as S
 
 import Foundation.Routes as R
 import Network.Eth.Foundation as F
@@ -18,6 +19,8 @@ data Query a
   | HandleInput Input a
   | GoToPage R.Screen a
   | ConfirmUnification F.FoundationName a
+  | InputNewAddress String a
+  | AddNewAddress (Either String F.EthAddress) a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -27,6 +30,7 @@ type State = { loading          ∷ Boolean
              , todoUnification  ∷ Array F.FoundationName
              , expiryDate       ∷ String
              , funds            ∷ F.Wei
+             , newAddress       ∷ Either String F.EthAddress
              }
 
 type ScreenChange = R.Screen
@@ -51,7 +55,8 @@ component =
                        , sentUnification: mockSentUnification
                        , todoUnification: mockTodoUnification
                        , expiryDate: randomDate
-                       , funds: F.Wei 10000.0}
+                       , funds: F.Wei 10000.0
+                       , newAddress: Left ""}
 
   render ∷ State → H.ComponentHTML Query
   render state =
@@ -59,7 +64,7 @@ component =
       [
           page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
         , page R.ManageAddressesScreen (addressesPage state.addresses state.sentUnification state.todoUnification)
-        , page R.AddAddressScreen (HH.text $ R.getContainerNameFor R.AddAddressScreen)
+        , page R.AddAddressScreen (addAddressPage state)
         , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
         , page R.ExtendIDScreen (HH.text $ R.getContainerNameFor R.ExtendIDScreen)
         , page R.FundIDScreen (HH.text $ R.getContainerNameFor R.FundIDScreen)
@@ -75,6 +80,13 @@ component =
       H.raise route
       pure next
     ConfirmUnification name next → do
+      pure next
+    InputNewAddress addrs next → do
+      if ((S.length addrs) > 41) --
+        then H.modify (_ { newAddress = Right $ F.EthAddress addrs })
+        else H.modify (_ { newAddress = Left addrs })
+      pure next
+    AddNewAddress addrs next → do
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -146,6 +158,28 @@ addAddressRequestBlock name =
     [HH.button [ HE.onClick $ HE.input_ $ ConfirmUnification name
                   , HP.class_ $ HH.ClassName "confirm-unification-button"]
                   [ HH.text $ "Combine with: " <> show name]]
+
+addAddressPage ∷ State → H.ComponentHTML Query
+addAddressPage state =
+  HH.div
+    [HP.class_ (HH.ClassName "col add-address-page")]
+    [
+      (card "Add new address" $  HH.div
+        [HP.class_ (HH.ClassName "col")]
+        [
+          HH.input [ HP.type_ HP.InputText
+                   , HP.value $ ""
+                   , HP.class_ $ HH.ClassName "row"
+                   , HP.placeholder $ "0x0"
+                   , HE.onValueInput
+                     (HE.input (\val → InputNewAddress val))
+                   ]
+        , HH.button [ HE.onClick $ HE.input_ $ AddNewAddress state.newAddress
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+          [ HH.text "Add Address" ]
+        ]
+      )
+    ]
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"
