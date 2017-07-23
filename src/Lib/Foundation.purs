@@ -5,6 +5,7 @@ module Network.Eth.Foundation
        , FoundationName(..)
        , EthAddress(..)
        , Error(..)
+       , Wei
        , StringAddr
        , StringId
 
@@ -20,6 +21,9 @@ module Network.Eth.Foundation
        , addPendingUnification
        , confirmPendingUnification
        , deleteAddr
+
+       , depositWei
+       , withdrawDeposit
        ) where
 
 import Prelude
@@ -38,7 +42,6 @@ foreign import data FOUNDATION ∷ Effect
 type MonadF a = ∀ e. ExceptT Error (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
 runMonadF = runExceptT
 
-type DummyVal = String
 type StringAddr = String
 type StringId = String
 
@@ -73,16 +76,22 @@ instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = show fi.name <> ", " <> show fi.addrs
 
 type PendingUnification = FoundationId
-fiGetId ∷ FoundationId → FoundationName
-fiGetId (FoundationId fi) = fi.name
+fiGetName ∷ FoundationId → FoundationName
+fiGetName (FoundationId fi) = fi.name
 fiGetAddrs ∷ FoundationId → Array EthAddress
 fiGetAddrs (FoundationId fi) = fi.addrs
+
+newtype Wei = Wei Number
+instance showWei ∷ Show Wei where
+  show (Wei num) = show num
+weiGet ∷ Wei → Number
+weiGet (Wei num) = num
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
 type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
 type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
 
-foreign import initImpl ∷ ∀ e. DummyVal → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import initImpl ∷ ∀ e. Unit → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import resolveToAddrImpl ∷ AddrLookupFn
 foreign import resolveToNameImpl ∷ NameLookupFn
 foreign import areSameIdImpl ∷ AddrComparisonFn
@@ -91,12 +100,14 @@ foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATI
 foreign import addPendingUnificationImpl ∷ ∀ e. StringId → StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import depositWeiImpl ∷ ∀ e. StringId → Number → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
   li ← liftEff loggedIn
   if li
-    then liftEff $ initImpl ""
+    then liftEff $ initImpl unit
     else throwError NoMetamask
 
 currentAddr ∷ MonadF EthAddress
@@ -147,3 +158,14 @@ deleteAddr ∷ EthAddress → MonadF Unit
 deleteAddr (EthAddress ea) = do
   checkAndInit
   liftEff $ deleteAddrImpl ea
+
+
+depositWei ∷ Wei → MonadF Unit
+depositWei w = do
+  (FoundationName name) ← (fiGetName <$> foundationId)
+  liftEff $ depositWeiImpl name (weiGet w)
+
+withdrawDeposit ∷ MonadF Unit
+withdrawDeposit = do
+  (FoundationName name) ← (fiGetName <$> foundationId)
+  liftEff $ withdrawDepositImpl name

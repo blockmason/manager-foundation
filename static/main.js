@@ -7406,6 +7406,7 @@ var PS = {};
   var Data_Semigroup = PS["Data.Semigroup"];
   var Data_Show = PS["Data.Show"];
   var Data_String = PS["Data.String"];
+  var Data_Unit = PS["Data.Unit"];
   var Network_Eth_Metamask = PS["Network.Eth.Metamask"];
   var Prelude = PS["Prelude"];
   var EthAddress = function (x) {
@@ -7451,7 +7452,7 @@ var PS = {};
       if (v instanceof NoFoundationId) {
           return "NoFoundationId";
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 52, column 3 - line 53, column 3: " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 55, column 3 - line 56, column 3: " + [ v.constructor.name ]);
   });
   var runMonadF = Control_Monad_Except_Trans.runExceptT;
   var fiGetAddrs = function (v) {
@@ -7459,7 +7460,7 @@ var PS = {};
   }; 
   var checkAndInit = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))(Network_Eth_Metamask.loggedIn))(function (v) {
       if (v) {
-          return Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))($foreign.initImpl(""));
+          return Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))($foreign.initImpl(Data_Unit.unit));
       };
       return Control_Monad_Error_Class.throwError(Control_Monad_Except_Trans.monadThrowExceptT(Control_Monad_Aff.monadAff))(NoMetamask.value);
   });
@@ -7488,8 +7489,8 @@ var PS = {};
   };
   var foundationId = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(currentAddr)(function (v) {
       return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(idByAddr(v))(function (v1) {
-          var $47 = Data_Array["null"](fiGetAddrs(v1));
-          if ($47) {
+          var $53 = Data_Array["null"](fiGetAddrs(v1));
+          if ($53) {
               return Control_Monad_Error_Class.throwError(Control_Monad_Except_Trans.monadThrowExceptT(Control_Monad_Aff.monadAff))(NoFoundationId.value);
           };
           return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(v1);

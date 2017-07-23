@@ -83,6 +83,22 @@ exports.deleteAddrImpl = function(addr) {
     };
 };
 
+exports.depositWeiImpl = function(foundationId) {
+    return function() {
+        Foundation.deployed().then(function(instance) {
+            return instance.deposit(foundationId, {value: weiAmount});
+        });
+    };
+};
+
+exports.withdrawDepositImpl = function(foundationId) {
+    return function() {
+        Foundation.deployed().then(function(instance) {
+            return instance.withdrawDeposit(foundationId);
+        });
+    };
+};
+
 /* ********** helpers ********** */
 
 var bytes2addrList = function(byteArrayList) {
