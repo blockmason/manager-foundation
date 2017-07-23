@@ -71,6 +71,8 @@ newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
 instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = show fi.name <> ", " <> show fi.addrs
+
+type PendingUnification = FoundationId
 fiGetId ∷ FoundationId → FoundationName
 fiGetId (FoundationId fi) = fi.name
 fiGetAddrs ∷ FoundationId → Array EthAddress

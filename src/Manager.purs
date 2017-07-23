@@ -10,6 +10,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 
 import Foundation.Routes as R
+import Network.Eth.Foundation as F
 
 data Query a
   = RefreshAddress a
@@ -17,6 +18,11 @@ data Query a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
+             , myId             ∷ F.FoundationId
+             , addresses        ∷ Array F.EthAddress
+             , sentUnification  ∷ Array F.PendingUnification
+             , todoUnification  ∷ Array F.FoundationName
+             , expiryDate       ∷ 
              }
 
 type Message = String
@@ -61,3 +67,19 @@ page screen child =
   HH.div
     [HP.class_ (HH.ClassName $ R.getContainerNameFor screen)]
     [child]
+
+summary ∷ H.ComponentHTML Query
+summary
+
+-- mocks
+mockFoundationName1 ∷ F.FoundationName
+mockFoundationName1 = F.FoundationName "Luke"
+
+mockFoundationName2 ∷ F.FoundationName
+mockFoundationName2 = F.FoundationName "Tim"
+
+mockMe :: F.FoundationId
+mockMe = (F.FoundationId mockFoundationName1)
+
+mockTim :: F.FoundationId
+mockTim = (F.FoundationId mockFoundationName2)
