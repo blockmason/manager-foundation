@@ -8176,6 +8176,15 @@ var PS = {};
       };
       return AddNewAddress;
   })();
+  var ExtendId = (function () {
+      function ExtendId(value0) {
+          this.value0 = value0;
+      };
+      ExtendId.create = function (value0) {
+          return new ExtendId(value0);
+      };
+      return ExtendId;
+  })();
   var randomDate = "2018-11-01";
   var page = function (screen) {
       return function (child) {
@@ -8203,6 +8212,9 @@ var PS = {};
           return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("card row card-inverse") ])([ Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("card-header") ])([ Halogen_HTML_Elements.h4([ Halogen_HTML_Properties.class_("card-title") ])([ Halogen_HTML_Core.text(cardTitle) ]) ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("card-block") ])([ child ]) ]);
       };
   };
+  var extendIdPage = function (expiryDate) {
+      return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col extend-id-page") ])([ card("Expires")(Halogen_HTML_Core.text(expiryDate)), card("Extend for 1 Year")(Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(ExtendId.create)), Halogen_HTML_Properties.class_("btn btn-secondary") ])([ Halogen_HTML_Core.text("Extend for 0.1 ETH") ])) ]);
+  };
   var summary = function (optionalID) {
       return function (expiryDate) {
           return function (addressCount) {
@@ -8213,7 +8225,7 @@ var PS = {};
                   if (optionalID instanceof Data_Maybe.Just) {
                       return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col myid-summary") ])([ card("ID")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showFoundationName)(optionalID.value0.name))), card("Expires")(Halogen_HTML_Core.text(randomDate)), card("Addresses")(Halogen_HTML_Core.text(Data_Show.show(Data_Show.showInt)(addressCount) + " associated")), card("Current Balance")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showWei)(balance) + " Wei")) ]);
                   };
-                  throw new Error("Failed pattern match at Foundation.Manager line 123, column 3 - line 138, column 10: " + [ optionalID.constructor.name ]);
+                  throw new Error("Failed pattern match at Foundation.Manager line 126, column 3 - line 141, column 10: " + [ optionalID.constructor.name ]);
               };
           };
       };
@@ -8241,7 +8253,7 @@ var PS = {};
   };
   var component = (function () {
       var render = function (state) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("main-view") ])([ page(Foundation_Routes.OverviewScreen.value)(summary(state.myId)(state.expiryDate)(Data_Array.length(state.addresses))(state.funds)), page(Foundation_Routes.ManageAddressesScreen.value)(addressesPage(state.addresses)(state.sentUnification)(state.todoUnification)), page(Foundation_Routes.AddAddressScreen.value)(addAddressPage(state)), page(Foundation_Routes.RegisterScreen.value)(Halogen_HTML_Core.text(Foundation_Routes.getContainerNameFor(Foundation_Routes.RegisterScreen.value))), page(Foundation_Routes.ExtendIDScreen.value)(Halogen_HTML_Core.text(Foundation_Routes.getContainerNameFor(Foundation_Routes.ExtendIDScreen.value))), page(Foundation_Routes.FundIDScreen.value)(Halogen_HTML_Core.text(Foundation_Routes.getContainerNameFor(Foundation_Routes.FundIDScreen.value))) ]);
+          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("main-view") ])([ page(Foundation_Routes.OverviewScreen.value)(summary(state.myId)(state.expiryDate)(Data_Array.length(state.addresses))(state.funds)), page(Foundation_Routes.ManageAddressesScreen.value)(addressesPage(state.addresses)(state.sentUnification)(state.todoUnification)), page(Foundation_Routes.AddAddressScreen.value)(addAddressPage(state)), page(Foundation_Routes.RegisterScreen.value)(Halogen_HTML_Core.text(Foundation_Routes.getContainerNameFor(Foundation_Routes.RegisterScreen.value))), page(Foundation_Routes.ExtendIDScreen.value)(extendIdPage(state.expiryDate)), page(Foundation_Routes.FundIDScreen.value)(Halogen_HTML_Core.text(Foundation_Routes.getContainerNameFor(Foundation_Routes.FundIDScreen.value))) ]);
       };
       var initialState = function (input) {
           return {
@@ -8303,7 +8315,10 @@ var PS = {};
           if (v instanceof AddNewAddress) {
               return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
           };
-          throw new Error("Failed pattern match at Foundation.Manager line 74, column 10 - line 90, column 16: " + [ v.constructor.name ]);
+          if (v instanceof ExtendId) {
+              return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
+          };
+          throw new Error("Failed pattern match at Foundation.Manager line 75, column 10 - line 93, column 16: " + [ v.constructor.name ]);
       };
       return Halogen_Component.component(Halogen_HTML_Core.bifunctorHTML)({
           initialState: initialState, 
@@ -8318,11 +8333,13 @@ var PS = {};
   exports["ConfirmUnification"] = ConfirmUnification;
   exports["InputNewAddress"] = InputNewAddress;
   exports["AddNewAddress"] = AddNewAddress;
+  exports["ExtendId"] = ExtendId;
   exports["addAddressPage"] = addAddressPage;
   exports["addAddressRequestBlock"] = addAddressRequestBlock;
   exports["addressesPage"] = addressesPage;
   exports["card"] = card;
   exports["component"] = component;
+  exports["extendIdPage"] = extendIdPage;
   exports["mockEthAddesses"] = mockEthAddesses;
   exports["mockFoundationName1"] = mockFoundationName1;
   exports["mockFoundationName2"] = mockFoundationName2;

@@ -21,6 +21,7 @@ data Query a
   | ConfirmUnification F.FoundationName a
   | InputNewAddress String a
   | AddNewAddress (Either String F.EthAddress) a
+  | ExtendId a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -66,7 +67,7 @@ component =
         , page R.ManageAddressesScreen (addressesPage state.addresses state.sentUnification state.todoUnification)
         , page R.AddAddressScreen (addAddressPage state)
         , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
-        , page R.ExtendIDScreen (HH.text $ R.getContainerNameFor R.ExtendIDScreen)
+        , page R.ExtendIDScreen (extendIdPage state.expiryDate)
         , page R.FundIDScreen (HH.text $ R.getContainerNameFor R.FundIDScreen)
       ]
 
@@ -87,6 +88,8 @@ component =
         else H.modify (_ { newAddress = Left addrs })
       pure next
     AddNewAddress addrs next → do
+      pure next
+    ExtendId next → do
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -180,6 +183,19 @@ addAddressPage state =
         ]
       )
     ]
+
+extendIdPage ∷ String → H.ComponentHTML Query
+extendIdPage expiryDate =
+  HH.div
+    [HP.class_ (HH.ClassName "col extend-id-page")]
+    [
+      (card "Expires" $ HH.text expiryDate),
+      (card "Extend for 1 Year" $
+        HH.button [ HE.onClick $ HE.input_ $ ExtendId
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                  [ HH.text "Extend for 0.1 ETH" ])
+    ]
+
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"
