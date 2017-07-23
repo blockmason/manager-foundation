@@ -16,7 +16,7 @@
     "purescript-affjax": "^4.0.0",
     "purescript-js-timers": "^3.0.0",
     "purescript-transformers": "^3.4.0",
-    "purescript-datetime": "^3.2.0"
+    "purescript-datetime": "^3.3.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

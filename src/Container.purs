@@ -156,14 +156,12 @@ startCheckInterval maybeBus ms = do
               pure unit
 
 -- view Components
--- menu ∷ String → H.ComponentHTML Query
 menu ∷ ∀ p. String → H.HTML p Query
 menu currentScreen =
   HH.div
     [ HP.class_ (HH.ClassName "header-menu col")]
     [
-        menuItem R.OverviewScreen currentScreen
-      , menuItem R.ManageAddressesScreen currentScreen
+        menuItem R.ManageAddressesScreen currentScreen
       , menuItem R.AddAddressScreen currentScreen
       , menuItem R.RegisterScreen currentScreen
       , menuItem R.ExtendIDScreen currentScreen

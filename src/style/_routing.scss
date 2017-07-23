@@ -11,6 +11,14 @@ $routes: (
 @each $route, $name in $routes {
   .show-#{$name} {
     @each $_route, $_name in $routes {
+      .header-menu { //don't show the menu in child pages
+        display: none;
+      }
+
+      .back-nav-bar { //show back bar in child pages
+        display: block;
+      }
+
       .#{$_name}-container {
         display: none;
       }
@@ -22,8 +30,19 @@ $routes: (
   }
 }
 
+.show-overview-screen {
+  .header-menu {
+    display: block;
+  }
+
+  .back-nav-bar {
+    display: none;
+  }
+}
+
 .back-nav-bar {
   background: rgba(0,0,0,0.1);
+  padding: 10px;
 }
 
 .back-nav-bar:hover {
