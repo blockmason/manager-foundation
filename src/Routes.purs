@@ -52,7 +52,7 @@ getMenuNameFor screen =
     AddAddressScreen →
       "Add Address"
     RegisterScreen →
-      "Register Screen"
+      "Register ID"
     ExtendIDScreen →
       "Extend Foundation ID"
     FundIDScreen →

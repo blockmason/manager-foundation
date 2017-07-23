@@ -1,5 +1,5 @@
 @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900");
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: none; }
 
 .show-overview-screen .back-nav-bar {
@@ -11,7 +11,7 @@
 .show-overview-screen .overview-screen-container {
   display: block; }
 
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: none; }
 
 .show-overview-screen .back-nav-bar {
@@ -23,7 +23,7 @@
 .show-overview-screen .overview-screen-container {
   display: block; }
 
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: none; }
 
 .show-overview-screen .back-nav-bar {
@@ -35,7 +35,7 @@
 .show-overview-screen .overview-screen-container {
   display: block; }
 
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: none; }
 
 .show-overview-screen .back-nav-bar {
@@ -47,7 +47,7 @@
 .show-overview-screen .overview-screen-container {
   display: block; }
 
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: none; }
 
 .show-overview-screen .back-nav-bar {
@@ -59,7 +59,7 @@
 .show-overview-screen .overview-screen-container {
   display: block; }
 
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: none; }
 
 .show-overview-screen .back-nav-bar {
@@ -71,7 +71,7 @@
 .show-overview-screen .overview-screen-container {
   display: block; }
 
-.show-manage-addresses-screen .header-menu {
+.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
   display: none; }
 
 .show-manage-addresses-screen .back-nav-bar {
@@ -83,7 +83,7 @@
 .show-manage-addresses-screen .manage-addresses-screen-container {
   display: block; }
 
-.show-manage-addresses-screen .header-menu {
+.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
   display: none; }
 
 .show-manage-addresses-screen .back-nav-bar {
@@ -95,7 +95,7 @@
 .show-manage-addresses-screen .manage-addresses-screen-container {
   display: block; }
 
-.show-manage-addresses-screen .header-menu {
+.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
   display: none; }
 
 .show-manage-addresses-screen .back-nav-bar {
@@ -107,7 +107,7 @@
 .show-manage-addresses-screen .manage-addresses-screen-container {
   display: block; }
 
-.show-manage-addresses-screen .header-menu {
+.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
   display: none; }
 
 .show-manage-addresses-screen .back-nav-bar {
@@ -119,7 +119,7 @@
 .show-manage-addresses-screen .manage-addresses-screen-container {
   display: block; }
 
-.show-manage-addresses-screen .header-menu {
+.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
   display: none; }
 
 .show-manage-addresses-screen .back-nav-bar {
@@ -131,7 +131,7 @@
 .show-manage-addresses-screen .manage-addresses-screen-container {
   display: block; }
 
-.show-manage-addresses-screen .header-menu {
+.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
   display: none; }
 
 .show-manage-addresses-screen .back-nav-bar {
@@ -143,7 +143,7 @@
 .show-manage-addresses-screen .manage-addresses-screen-container {
   display: block; }
 
-.show-add-address-screen .header-menu {
+.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
   display: none; }
 
 .show-add-address-screen .back-nav-bar {
@@ -155,7 +155,7 @@
 .show-add-address-screen .add-address-screen-container {
   display: block; }
 
-.show-add-address-screen .header-menu {
+.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
   display: none; }
 
 .show-add-address-screen .back-nav-bar {
@@ -167,7 +167,7 @@
 .show-add-address-screen .add-address-screen-container {
   display: block; }
 
-.show-add-address-screen .header-menu {
+.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
   display: none; }
 
 .show-add-address-screen .back-nav-bar {
@@ -179,7 +179,7 @@
 .show-add-address-screen .add-address-screen-container {
   display: block; }
 
-.show-add-address-screen .header-menu {
+.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
   display: none; }
 
 .show-add-address-screen .back-nav-bar {
@@ -191,7 +191,7 @@
 .show-add-address-screen .add-address-screen-container {
   display: block; }
 
-.show-add-address-screen .header-menu {
+.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
   display: none; }
 
 .show-add-address-screen .back-nav-bar {
@@ -203,7 +203,7 @@
 .show-add-address-screen .add-address-screen-container {
   display: block; }
 
-.show-add-address-screen .header-menu {
+.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
   display: none; }
 
 .show-add-address-screen .back-nav-bar {
@@ -215,7 +215,7 @@
 .show-add-address-screen .add-address-screen-container {
   display: block; }
 
-.show-register-screen .header-menu {
+.show-register-screen .header-menu, .show-register-screen .home-bar {
   display: none; }
 
 .show-register-screen .back-nav-bar {
@@ -227,7 +227,7 @@
 .show-register-screen .register-screen-container {
   display: block; }
 
-.show-register-screen .header-menu {
+.show-register-screen .header-menu, .show-register-screen .home-bar {
   display: none; }
 
 .show-register-screen .back-nav-bar {
@@ -239,7 +239,7 @@
 .show-register-screen .register-screen-container {
   display: block; }
 
-.show-register-screen .header-menu {
+.show-register-screen .header-menu, .show-register-screen .home-bar {
   display: none; }
 
 .show-register-screen .back-nav-bar {
@@ -251,7 +251,7 @@
 .show-register-screen .register-screen-container {
   display: block; }
 
-.show-register-screen .header-menu {
+.show-register-screen .header-menu, .show-register-screen .home-bar {
   display: none; }
 
 .show-register-screen .back-nav-bar {
@@ -263,7 +263,7 @@
 .show-register-screen .register-screen-container {
   display: block; }
 
-.show-register-screen .header-menu {
+.show-register-screen .header-menu, .show-register-screen .home-bar {
   display: none; }
 
 .show-register-screen .back-nav-bar {
@@ -275,7 +275,7 @@
 .show-register-screen .register-screen-container {
   display: block; }
 
-.show-register-screen .header-menu {
+.show-register-screen .header-menu, .show-register-screen .home-bar {
   display: none; }
 
 .show-register-screen .back-nav-bar {
@@ -287,7 +287,7 @@
 .show-register-screen .register-screen-container {
   display: block; }
 
-.show-extend-id-screen .header-menu {
+.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
   display: none; }
 
 .show-extend-id-screen .back-nav-bar {
@@ -299,7 +299,7 @@
 .show-extend-id-screen .extend-id-screen-container {
   display: block; }
 
-.show-extend-id-screen .header-menu {
+.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
   display: none; }
 
 .show-extend-id-screen .back-nav-bar {
@@ -311,7 +311,7 @@
 .show-extend-id-screen .extend-id-screen-container {
   display: block; }
 
-.show-extend-id-screen .header-menu {
+.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
   display: none; }
 
 .show-extend-id-screen .back-nav-bar {
@@ -323,7 +323,7 @@
 .show-extend-id-screen .extend-id-screen-container {
   display: block; }
 
-.show-extend-id-screen .header-menu {
+.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
   display: none; }
 
 .show-extend-id-screen .back-nav-bar {
@@ -335,7 +335,7 @@
 .show-extend-id-screen .extend-id-screen-container {
   display: block; }
 
-.show-extend-id-screen .header-menu {
+.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
   display: none; }
 
 .show-extend-id-screen .back-nav-bar {
@@ -347,7 +347,7 @@
 .show-extend-id-screen .extend-id-screen-container {
   display: block; }
 
-.show-extend-id-screen .header-menu {
+.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
   display: none; }
 
 .show-extend-id-screen .back-nav-bar {
@@ -359,7 +359,7 @@
 .show-extend-id-screen .extend-id-screen-container {
   display: block; }
 
-.show-fund-id-screen .header-menu {
+.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
   display: none; }
 
 .show-fund-id-screen .back-nav-bar {
@@ -371,7 +371,7 @@
 .show-fund-id-screen .fund-id-screen-container {
   display: block; }
 
-.show-fund-id-screen .header-menu {
+.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
   display: none; }
 
 .show-fund-id-screen .back-nav-bar {
@@ -383,7 +383,7 @@
 .show-fund-id-screen .fund-id-screen-container {
   display: block; }
 
-.show-fund-id-screen .header-menu {
+.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
   display: none; }
 
 .show-fund-id-screen .back-nav-bar {
@@ -395,7 +395,7 @@
 .show-fund-id-screen .fund-id-screen-container {
   display: block; }
 
-.show-fund-id-screen .header-menu {
+.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
   display: none; }
 
 .show-fund-id-screen .back-nav-bar {
@@ -407,7 +407,7 @@
 .show-fund-id-screen .fund-id-screen-container {
   display: block; }
 
-.show-fund-id-screen .header-menu {
+.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
   display: none; }
 
 .show-fund-id-screen .back-nav-bar {
@@ -419,7 +419,7 @@
 .show-fund-id-screen .fund-id-screen-container {
   display: block; }
 
-.show-fund-id-screen .header-menu {
+.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
   display: none; }
 
 .show-fund-id-screen .back-nav-bar {
@@ -431,18 +431,23 @@
 .show-fund-id-screen .fund-id-screen-container {
   display: block; }
 
-.show-overview-screen .header-menu {
+.show-overview-screen .header-menu, .show-overview-screen .home-bar {
   display: block; }
 
 .show-overview-screen .back-nav-bar {
   display: none; }
 
-.back-nav-bar {
-  background: rgba(0, 0, 0, 0.1);
+.back-nav-bar, .home-bar {
+  background: rgba(0, 0, 0, 0.5);
   padding: 10px; }
 
+.home-bar {
+  font-weight: 100;
+  background: #333;
+  text-transform: uppercase; }
+
 .back-nav-bar:hover {
-  background: rgba(0, 0, 0, 0.2); }
+  background: rgba(0, 0, 0, 0.6); }
 
 .close-pop-button {
   color: white;

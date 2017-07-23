@@ -37,7 +37,8 @@ type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
              , currentScreen ∷ String
-             , previousScreen ∷ String}
+             , previousScreen ∷ String
+             , myId ∷ Maybe F.FoundationId}
 
 type ChildQuery = Coproduct1 MainView.Query
 type ChildSlot = Either1 Unit
@@ -59,13 +60,18 @@ ui =
                    , loading: true
                    , errorBus: Nothing
                    , currentScreen: "show-overview-screen"
-                   , previousScreen: "show-overview-screen" }
+                   , previousScreen: "show-overview-screen"
+                   , myId: Just mockMe}
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
       HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> state.currentScreen) ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
+      , HH.div [ HP.id_ "home-bar", HP.class_ (HH.ClassName "row home-bar")]
+        [
+          HH.text "Foundation Manager"
+        ]
       , HH.div [ HP.id_ "back-nav-bar", HP.class_ (HH.ClassName "row back-nav-bar")]
         [
           HH.a [HP.href "#", HP.class_ (HH.ClassName "close-pop-button"), HE.onClick $ HE.input_ $ ShowPreviousScreen]
@@ -75,7 +81,7 @@ ui =
         [
           HH.slot' CP.cp1 unit MainView.component state.errorBus $ HE.input SetScreen
         ]
-      , menu state.currentScreen
+      , menu state.currentScreen state.myId
       ]
 
     eval ∷ Query ~> H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad eff)
@@ -156,17 +162,24 @@ startCheckInterval maybeBus ms = do
               pure unit
 
 -- view Components
-menu ∷ ∀ p. String → H.HTML p Query
-menu currentScreen =
-  HH.div
-    [ HP.class_ (HH.ClassName "header-menu col")]
-    [
-        menuItem R.ManageAddressesScreen currentScreen
-      , menuItem R.AddAddressScreen currentScreen
-      , menuItem R.RegisterScreen currentScreen
-      , menuItem R.ExtendIDScreen currentScreen
-      , menuItem R.FundIDScreen currentScreen
-    ]
+menu ∷ ∀ p. String → Maybe F.FoundationId → H.HTML p Query
+menu currentScreen myId =
+  case myId of
+    Nothing →
+      HH.div
+        [ HP.class_ (HH.ClassName "header-menu col")]
+        [
+            menuItem R.RegisterScreen currentScreen
+        ]
+    Just _ →
+      HH.div
+        [ HP.class_ (HH.ClassName "header-menu col")]
+        [
+            menuItem R.ManageAddressesScreen currentScreen
+          , menuItem R.AddAddressScreen currentScreen
+          , menuItem R.ExtendIDScreen currentScreen
+          , menuItem R.FundIDScreen currentScreen
+        ]
 
 menuItem ∷ ∀ p. R.Screen → String → H.HTML p Query
 menuItem screen currentScreen =
@@ -175,3 +188,13 @@ menuItem screen currentScreen =
         HP.class_ (HH.ClassName $ "row " <> if currentScreen == (R.getRouteNameFor screen) then "active" else ""),
         HE.onClick $ HE.input_ $ SetScreen (R.getRouteNameFor screen)]
   [ HH.text $ R.getMenuNameFor screen]
+
+--  mocks
+mockFoundationName1 ∷ F.FoundationName
+mockFoundationName1 = F.FoundationName "Luke"
+
+mockEthAddesses ∷ Array F.EthAddress
+mockEthAddesses = [F.EthAddress "0x0", F.EthAddress "0x1"]
+
+mockMe ∷ F.FoundationId
+mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})

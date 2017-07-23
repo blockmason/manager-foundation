@@ -11,7 +11,7 @@ $routes: (
 @each $route, $name in $routes {
   .show-#{$name} {
     @each $_route, $_name in $routes {
-      .header-menu { //don't show the menu in child pages
+      .header-menu, .home-bar { //don't show the menu in child pages
         display: none;
       }
 
@@ -31,7 +31,7 @@ $routes: (
 }
 
 .show-overview-screen {
-  .header-menu {
+  .header-menu, .home-bar {
     display: block;
   }
 
@@ -40,13 +40,19 @@ $routes: (
   }
 }
 
-.back-nav-bar {
-  background: rgba(0,0,0,0.1);
+.back-nav-bar, .home-bar {
+  background: rgba(0,0,0,0.5);
   padding: 10px;
 }
 
+.home-bar {
+  font-weight: 100;
+  background: #333;
+  text-transform: uppercase;
+}
+
 .back-nav-bar:hover {
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.6);
 }
 
 .close-pop-button {

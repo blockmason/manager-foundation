@@ -19,7 +19,7 @@ data Query a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
-             , myId             ∷ F.FoundationId
+             , myId             ∷ Maybe F.FoundationId
              , addresses        ∷ Array F.EthAddress
              , sentUnification  ∷ Array F.PendingUnification
              , todoUnification  ∷ Array F.FoundationName
@@ -44,7 +44,7 @@ component =
   initialState ∷ Input → State
   initialState input = { loading: false
                        , errorBus: input
-                       , myId: mockMe
+                       , myId: Just mockMe
                        , addresses: mockEthAddesses
                        , sentUnification: mockSentUnification
                        , todoUnification: mockTodoUnification
@@ -89,16 +89,24 @@ card cardTitle child =
         [child]
     ]
 
-summary ∷ F.FoundationId → String → Int → F.Wei → H.ComponentHTML Query
-summary (F.FoundationId myId) expiryDate addressCount balance=
-  HH.div
-    [HP.class_ (HH.ClassName "col myid-summary")]
-    [
-      (card "ID" $ HH.text $ show myId.name),
-      (card "Expires" $ HH.text randomDate),
-      (card "Addresses" $ HH.text $ show addressCount <> " associated"),
-      (card "Current Balance" $ HH.text $ show balance <> " Wei")
-    ]
+summary ∷ Maybe F.FoundationId → String → Int → F.Wei → H.ComponentHTML Query
+summary optionalID expiryDate addressCount balance=
+  case optionalID of
+    Nothing →
+      HH.div
+        [HP.class_ (HH.ClassName "col myid-summary")]
+        [
+          (card "ID" $ HH.text $ "No ID found. Please register...")
+        ]
+    Just (F.FoundationId myId) →
+      HH.div
+        [HP.class_ (HH.ClassName "col myid-summary")]
+        [
+          (card "ID" $ HH.text $ show myId.name),
+          (card "Expires" $ HH.text randomDate),
+          (card "Addresses" $ HH.text $ show addressCount <> " associated"),
+          (card "Current Balance" $ HH.text $ show balance <> " Wei")
+        ]
 
 -- mocks
 randomDate ∷ String
