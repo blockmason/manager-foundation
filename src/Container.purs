@@ -25,19 +25,21 @@ import Network.Eth.Foundation as F
 import Foundation.Manager as MainView
 import Foundation.Routes as R
 
+import Data.Array as A
+
 data Query a
   = Init a
   | HandleMsg ContainerMsg a
   | RefreshMetamask a
-  | SetScreen String a
-  | ShowPreviousScreen a
+  | SetScreen R.Screen a
+  | PreviousScreen a
 
-type Message = String
+type ScreenChange = R.Screen
 type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
-             , currentScreen ∷ String
-             , previousScreen ∷ String
+             , currentScreen ∷ R.Screen
+             , history ∷ Array R.Screen
              , myId ∷ Maybe F.FoundationId}
 
 type ChildQuery = Coproduct1 MainView.Query
@@ -59,13 +61,13 @@ ui =
     initialState = { loggedIn: true
                    , loading: true
                    , errorBus: Nothing
-                   , currentScreen: "show-overview-screen"
-                   , previousScreen: "show-overview-screen"
+                   , currentScreen: R.OverviewScreen
+                   , history: []
                    , myId: Just mockMe}
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
-      HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> state.currentScreen) ]
+      HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> (R.getRouteNameFor state.currentScreen)) ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
       , HH.div [ HP.id_ "home-bar", HP.class_ (HH.ClassName "row home-bar")]
@@ -74,7 +76,7 @@ ui =
         ]
       , HH.div [ HP.id_ "back-nav-bar", HP.class_ (HH.ClassName "row back-nav-bar")]
         [
-          HH.a [HP.href "#", HP.class_ (HH.ClassName "close-pop-button"), HE.onClick $ HE.input_ $ ShowPreviousScreen]
+          HH.a [HP.href "#", HP.class_ (HH.ClassName "close-pop-button"), HE.onClick $ HE.input_ $ PreviousScreen]
           [HH.i [ HP.class_ (HH.ClassName "fa fa-chevron-left")][], HH.text " Back"]
         ]
       , HH.div [ HP.id_ "body" ]
@@ -110,12 +112,12 @@ ui =
       RefreshMetamask next → do
         refreshMetamask
         pure next
-      SetScreen className next → do
-        H.modify (\state → state {previousScreen = state.currentScreen})
-        H.modify (_ {currentScreen = className})
+      SetScreen screen next → do
+        H.modify (\state → state {history = append [state.currentScreen] state.history })
+        H.modify (_ {currentScreen = screen})
         pure next
-      ShowPreviousScreen next → do
-        H.modify (\state → state {currentScreen = state.previousScreen})
+      PreviousScreen next → do
+        H.modify (\state → state {currentScreen = (fromMaybe R.OverviewScreen $ A.head state.history), history = (fromMaybe [] $ A.tail state.history)})
         pure next
 
 
@@ -162,7 +164,7 @@ startCheckInterval maybeBus ms = do
               pure unit
 
 -- view Components
-menu ∷ ∀ p. String → Maybe F.FoundationId → H.HTML p Query
+menu ∷ ∀ p. R.Screen → Maybe F.FoundationId → H.HTML p Query
 menu currentScreen myId =
   case myId of
     Nothing →
@@ -181,12 +183,12 @@ menu currentScreen myId =
           , menuItem R.FundIDScreen currentScreen
         ]
 
-menuItem ∷ ∀ p. R.Screen → String → H.HTML p Query
+menuItem ∷ ∀ p. R.Screen → R.Screen → H.HTML p Query
 menuItem screen currentScreen =
   HH.a
   [HP.href "#",
-        HP.class_ (HH.ClassName $ "row " <> if currentScreen == (R.getRouteNameFor screen) then "active" else ""),
-        HE.onClick $ HE.input_ $ SetScreen (R.getRouteNameFor screen)]
+        HP.class_ (HH.ClassName $ "row " <> if screen == currentScreen then "active" else ""),
+        HE.onClick $ HE.input_ $ SetScreen screen]
   [ HH.text $ R.getMenuNameFor screen]
 
 --  mocks

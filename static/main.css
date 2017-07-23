@@ -453,10 +453,9 @@
   color: white;
   width: 100%;
   padding: 10px; }
-
-.close-pop-button:hover {
-  color: white;
-  text-decoration: none; }
+  .close-pop-button:focus, .close-pop-button:hover {
+    color: white;
+    text-decoration: none; }
 
 .header-menu .row {
   padding: 5px;
@@ -480,6 +479,36 @@
   .myid-summary .card .card-header h4 {
     font-size: 12px;
     font-weight: 100; }
+
+.address-list .card {
+  background: rgba(0, 0, 0, 0.6);
+  margin-bottom: 10px;
+  font-size: 10px; }
+  .address-list .card .card-header {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px 0 0 20px; }
+  .address-list .card .card-header h4 {
+    font-size: 12px;
+    font-weight: 100; }
+  .address-list .card:first-child {
+    background: rgba(255, 255, 255, 0.1);
+    padding-left: 0; }
+    .address-list .card:first-child .card-block {
+      padding: 0; }
+
+.confirm-address-button, .confirm-unification-button {
+  color: black;
+  font-weight: bold;
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  background: none;
+  border: none;
+  padding: 10px; }
+
+.confirm-unification-button {
+  color: white;
+  background: rgba(255, 255, 255, 0.1); }
 
 /* general */
 body {

@@ -16,6 +16,8 @@ import Network.Eth.Foundation as F
 data Query a
   = RefreshAddress a
   | HandleInput Input a
+  | GoToPage R.Screen a
+  | ConfirmUnification F.FoundationName a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -27,11 +29,11 @@ type State = { loading          ∷ Boolean
              , funds            ∷ F.Wei
              }
 
-type Message = String
+type ScreenChange = R.Screen
 type Input = ContainerMsgBus
 
 
-component ∷ ∀ eff. H.Component HH.HTML Query Input Message (AppMonad eff)
+component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
 component =
   H.component
   { initialState: initialState
@@ -56,18 +58,23 @@ component =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
           page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
-        , page R.ManageAddressesScreen (HH.text $ R.getContainerNameFor R.ManageAddressesScreen)
+        , page R.ManageAddressesScreen (addressesPage state.addresses state.sentUnification state.todoUnification)
         , page R.AddAddressScreen (HH.text $ R.getContainerNameFor R.AddAddressScreen)
         , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
         , page R.ExtendIDScreen (HH.text $ R.getContainerNameFor R.ExtendIDScreen)
         , page R.FundIDScreen (HH.text $ R.getContainerNameFor R.FundIDScreen)
       ]
 
-  eval ∷ Query ~> H.ComponentDSL State Query Message (AppMonad eff)
+  eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
   eval = case _ of
     HandleInput input next → do
       pure next
     RefreshAddress next → do
+      pure next
+    GoToPage route next → do
+      H.raise route
+      pure next
+    ConfirmUnification name next → do
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -78,16 +85,26 @@ page screen child =
 
 card ∷ String → H.ComponentHTML Query → H.ComponentHTML Query
 card cardTitle child =
-  HH.div
-    [HP.class_ (HH.ClassName "card row card-inverse")]
-    [
+  case cardTitle of
+    "" →
+    HH.div
+      [HP.class_ (HH.ClassName "card row card-inverse")]
+      [
+        HH.div
+          [HP.class_ (HH.ClassName "card-block")]
+          [child]
+      ]
+    someTitle →
       HH.div
-        [HP.class_ (HH.ClassName "card-header")]
-        [HH.h4 [HP.class_ (HH.ClassName "card-title")][HH.text cardTitle]]
-      , HH.div
-        [HP.class_ (HH.ClassName "card-block")]
-        [child]
-    ]
+        [HP.class_ (HH.ClassName "card row card-inverse")]
+        [
+          HH.div
+            [HP.class_ (HH.ClassName "card-header")]
+            [HH.h4 [HP.class_ (HH.ClassName "card-title")][HH.text cardTitle]]
+          , HH.div
+            [HP.class_ (HH.ClassName "card-block")]
+            [child]
+        ]
 
 summary ∷ Maybe F.FoundationId → String → Int → F.Wei → H.ComponentHTML Query
 summary optionalID expiryDate addressCount balance=
@@ -108,6 +125,27 @@ summary optionalID expiryDate addressCount balance=
           (card "Current Balance" $ HH.text $ show balance <> " Wei")
         ]
 
+addressesPage ∷ Array F.EthAddress → Array F.PendingUnification → Array F.FoundationName → H.ComponentHTML Query
+addressesPage addresses pendingUnifications todoUnifications =
+      HH.div
+        [HP.class_ (HH.ClassName "col address-list")]
+        $ append [
+          (card "" $
+            HH.button [ HE.onClick $ HE.input_ $ GoToPage R.AddAddressScreen
+                      , HP.class_ $ HH.ClassName "confirm-address-button"]
+                      [ HH.text "Add Address" ])
+        ]
+        $ append ((\(F.FoundationId pending) → card "Waiting for confirmation from:" $ HH.text $ show pending.addrs) <$> pendingUnifications)
+        $ append ((\name → card "Combine address request:" $ addAddressRequestBlock name) <$> todoUnifications)
+        $ ((\address → card "" $ HH.text $ show address) <$> addresses)
+
+addAddressRequestBlock ∷ F.FoundationName → H.ComponentHTML Query
+addAddressRequestBlock name =
+  HH.div
+    [HP.class_ (HH.ClassName "")]
+    [HH.button [ HE.onClick $ HE.input_ $ ConfirmUnification name
+                  , HP.class_ $ HH.ClassName "confirm-unification-button"]
+                  [ HH.text $ "Combine with: " <> show name]]
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"

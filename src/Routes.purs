@@ -10,6 +10,9 @@ data Screen =
   | ExtendIDScreen
   | FundIDScreen
 
+instance eqScreen ∷ Eq Screen where
+  eq screen1 screen2 = (getRouteNameFor screen1) == (getRouteNameFor screen2)
+
 getRouteNameFor ∷ Screen → String
 getRouteNameFor screen =
   case screen of
