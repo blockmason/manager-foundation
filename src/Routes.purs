@@ -10,50 +10,50 @@ data Screen =
   | ExtendIDScreen
   | FundIDScreen
 
-getRouteNameFor ∷ Screen -> String
+getRouteNameFor ∷ Screen → String
 getRouteNameFor screen =
   case screen of
-    OverviewScreen ->
+    OverviewScreen →
       "show-overview-screen"
-    ManageAddressesScreen ->
+    ManageAddressesScreen →
       "show-manage-addresses-screen"
-    AddAddressScreen ->
+    AddAddressScreen →
       "show-add-address-screen"
-    RegisterScreen ->
+    RegisterScreen →
       "show-register-screen"
-    ExtendIDScreen ->
+    ExtendIDScreen →
       "show-extend-id-screen"
-    FundIDScreen ->
+    FundIDScreen →
       "show-fund-id-screen"
 
-getContainerNameFor ∷ Screen -> String
+getContainerNameFor ∷ Screen → String
 getContainerNameFor screen =
   case screen of
-    OverviewScreen ->
+    OverviewScreen →
       "overview-screen-container"
-    ManageAddressesScreen ->
+    ManageAddressesScreen →
       "manage-addresses-screen-container"
-    AddAddressScreen ->
+    AddAddressScreen →
       "add-address-screen-container"
-    RegisterScreen ->
+    RegisterScreen →
       "register-screen-container"
-    ExtendIDScreen ->
+    ExtendIDScreen →
       "extend-id-screen-container"
-    FundIDScreen ->
+    FundIDScreen →
       "fund-id-screen-container"
 
-getMenuNameFor ∷ Screen -> String
+getMenuNameFor ∷ Screen → String
 getMenuNameFor screen =
   case screen of
-    OverviewScreen ->
+    OverviewScreen →
       "Overview"
-    ManageAddressesScreen ->
+    ManageAddressesScreen →
       "Manage Addresses"
-    AddAddressScreen ->
+    AddAddressScreen →
       "Add Address"
-    RegisterScreen ->
+    RegisterScreen →
       "Register Screen"
-    ExtendIDScreen ->
+    ExtendIDScreen →
       "Extend Foundation ID"
-    FundIDScreen ->
+    FundIDScreen →
       "Foundation ID Funds"

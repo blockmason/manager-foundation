@@ -42,7 +42,7 @@ type State = { loggedIn ∷ Boolean
 type ChildQuery = Coproduct1 MainView.Query
 type ChildSlot = Either1 Unit
 
-ui :: ∀ eff. H.Component HH.HTML Query Unit Void (AppMonad eff)
+ui ∷ ∀ eff. H.Component HH.HTML Query Unit Void (AppMonad eff)
 ui =
   H.lifecycleParentComponent
   { initialState: const initialState
@@ -54,14 +54,14 @@ ui =
   }
   where
 
-    initialState :: State
+    initialState ∷ State
     initialState = { loggedIn: true
                    , loading: true
                    , errorBus: Nothing
                    , currentScreen: ""
                    , previousScreen: "" }
 
-    render :: State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
+    render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
       HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> state.currentScreen) ]
       [ promptMetamask state.loggedIn
@@ -73,7 +73,7 @@ ui =
         ]
       ]
 
-    eval :: Query ~> H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad eff)
+    eval ∷ Query ~> H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad eff)
     eval = case _ of
       Init next → do
         bus ← H.liftAff $ Bus.make
@@ -100,11 +100,11 @@ ui =
         refreshMetamask
         pure next
       SetScreen className next → do
-        H.modify (\state -> state {previousScreen = state.currentScreen})
+        H.modify (\state → state {previousScreen = state.currentScreen})
         H.modify (_ {currentScreen = className})
         pure next
       ShowPreviousScreen next → do
-        H.modify (\state -> state {currentScreen = state.previousScreen})
+        H.modify (\state → state {currentScreen = state.previousScreen})
         pure next
 
 
@@ -151,7 +151,7 @@ startCheckInterval maybeBus ms = do
               pure unit
 
 -- view Components
--- menu :: String -> H.ComponentHTML Query
+-- menu ∷ String → H.ComponentHTML Query
 menu ∷ ∀ p. String → H.HTML p Query
 menu currentScreen =
   HH.div
@@ -165,7 +165,7 @@ menu currentScreen =
       , menuItem R.FundIDScreen currentScreen
     ]
 
-menuItem :: ∀ p. R.Screen → String → H.HTML p Query
+menuItem ∷ ∀ p. R.Screen → String → H.HTML p Query
 menuItem screen currentScreen =
   HH.a
   [HP.href "#",

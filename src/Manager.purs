@@ -56,7 +56,7 @@ component =
     RefreshAddress next → do
       pure next
 
-page :: R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
+page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
 page screen child =
   HH.div
     [HP.class_ (HH.ClassName $ R.getContainerNameFor screen)]
