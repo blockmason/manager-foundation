@@ -8164,6 +8164,30 @@ var PS = {};
       };
       return InputNewAddress;
   })();
+  var InputNewName = (function () {
+      function InputNewName(value0, value1) {
+          this.value0 = value0;
+          this.value1 = value1;
+      };
+      InputNewName.create = function (value0) {
+          return function (value1) {
+              return new InputNewName(value0, value1);
+          };
+      };
+      return InputNewName;
+  })();
+  var CreateNewId = (function () {
+      function CreateNewId(value0, value1) {
+          this.value0 = value0;
+          this.value1 = value1;
+      };
+      CreateNewId.create = function (value0) {
+          return function (value1) {
+              return new CreateNewId(value0, value1);
+          };
+      };
+      return CreateNewId;
+  })();
   var AddNewAddress = (function () {
       function AddNewAddress(value0, value1) {
           this.value0 = value0;
@@ -8221,6 +8245,11 @@ var PS = {};
           return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("card row card-inverse") ])([ Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("card-header") ])([ Halogen_HTML_Elements.h4([ Halogen_HTML_Properties.class_("card-title") ])([ Halogen_HTML_Core.text(cardTitle) ]) ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("card-block") ])([ child ]) ]);
       };
   };
+  var createIdPage = function (state) {
+      return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col create-id-page") ])([ card("Make new id")(Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col") ])([ Halogen_HTML_Elements.input([ Halogen_HTML_Properties.type_(Halogen_HTML_Core.inputTypeIsProp)(DOM_HTML_Indexed_InputType.InputText.value), Halogen_HTML_Properties.value(""), Halogen_HTML_Properties.class_("row"), Halogen_HTML_Properties.placeholder("some_name"), Halogen_HTML_Events.onValueInput(Halogen_HTML_Events.input(function (val) {
+          return InputNewName.create(val);
+      })) ]), Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(CreateNewId.create(state.newName))), Halogen_HTML_Properties.class_("btn btn-secondary") ])([ Halogen_HTML_Core.text("Create Foundation ID") ]) ])) ]);
+  };
   var extendIdPage = function (expiryDate) {
       return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col extend-id-page") ])([ card("Expires")(Halogen_HTML_Core.text(expiryDate)), card("Extend for 1 Year")(Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(ExtendId.create)), Halogen_HTML_Properties.class_("btn btn-secondary") ])([ Halogen_HTML_Core.text("Extend for 0.1 ETH") ])) ]);
   };
@@ -8237,7 +8266,7 @@ var PS = {};
                   if (optionalID instanceof Data_Maybe.Just) {
                       return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col myid-summary") ])([ card("ID")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showFoundationName)(optionalID.value0.name))), card("Expires")(Halogen_HTML_Core.text(randomDate)), card("Addresses")(Halogen_HTML_Core.text(Data_Show.show(Data_Show.showInt)(addressCount) + " associated")), card("Current Balance")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showWei)(balance) + " Wei")) ]);
                   };
-                  throw new Error("Failed pattern match at Foundation.Manager line 129, column 3 - line 144, column 10: " + [ optionalID.constructor.name ]);
+                  throw new Error("Failed pattern match at Foundation.Manager line 140, column 3 - line 155, column 10: " + [ optionalID.constructor.name ]);
               };
           };
       };
@@ -8265,7 +8294,7 @@ var PS = {};
   };
   var component = (function () {
       var render = function (state) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("main-view") ])([ page(Foundation_Routes.OverviewScreen.value)(summary(state.myId)(state.expiryDate)(Data_Array.length(state.addresses))(state.funds)), page(Foundation_Routes.ManageAddressesScreen.value)(addressesPage(state.addresses)(state.sentUnification)(state.todoUnification)), page(Foundation_Routes.AddAddressScreen.value)(addAddressPage(state)), page(Foundation_Routes.RegisterScreen.value)(Halogen_HTML_Core.text(Foundation_Routes.getContainerNameFor(Foundation_Routes.RegisterScreen.value))), page(Foundation_Routes.ExtendIDScreen.value)(extendIdPage(state.expiryDate)), page(Foundation_Routes.FundIDScreen.value)(fundsPage(state)) ]);
+          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("main-view") ])([ page(Foundation_Routes.OverviewScreen.value)(summary(state.myId)(state.expiryDate)(Data_Array.length(state.addresses))(state.funds)), page(Foundation_Routes.ManageAddressesScreen.value)(addressesPage(state.addresses)(state.sentUnification)(state.todoUnification)), page(Foundation_Routes.AddAddressScreen.value)(addAddressPage(state)), page(Foundation_Routes.RegisterScreen.value)(createIdPage(state)), page(Foundation_Routes.ExtendIDScreen.value)(extendIdPage(state.expiryDate)), page(Foundation_Routes.FundIDScreen.value)(fundsPage(state)) ]);
       };
       var initialState = function (input) {
           return {
@@ -8277,7 +8306,8 @@ var PS = {};
               todoUnification: mockTodoUnification, 
               expiryDate: randomDate, 
               funds: 10000.0, 
-              newAddress: new Data_Either.Left("")
+              newAddress: new Data_Either.Left(""), 
+              newName: ""
           };
       };
       var $$eval = function (v) {
@@ -8297,28 +8327,28 @@ var PS = {};
           };
           if (v instanceof InputNewAddress) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)((function () {
-                  var $16 = Data_String.length(v.value0) > 41;
-                  if ($16) {
+                  var $17 = Data_String.length(v.value0) > 41;
+                  if ($17) {
                       return Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                          var $17 = {};
-                          for (var $18 in v1) {
-                              if ({}.hasOwnProperty.call(v1, $18)) {
-                                  $17[$18] = v1[$18];
+                          var $18 = {};
+                          for (var $19 in v1) {
+                              if ({}.hasOwnProperty.call(v1, $19)) {
+                                  $18[$19] = v1[$19];
                               };
                           };
-                          $17.newAddress = Data_Either.Right.create(v.value0);
-                          return $17;
+                          $18.newAddress = Data_Either.Right.create(v.value0);
+                          return $18;
                       });
                   };
                   return Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                      var $20 = {};
-                      for (var $21 in v1) {
-                          if ({}.hasOwnProperty.call(v1, $21)) {
-                              $20[$21] = v1[$21];
+                      var $21 = {};
+                      for (var $22 in v1) {
+                          if ({}.hasOwnProperty.call(v1, $22)) {
+                              $21[$22] = v1[$22];
                           };
                       };
-                      $20.newAddress = new Data_Either.Left(v.value0);
-                      return $20;
+                      $21.newAddress = new Data_Either.Left(v.value0);
+                      return $21;
                   });
               })())(function () {
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
@@ -8333,7 +8363,24 @@ var PS = {};
           if (v instanceof FundId) {
               return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
           };
-          throw new Error("Failed pattern match at Foundation.Manager line 76, column 10 - line 96, column 16: " + [ v.constructor.name ]);
+          if (v instanceof InputNewName) {
+              return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
+                  var $30 = {};
+                  for (var $31 in v1) {
+                      if ({}.hasOwnProperty.call(v1, $31)) {
+                          $30[$31] = v1[$31];
+                      };
+                  };
+                  $30.newName = v.value0;
+                  return $30;
+              }))(function () {
+                  return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
+              });
+          };
+          if (v instanceof CreateNewId) {
+              return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
+          };
+          throw new Error("Failed pattern match at Foundation.Manager line 81, column 10 - line 106, column 16: " + [ v.constructor.name ]);
       };
       return Halogen_Component.component(Halogen_HTML_Core.bifunctorHTML)({
           initialState: initialState, 
@@ -8347,6 +8394,8 @@ var PS = {};
   exports["GoToPage"] = GoToPage;
   exports["ConfirmUnification"] = ConfirmUnification;
   exports["InputNewAddress"] = InputNewAddress;
+  exports["InputNewName"] = InputNewName;
+  exports["CreateNewId"] = CreateNewId;
   exports["AddNewAddress"] = AddNewAddress;
   exports["ExtendId"] = ExtendId;
   exports["FundId"] = FundId;
@@ -8355,6 +8404,7 @@ var PS = {};
   exports["addressesPage"] = addressesPage;
   exports["card"] = card;
   exports["component"] = component;
+  exports["createIdPage"] = createIdPage;
   exports["extendIdPage"] = extendIdPage;
   exports["fundsPage"] = fundsPage;
   exports["mockEthAddesses"] = mockEthAddesses;
@@ -8572,12 +8622,6 @@ var PS = {};
           return Halogen_HTML_Properties.class_("active");
       })() ])([ Halogen_HTML_Elements.div_([ Halogen_HTML_Elements.h6_([ Halogen_HTML_Core.text("Not logged in to Metamask.") ]), Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(RefreshMetamask.create)), Halogen_HTML_Properties.class_("btn-info") ])([ Halogen_HTML_Core.text("Retry") ]) ]) ]);
   };
-  var mockFoundationName1 = "Luke";
-  var mockEthAddesses = [ "0x0", "0x1" ];
-  var mockMe = {
-      name: mockFoundationName1, 
-      addrs: mockEthAddesses
-  };
   var menuItem = function (screen) {
       return function (currentScreen) {
           return Halogen_HTML_Elements.a([ Halogen_HTML_Properties.href("#"), Halogen_HTML_Properties.class_(Halogen_HTML_Core.ClassName("row " + (function () {
@@ -8627,7 +8671,7 @@ var PS = {};
           errorBus: Data_Maybe.Nothing.value, 
           currentScreen: Foundation_Routes.OverviewScreen.value, 
           history: [  ], 
-          myId: new Data_Maybe.Just(mockMe)
+          myId: Data_Maybe.Nothing.value
       };
       var $$eval = function (v) {
           if (v instanceof Init) {
@@ -8762,9 +8806,6 @@ var PS = {};
   exports["loadingOverlay"] = loadingOverlay;
   exports["menu"] = menu;
   exports["menuItem"] = menuItem;
-  exports["mockEthAddesses"] = mockEthAddesses;
-  exports["mockFoundationName1"] = mockFoundationName1;
-  exports["mockMe"] = mockMe;
   exports["promptMetamask"] = promptMetamask;
   exports["refreshMetamask"] = refreshMetamask;
   exports["startCheckInterval"] = startCheckInterval;

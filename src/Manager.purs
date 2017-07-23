@@ -20,6 +20,8 @@ data Query a
   | GoToPage R.Screen a
   | ConfirmUnification F.FoundationName a
   | InputNewAddress String a
+  | InputNewName String a
+  | CreateNewId String a
   | AddNewAddress (Either String F.EthAddress) a
   | ExtendId a
   | FundId a
@@ -33,6 +35,7 @@ type State = { loading          ∷ Boolean
              , expiryDate       ∷ String
              , funds            ∷ F.Wei
              , newAddress       ∷ Either String F.EthAddress
+             , newName          ∷ String
              }
 
 type ScreenChange = R.Screen
@@ -58,7 +61,9 @@ component =
                        , todoUnification: mockTodoUnification
                        , expiryDate: randomDate
                        , funds: F.Wei 10000.0
-                       , newAddress: Left ""}
+                       , newAddress: Left ""
+                       , newName: ""
+                     }
 
   render ∷ State → H.ComponentHTML Query
   render state =
@@ -67,7 +72,7 @@ component =
           page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
         , page R.ManageAddressesScreen (addressesPage state.addresses state.sentUnification state.todoUnification)
         , page R.AddAddressScreen (addAddressPage state)
-        , page R.RegisterScreen (HH.text $ R.getContainerNameFor R.RegisterScreen)
+        , page R.RegisterScreen (createIdPage state)
         , page R.ExtendIDScreen (extendIdPage state.expiryDate)
         , page R.FundIDScreen (fundsPage state)
       ]
@@ -94,6 +99,12 @@ component =
       pure next
     FundId next → do
       pure next
+    InputNewName nameStr next → do
+      H.modify (_ { newName = nameStr })
+      pure next
+    CreateNewId name next → do
+      pure next
+
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
 page screen child =
@@ -209,6 +220,28 @@ fundsPage state =
         HH.button [ HE.onClick $ HE.input_ $ FundId
                     , HP.class_ $ HH.ClassName "btn btn-secondary"]
                   [ HH.text "Deposit ETH" ])
+    ]
+
+createIdPage ∷ State → H.ComponentHTML Query
+createIdPage state =
+  HH.div
+    [HP.class_ (HH.ClassName "col create-id-page")]
+    [
+      (card "Make new id" $  HH.div
+        [HP.class_ (HH.ClassName "col")]
+        [
+          HH.input [ HP.type_ HP.InputText
+                   , HP.value $ ""
+                   , HP.class_ $ HH.ClassName "row"
+                   , HP.placeholder $ "some_name"
+                   , HE.onValueInput
+                     (HE.input (\val → InputNewName val))
+                   ]
+        , HH.button [ HE.onClick $ HE.input_ $ CreateNewId state.newName
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+          [ HH.text "Create Foundation ID" ]
+        ]
+      )
     ]
 -- mocks
 randomDate ∷ String
