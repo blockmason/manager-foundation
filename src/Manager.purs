@@ -55,7 +55,7 @@ component =
   initialState ∷ Input → State
   initialState input = { loading: false
                        , errorBus: input
-                       , myId: Just mockMe
+                       , myId: Nothing
                        , addresses: mockEthAddesses
                        , sentUnification: mockSentUnification
                        , todoUnification: mockTodoUnification

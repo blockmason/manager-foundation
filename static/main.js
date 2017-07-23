@@ -6055,7 +6055,7 @@ var PS = {};
   var Control_Semigroupoid = PS["Control.Semigroupoid"];
   var Data_Eq = PS["Data.Eq"];
   var Data_Semigroup = PS["Data.Semigroup"];
-  var Prelude = PS["Prelude"];        
+  var Foundation_Prelude = PS["Foundation.Prelude"];        
   var OverviewScreen = (function () {
       function OverviewScreen() {
 
@@ -8215,12 +8215,7 @@ var PS = {};
   };
   var mockFoundationName2 = "Tim";
   var mockTodoUnification = [ mockFoundationName2 ];
-  var mockFoundationName1 = "Luke";
   var mockEthAddesses = [ "0x0", "0x1" ];
-  var mockMe = {
-      name: mockFoundationName1, 
-      addrs: mockEthAddesses
-  };
   var mockTim = {
       name: mockFoundationName2, 
       addrs: mockEthAddesses
@@ -8289,7 +8284,7 @@ var PS = {};
           return {
               loading: false, 
               errorBus: input, 
-              myId: new Data_Maybe.Just(mockMe), 
+              myId: Data_Maybe.Nothing.value, 
               addresses: mockEthAddesses, 
               sentUnification: mockSentUnification, 
               todoUnification: mockTodoUnification, 
@@ -8397,9 +8392,7 @@ var PS = {};
   exports["extendIdPage"] = extendIdPage;
   exports["fundsPage"] = fundsPage;
   exports["mockEthAddesses"] = mockEthAddesses;
-  exports["mockFoundationName1"] = mockFoundationName1;
   exports["mockFoundationName2"] = mockFoundationName2;
-  exports["mockMe"] = mockMe;
   exports["mockSentUnification"] = mockSentUnification;
   exports["mockTim"] = mockTim;
   exports["mockTodoUnification"] = mockTodoUnification;

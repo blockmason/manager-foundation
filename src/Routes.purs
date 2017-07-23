@@ -1,6 +1,6 @@
 module Foundation.Routes where
 
-import Prelude
+import Foundation.Prelude
 
 data Screen =
     OverviewScreen
@@ -30,10 +30,10 @@ getBaseName screen =
       "fund-id-screen"
 
 getRouteNameFor ∷ Screen → String
-getRouteNameFor = (append "show-") <<< getBaseName
+getRouteNameFor = (append "show-") ∘ getBaseName
 
 getContainerNameFor ∷ Screen → String
-getContainerNameFor = (\x → append x "-container") <<< getBaseName
+getContainerNameFor = (\x → append x "-container") ∘ getBaseName
 
 getMenuNameFor ∷ Screen → String
 getMenuNameFor screen =
