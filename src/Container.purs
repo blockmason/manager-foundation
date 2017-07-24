@@ -202,5 +202,5 @@ mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})
 
 runTests = do
   pure unit
---  (H.liftAff $ F.runMonadF F.currentAddr) >>= hLog
+--  (H.liftAff $ F.runMonadF F.getPendingUnification) >>= hLog
 --  (H.liftAff $ F.runMonadF F.foundationId) >>= hLog

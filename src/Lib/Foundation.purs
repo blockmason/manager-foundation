@@ -21,6 +21,7 @@ module Network.Eth.Foundation
        , areSameId
 
        , createId
+       , getPendingUnification
        , addPendingUnification
        , confirmPendingUnification
        , deleteAddr
@@ -36,6 +37,7 @@ import Control.Monad.Aff.Class     (liftAff)
 import Control.Monad.Aff           (Aff, makeAff)
 import Control.Monad.Except.Trans  (ExceptT, throwError, runExceptT, lift)
 import Data.Either                 (Either(..))
+import Data.Maybe                  (Maybe(..))
 import Data.String                 (localeCompare)
 import Data.Array                  as A
 import Network.Eth.Metamask        (loggedIn, currentUserAddress, METAMASK)
@@ -69,6 +71,8 @@ instance ordEthAddress ∷ Ord EthAddress where
   compare (EthAddress ua1) (EthAddress ua2) = localeCompare ua1 ua2
 getEa ∷ EthAddress → String
 getEa (EthAddress ea) = ea
+isNull ∷ EthAddress → Boolean
+isNull (EthAddress ea) = ea == "0x0"
 
 newtype FoundationName = FoundationName StringId
 instance showFoundationName ∷ Show FoundationName where
@@ -98,6 +102,7 @@ weiGet ∷ Wei → Number
 weiGet (Wei num) = num
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
+type SingleAddrLookupFn = ∀ e. (StringAddr → Eff e Unit) → StringId → Eff e Unit
 type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
 type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
 
@@ -107,6 +112,7 @@ foreign import resolveToNameImpl ∷ NameLookupFn
 foreign import areSameIdImpl ∷ AddrComparisonFn
 
 foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import getPendingUnificationImpl ∷ SingleAddrLookupFn
 foreign import addPendingUnificationImpl ∷ ∀ e. StringId → StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
@@ -153,6 +159,12 @@ createId ∷ FoundationName → MonadF Unit
 createId (FoundationName fn) = do
   checkAndInit
   liftEff $ createIdImpl fn
+
+getPendingUnification ∷ MonadF (Maybe EthAddress)
+getPendingUnification = do
+  myId ← foundationId
+  addr ← liftAff $ makeAff (\e s → getPendingUnificationImpl s (show $ fiGetName myId))
+  if isNull (EthAddress addr) then pure Nothing else pure $ Just (EthAddress addr)
 
 addPendingUnification ∷ FoundationName → EthAddress → MonadF Unit
 addPendingUnification (FoundationName fn) (EthAddress ea) = do

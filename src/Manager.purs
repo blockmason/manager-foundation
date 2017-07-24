@@ -32,8 +32,7 @@ type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
              , myId             ∷ Maybe F.FoundationId
              , addresses        ∷ Array F.EthAddress
-             , sentUnification  ∷ Array F.PendingUnification
-             , todoUnification  ∷ Array F.FoundationName
+             , pendingUnification  ∷ Maybe F.EthAddress
              , expiryDate       ∷ String
              , funds            ∷ F.Wei
              , newAddress       ∷ Either String F.EthAddress
@@ -58,8 +57,7 @@ component =
                        , errorBus: input
                        , myId: Nothing
                        , addresses: []
-                       , sentUnification: mockSentUnification
-                       , todoUnification: mockTodoUnification
+                       , pendingUnification: Nothing
                        , expiryDate: randomDate
                        , funds: F.Wei 10000.0
                        , newAddress: Left ""
@@ -71,7 +69,7 @@ component =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
           page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
-        , page R.ManageAddressesScreen (addressesPage state.addresses state.sentUnification state.todoUnification)
+        , page R.ManageAddressesScreen (addressesPage state.addresses state.pendingUnification)
         , page R.AddAddressScreen (addAddressPage state)
         , page R.RegisterScreen (createIdPage state)
         , page R.ExtendIDScreen (extendIdPage state.expiryDate)
@@ -160,19 +158,18 @@ summary optionalID expiryDate addressCount balance=
           (card "Current Balance" $ HH.text $ show balance <> " Wei")
         ]
 
-addressesPage ∷ Array F.EthAddress → Array F.PendingUnification → Array F.FoundationName → H.ComponentHTML Query
-addressesPage addresses pendingUnifications todoUnifications =
+addressesPage ∷ Array F.EthAddress → Maybe F.EthAddress → H.ComponentHTML Query
+addressesPage addresses pendingUnification =
       HH.div
-        [HP.class_ (HH.ClassName "col address-list")]
-        $ append [
+        [HP.class_ (HH.ClassName "col address-list")] $
+        [
           (card "" $
-            HH.button [ HE.onClick $ HE.input_ $ GoToPage R.AddAddressScreen
-                      , HP.class_ $ HH.ClassName "confirm-address-button"]
-                      [ HH.text "Add Address" ])
-        ]
-        $ append ((\(F.FoundationId pending) → card "Waiting for confirmation from:" $ HH.text $ show pending.addrs) <$> pendingUnifications)
-        $ append ((\name → card "Combine address request:" $ addAddressRequestBlock name) <$> todoUnifications)
-        $ ((\address → card "" $ HH.text $ show address) <$> addresses)
+           HH.button [ HE.onClick $ HE.input_ $ GoToPage R.AddAddressScreen
+                     , HP.class_ $ HH.ClassName "confirm-address-button"]
+           [ HH.text "Add Address" ])
+        , (card "Waiting for confirmation from:" $ HH.text $ show pendingUnification)
+        ] <>
+        ((\address → card "" $ HH.text $ show address) <$> addresses)
 
 addAddressRequestBlock ∷ F.FoundationName → H.ComponentHTML Query
 addAddressRequestBlock name =
@@ -253,9 +250,10 @@ createIdPage state =
 loadFromBlockchain = do
   s ← H.get
   H.modify (_ { loading = true })
-  myId ← handleFCall s.errorBus F.fiBlankId F.foundationId
+  myId        ← handleFCall s.errorBus F.fiBlankId F.foundationId
+  pendingAddr ← handleFCall s.errorBus Nothing F.getPendingUnification
   H.modify (_ { myId = Just myId, loading = false
-              , addresses = F.fiGetAddrs myId })
+              , addresses = F.fiGetAddrs myId, pendingUnification = pendingAddr })
 
 -- mocks
 randomDate ∷ String
