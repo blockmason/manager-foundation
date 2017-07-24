@@ -81,13 +81,11 @@ exports.todoPendingImpl = function(callback) {
     };
 };
 
-exports.addPendingUnificationImpl = function(foundationId) {
-    return function(addr) {
-        return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.addPendingUnification(foundationId, addr);
-            });
-        };
+exports.addPendingUnificationImpl = function(addr) {
+    return function() {
+        Foundation.deployed().then(function(instance) {
+            return instance.addPendingUnification(addr);
+        });
     };
 };
 

@@ -94,14 +94,21 @@ component =
       H.raise route
       pure next
     ConfirmUnification name next → do
+      errorBus ← H.gets _.errorBus
+      handleFCall errorBus unit $ F.confirmPendingUnification name
       pure next
     InputNewAddress addrs next → do
-      if ((S.length addrs) > 41) --
+      if ((S.length addrs) == 42) --
         then H.modify (_ { newAddress = Right $ F.EthAddress addrs })
         else H.modify (_ { newAddress = Left addrs })
       pure next
-    AddNewAddress addrs next → do
-      pure next
+    AddNewAddress eitherAddr next → do
+      errorBus ← H.gets _.errorBus
+      case eitherAddr of
+        Left _      → pure next
+        Right addr  → do
+          handleFCall errorBus unit $ F.addPendingUnification addr
+          pure next
     ExtendId next → do
       pure next
     FundId next → do
@@ -177,10 +184,17 @@ addressesPage addresses sentPending todoPending =
          sentPending)
         <>
         (maybe []
-         (\tp → [(card "Confirmation required for id:" $ HH.text $ show tp)])
+         (\tp → [(card "Confirmation required for id:" $ idConfirmation tp)])
          todoPending)
         <>
         ((\address → card "" $ HH.text $ show address) <$> addresses)
+  where idConfirmation fName =
+          HH.div [ HP.class_ (HH.ClassName "col") ]
+          [ HH.text $ show fName
+          , HH.button [ HE.onClick $ HE.input_ $ ConfirmUnification fName
+                      , HP.class_ $ HH.ClassName "btn btn-secondary"]
+            [ HH.text "Confirm Address Link" ]
+          ]
 
 addAddressRequestBlock ∷ F.FoundationName → H.ComponentHTML Query
 addAddressRequestBlock name =
@@ -195,7 +209,8 @@ addAddressPage state =
   HH.div
     [HP.class_ (HH.ClassName "col add-address-page")]
     [
-      (card "Add new address" $  HH.div
+      (card ("Link a new address to " <> (maybe "" (show ∘ F.fiGetName) state.myId)) $
+       HH.div
         [HP.class_ (HH.ClassName "col")]
         [
           HH.input [ HP.type_ HP.InputText
@@ -206,6 +221,7 @@ addAddressPage state =
                      (HE.input (\val → InputNewAddress val))
                    ]
         , HH.button [ HE.onClick $ HE.input_ $ AddNewAddress state.newAddress
+                    , HP.disabled $ isLeft state.newAddress
                     , HP.class_ $ HH.ClassName "btn btn-secondary"]
           [ HH.text "Add Address" ]
         ]

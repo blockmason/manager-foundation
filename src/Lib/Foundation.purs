@@ -9,8 +9,12 @@ module Network.Eth.Foundation
        , PendingUnification
        , StringAddr
        , StringId
+       , eaMkAddr
        , fiBlankId
+       , fiGetName
        , fiGetAddrs
+       , fnGetName
+       , fnMkName
 
        , currentAddr
        , foundationId
@@ -72,6 +76,7 @@ instance ordEthAddress ∷ Ord EthAddress where
   compare (EthAddress ua1) (EthAddress ua2) = localeCompare ua1 ua2
 getEa ∷ EthAddress → String
 getEa (EthAddress ea) = ea
+eaMkAddr = EthAddress
 isNull ∷ EthAddress → Boolean
 isNull (EthAddress ea) = ea == "0x0"
 
@@ -79,6 +84,7 @@ newtype FoundationName = FoundationName StringId
 instance showFoundationName ∷ Show FoundationName where
   show (FoundationName fn) = fn
 fnGetName (FoundationName fn) = fn
+fnMkName = FoundationName
 
 newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
@@ -116,7 +122,7 @@ foreign import areSameIdImpl ∷ AddrComparisonFn
 foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import sentPendingImpl ∷ SingleAddrLookupFn
 foreign import todoPendingImpl ∷ NameLookupFn
-foreign import addPendingUnificationImpl ∷ ∀ e. StringId → StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import addPendingUnificationImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import depositWeiImpl ∷ ∀ e. StringId → Number → Eff (foundation ∷ FOUNDATION | e) Unit
@@ -180,10 +186,10 @@ todoPending = do
   fn ← liftAff $ makeAff (\e s → todoPendingImpl s $ getEa addr)
   if fn == "" then pure Nothing else pure $ Just (FoundationName fn)
 
-addPendingUnification ∷ FoundationName → EthAddress → MonadF Unit
-addPendingUnification (FoundationName fn) (EthAddress ea) = do
+addPendingUnification ∷ EthAddress → MonadF Unit
+addPendingUnification ea = do
   checkAndInit
-  liftEff $ addPendingUnificationImpl fn ea
+  liftEff $ addPendingUnificationImpl (getEa ea)
 
 confirmPendingUnification ∷ FoundationName → MonadF Unit
 confirmPendingUnification (FoundationName fn) = do
