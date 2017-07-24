@@ -57,13 +57,25 @@ exports.createIdImpl = function(foundationId) {
     };
 };
 
-exports.todoPendingImpl = function(callback) {
+exports.sentPendingImpl = function(callback) {
     return function(foundationId) {
         return function() {
             Foundation.deployed().then(function(instance) {
-                return instance.todoPending.call(foundationId);
+                return instance.sentPending.call(foundationId);
             }).then(function(r) {
                 callback(r.valueOf())();
+            });
+        };
+    };
+};
+
+exports.todoPendingImpl = function(callback) {
+    return function(addr) {
+        return function() {
+            Foundation.deployed().then(function(instance) {
+                return instance.todoPending.call(addr);
+            }).then(function(r) {
+                callback(b2s(r.valueOf()))();
             });
         };
     };

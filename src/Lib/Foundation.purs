@@ -21,7 +21,8 @@ module Network.Eth.Foundation
        , areSameId
 
        , createId
-       , getPendingUnification
+       , sentPending
+       , todoPending
        , addPendingUnification
        , confirmPendingUnification
        , deleteAddr
@@ -112,7 +113,8 @@ foreign import resolveToNameImpl ∷ NameLookupFn
 foreign import areSameIdImpl ∷ AddrComparisonFn
 
 foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import getPendingUnificationImpl ∷ SingleAddrLookupFn
+foreign import sentPendingImpl ∷ SingleAddrLookupFn
+foreign import todoPendingImpl ∷ NameLookupFn
 foreign import addPendingUnificationImpl ∷ ∀ e. StringId → StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
@@ -160,11 +162,17 @@ createId (FoundationName fn) = do
   checkAndInit
   liftEff $ createIdImpl fn
 
-getPendingUnification ∷ MonadF (Maybe EthAddress)
-getPendingUnification = do
+sentPending ∷ MonadF (Maybe EthAddress)
+sentPending = do
   myId ← foundationId
-  addr ← liftAff $ makeAff (\e s → getPendingUnificationImpl s (show $ fiGetName myId))
+  addr ← liftAff $ makeAff (\e s → sentPendingImpl s (show $ fiGetName myId))
   if isNull (EthAddress addr) then pure Nothing else pure $ Just (EthAddress addr)
+
+todoPending ∷ MonadF (Maybe FoundationName)
+todoPending = do
+  addr ← currentAddr
+  fn ← liftAff $ makeAff (\e s → todoPendingImpl s $ getEa addr)
+  if fn == "" then pure Nothing else pure $ Just (FoundationName fn)
 
 addPendingUnification ∷ FoundationName → EthAddress → MonadF Unit
 addPendingUnification (FoundationName fn) (EthAddress ea) = do

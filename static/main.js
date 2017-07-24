@@ -6124,13 +6124,25 @@ var PS = {};
       };
   };
 
-  exports.getPendingUnificationImpl = function(callback) {
+  exports.sentPendingImpl = function(callback) {
       return function(foundationId) {
           return function() {
               Foundation.deployed().then(function(instance) {
-                  return instance.getPendingUnification(foundationId);
+                  return instance.sentPending.call(foundationId);
               }).then(function(r) {
                   callback(r.valueOf())();
+              });
+          };
+      };
+  };
+
+  exports.todoPendingImpl = function(callback) {
+      return function(addr) {
+          return function() {
+              Foundation.deployed().then(function(instance) {
+                  return instance.todoPending.call(addr);
+              }).then(function(r) {
+                  callback(b2s(r.valueOf()))();
               });
           };
       };
@@ -6276,6 +6288,9 @@ var PS = {};
   var isNull = function (v) {
       return v === "0x0";
   };
+  var getEa = function (v) {
+      return v;
+  };
   var fiGetName = function (v) {
       return v.name;
   };
@@ -6294,6 +6309,19 @@ var PS = {};
   });
   var currentAddr = Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
       return Data_Functor.map(Control_Monad_Except_Trans.functorExceptT(Control_Monad_Aff.functorAff))(EthAddress)(Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))(Network_Eth_Metamask.currentUserAddress));
+  });
+  var todoPending = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(currentAddr)(function (v) {
+      return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
+          return function (s) {
+              return $foreign.todoPendingImpl(s)(getEa(v));
+          };
+      })))(function (v1) {
+          var $58 = v1 === "";
+          if ($58) {
+              return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
+          };
+          return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
+      });
   });
   var idByAddr = function (v) {
       return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
@@ -6317,21 +6345,21 @@ var PS = {};
   };
   var foundationId = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(currentAddr)(function (v) {
       return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(idByAddr(v))(function (v1) {
-          var $60 = Data_Array["null"](fiGetAddrs(v1));
-          if ($60) {
+          var $65 = Data_Array["null"](fiGetAddrs(v1));
+          if ($65) {
               return Control_Monad_Error_Class.throwError(Control_Monad_Except_Trans.monadThrowExceptT(Control_Monad_Aff.monadAff))(NoFoundationId.value);
           };
           return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(v1);
       });
   });
-  var getPendingUnification = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
+  var sentPending = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
       return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
           return function (s) {
-              return $foreign.getPendingUnificationImpl(s)(Data_Show.show(showFoundationName)(fiGetName(v)));
+              return $foreign.sentPendingImpl(s)(Data_Show.show(showFoundationName)(fiGetName(v)));
           };
       })))(function (v1) {
-          var $64 = isNull(v1);
-          if ($64) {
+          var $69 = isNull(v1);
+          if ($69) {
               return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
           };
           return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
@@ -6344,9 +6372,10 @@ var PS = {};
   exports["fiBlankId"] = fiBlankId;
   exports["fiGetAddrs"] = fiGetAddrs;
   exports["foundationId"] = foundationId;
-  exports["getPendingUnification"] = getPendingUnification;
   exports["idByAddr"] = idByAddr;
   exports["runMonadF"] = runMonadF;
+  exports["sentPending"] = sentPending;
+  exports["todoPending"] = todoPending;
   exports["showEthAddress"] = showEthAddress;
   exports["showFoundationName"] = showFoundationName;
   exports["showWei"] = showWei;
@@ -8367,29 +8396,32 @@ var PS = {};
               return function (dictMonadAff) {
                   return Control_Bind.bind(dictBind)(Control_Monad_State_Class.get(dictMonadState))(function (v) {
                       return Control_Bind.discard(Control_Bind.discardUnit)(dictBind)(Control_Monad_State_Class.modify(dictMonadState)(function (v1) {
-                          var $16 = {};
-                          for (var $17 in v1) {
-                              if ({}.hasOwnProperty.call(v1, $17)) {
-                                  $16[$17] = v1[$17];
+                          var $17 = {};
+                          for (var $18 in v1) {
+                              if ({}.hasOwnProperty.call(v1, $18)) {
+                                  $17[$18] = v1[$18];
                               };
                           };
-                          $16.loading = true;
-                          return $16;
+                          $17.loading = true;
+                          return $17;
                       }))(function () {
                           return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Network_Eth_Foundation.fiBlankId)(Network_Eth_Foundation.foundationId))(function (v1) {
-                              return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Data_Maybe.Nothing.value)(Network_Eth_Foundation.getPendingUnification))(function (v2) {
-                                  return Control_Monad_State_Class.modify(dictMonadState)(function (v3) {
-                                      var $21 = {};
-                                      for (var $22 in v3) {
-                                          if ({}.hasOwnProperty.call(v3, $22)) {
-                                              $21[$22] = v3[$22];
+                              return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Data_Maybe.Nothing.value)(Network_Eth_Foundation.sentPending))(function (v2) {
+                                  return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Data_Maybe.Nothing.value)(Network_Eth_Foundation.todoPending))(function (v3) {
+                                      return Control_Monad_State_Class.modify(dictMonadState)(function (v4) {
+                                          var $23 = {};
+                                          for (var $24 in v4) {
+                                              if ({}.hasOwnProperty.call(v4, $24)) {
+                                                  $23[$24] = v4[$24];
+                                              };
                                           };
-                                      };
-                                      $21.myId = new Data_Maybe.Just(v1);
-                                      $21.loading = false;
-                                      $21.addresses = Network_Eth_Foundation.fiGetAddrs(v1);
-                                      $21.pendingUnification = v2;
-                                      return $21;
+                                          $23.myId = new Data_Maybe.Just(v1);
+                                          $23.loading = false;
+                                          $23.addresses = Network_Eth_Foundation.fiGetAddrs(v1);
+                                          $23.sentPending = v2;
+                                          $23.todoPending = v3;
+                                          return $23;
+                                      });
                                   });
                               });
                           });
@@ -8428,16 +8460,18 @@ var PS = {};
                   if (optionalID instanceof Data_Maybe.Just) {
                       return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col myid-summary") ])([ card("ID")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showFoundationName)(optionalID.value0.name))), card("Expires")(Halogen_HTML_Core.text(randomDate)), card("Addresses")(Halogen_HTML_Core.text(Data_Show.show(Data_Show.showInt)(addressCount) + " associated")), card("Current Balance")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showWei)(balance) + " Wei")) ]);
                   };
-                  throw new Error("Failed pattern match at Foundation.Manager line 144, column 3 - line 159, column 10: " + [ optionalID.constructor.name ]);
+                  throw new Error("Failed pattern match at Foundation.Manager line 147, column 3 - line 162, column 10: " + [ optionalID.constructor.name ]);
               };
           };
       };
   };
   var addressesPage = function (addresses) {
-      return function (pendingUnification) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col address-list") ])(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ card("")(Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(GoToPage.create(Foundation_Routes.AddAddressScreen.value))), Halogen_HTML_Properties.class_("confirm-address-button") ])([ Halogen_HTML_Core.text("Add Address") ])), card("Waiting for confirmation from:")(Halogen_HTML_Core.text(Data_Show.show(Data_Maybe.showMaybe(Network_Eth_Foundation.showEthAddress))(pendingUnification))) ])(Data_Functor.map(Data_Functor.functorArray)(function (address) {
-              return card("")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showEthAddress)(address)));
-          })(addresses)));
+      return function (sentPending) {
+          return function (todoPending) {
+              return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col address-list") ])(Data_Semigroup.append(Data_Semigroup.semigroupArray)([ card("")(Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(GoToPage.create(Foundation_Routes.AddAddressScreen.value))), Halogen_HTML_Properties.class_("confirm-address-button") ])([ Halogen_HTML_Core.text("Add Address") ])), card("Waiting for confirmation from:")(Halogen_HTML_Core.text(Data_Show.show(Data_Maybe.showMaybe(Network_Eth_Foundation.showEthAddress))(sentPending))) ])(Data_Functor.map(Data_Functor.functorArray)(function (address) {
+                  return card("")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showEthAddress)(address)));
+              })(addresses)));
+          };
       };
   };
   var addAddressPage = function (state) {
@@ -8447,7 +8481,7 @@ var PS = {};
   };
   var component = (function () {
       var render = function (state) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("main-view") ])([ page(Foundation_Routes.OverviewScreen.value)(summary(state.myId)(state.expiryDate)(Data_Array.length(state.addresses))(state.funds)), page(Foundation_Routes.ManageAddressesScreen.value)(addressesPage(state.addresses)(state.pendingUnification)), page(Foundation_Routes.AddAddressScreen.value)(addAddressPage(state)), page(Foundation_Routes.RegisterScreen.value)(createIdPage(state)), page(Foundation_Routes.ExtendIDScreen.value)(extendIdPage(state.expiryDate)), page(Foundation_Routes.FundIDScreen.value)(fundsPage(state)) ]);
+          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("main-view") ])([ page(Foundation_Routes.OverviewScreen.value)(summary(state.myId)(state.expiryDate)(Data_Array.length(state.addresses))(state.funds)), page(Foundation_Routes.ManageAddressesScreen.value)(addressesPage(state.addresses)(state.sentPending)(state.todoPending)), page(Foundation_Routes.AddAddressScreen.value)(addAddressPage(state)), page(Foundation_Routes.RegisterScreen.value)(createIdPage(state)), page(Foundation_Routes.ExtendIDScreen.value)(extendIdPage(state.expiryDate)), page(Foundation_Routes.FundIDScreen.value)(fundsPage(state)) ]);
       };
       var initialState = function (input) {
           return {
@@ -8455,7 +8489,8 @@ var PS = {};
               errorBus: input, 
               myId: Data_Maybe.Nothing.value, 
               addresses: [  ], 
-              pendingUnification: Data_Maybe.Nothing.value, 
+              sentPending: Data_Maybe.Nothing.value, 
+              todoPending: Data_Maybe.Nothing.value, 
               expiryDate: randomDate, 
               funds: 10000.0, 
               newAddress: new Data_Either.Left(""), 
@@ -8465,14 +8500,14 @@ var PS = {};
       var $$eval = function (v) {
           if (v instanceof HandleInput) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                  var $28 = {};
-                  for (var $29 in v1) {
-                      if ({}.hasOwnProperty.call(v1, $29)) {
-                          $28[$29] = v1[$29];
+                  var $30 = {};
+                  for (var $31 in v1) {
+                      if ({}.hasOwnProperty.call(v1, $31)) {
+                          $30[$31] = v1[$31];
                       };
                   };
-                  $28.errorBus = v.value0;
-                  return $28;
+                  $30.errorBus = v.value0;
+                  return $30;
               }))(function () {
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
               });
@@ -8497,28 +8532,28 @@ var PS = {};
           };
           if (v instanceof InputNewAddress) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)((function () {
-                  var $40 = Data_String.length(v.value0) > 41;
-                  if ($40) {
+                  var $42 = Data_String.length(v.value0) > 41;
+                  if ($42) {
                       return Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                          var $41 = {};
-                          for (var $42 in v1) {
-                              if ({}.hasOwnProperty.call(v1, $42)) {
-                                  $41[$42] = v1[$42];
+                          var $43 = {};
+                          for (var $44 in v1) {
+                              if ({}.hasOwnProperty.call(v1, $44)) {
+                                  $43[$44] = v1[$44];
                               };
                           };
-                          $41.newAddress = Data_Either.Right.create(v.value0);
-                          return $41;
+                          $43.newAddress = Data_Either.Right.create(v.value0);
+                          return $43;
                       });
                   };
                   return Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                      var $44 = {};
-                      for (var $45 in v1) {
-                          if ({}.hasOwnProperty.call(v1, $45)) {
-                              $44[$45] = v1[$45];
+                      var $46 = {};
+                      for (var $47 in v1) {
+                          if ({}.hasOwnProperty.call(v1, $47)) {
+                              $46[$47] = v1[$47];
                           };
                       };
-                      $44.newAddress = new Data_Either.Left(v.value0);
-                      return $44;
+                      $46.newAddress = new Data_Either.Left(v.value0);
+                      return $46;
                   });
               })())(function () {
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
@@ -8535,14 +8570,14 @@ var PS = {};
           };
           if (v instanceof InputNewName) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                  var $53 = {};
-                  for (var $54 in v1) {
-                      if ({}.hasOwnProperty.call(v1, $54)) {
-                          $53[$54] = v1[$54];
+                  var $55 = {};
+                  for (var $56 in v1) {
+                      if ({}.hasOwnProperty.call(v1, $56)) {
+                          $55[$56] = v1[$56];
                       };
                   };
-                  $53.newName = v.value0;
-                  return $53;
+                  $55.newName = v.value0;
+                  return $55;
               }))(function () {
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
               });
@@ -8550,7 +8585,7 @@ var PS = {};
           if (v instanceof CreateNewId) {
               return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
           };
-          throw new Error("Failed pattern match at Foundation.Manager line 80, column 10 - line 110, column 16: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Manager line 83, column 10 - line 113, column 16: " + [ v.constructor.name ]);
       };
       return Halogen_Component.component(Halogen_HTML_Core.bifunctorHTML)({
           initialState: initialState, 
