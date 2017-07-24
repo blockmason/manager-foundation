@@ -33,6 +33,7 @@ module Network.Eth.Foundation
 
        , depositWei
        , withdrawDeposit
+       , expirationDate
        ) where
 
 import Prelude
@@ -102,6 +103,7 @@ fiGetAddrs ∷ FoundationId → Array EthAddress
 fiGetAddrs (FoundationId fi) = fi.addrs
 fiBlankId ∷ FoundationId
 fiBlankId = FoundationId { name: (FoundationName ""), addrs: [] }
+fiStrName = fnGetName <<< fiGetName
 
 newtype Wei = Wei Number
 instance showWei ∷ Show Wei where
@@ -113,6 +115,7 @@ type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Ef
 type SingleAddrLookupFn = ∀ e. (StringAddr → Eff e Unit) → StringId → Eff e Unit
 type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
 type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
+type NumberLookupFn = ∀ e. (Number → Eff e Unit) → StringId → Eff e Unit
 
 foreign import initImpl ∷ ∀ e. Unit → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import resolveToAddrImpl ∷ AddrLookupFn
@@ -127,6 +130,7 @@ foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (founda
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import depositWeiImpl ∷ ∀ e. StringId → Number → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import expirationDateImpl ∷ NumberLookupFn
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
@@ -214,3 +218,10 @@ withdrawDeposit = do
   case mId of
     Nothing → throwError NoFoundationId
     Just fi → liftEff $ withdrawDepositImpl ((fnGetName <<<fiGetName) fi)
+
+expirationDate ∷ MonadF (Maybe Number)
+expirationDate = do
+  mId ← foundationId
+  case mId of
+    Nothing → pure Nothing
+    Just i  → Just <$> (liftAff $ makeAff (\e s → expirationDateImpl s (fiStrName i)))

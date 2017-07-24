@@ -279,8 +279,9 @@ loadFromBlockchain = do
   H.modify (_ { loading = true })
   myId        ← handleFCall s.errorBus Nothing F.foundationId
   sentPending ← handleFCall s.errorBus Nothing F.sentPending
-  hLog sentPending
   todoPending ← handleFCall s.errorBus Nothing F.todoPending
+  expiryDate  ← handleFCall s.errorBus Nothing F.expirationDate
+  hLog expiryDate
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending })

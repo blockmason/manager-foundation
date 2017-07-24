@@ -121,6 +121,18 @@ exports.withdrawDepositImpl = function(foundationId) {
     };
 };
 
+exports.expirationDateImpl = function(callback) {
+    return function(foundationId) {
+        return function() {
+            Foundation.deployed().then(function(instance) {
+                return instance.getExpirationDate.call(foundationId);
+            }).then(function(r) {
+                callback(parseInt(r.valueOf()))();
+            });
+        };
+    };
+};
+
 /* ********** helpers ********** */
 
 var bytes2addrList = function(byteArrayList) {
