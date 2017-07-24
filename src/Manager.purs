@@ -149,7 +149,7 @@ summary optionalID expiryDate addressCount balance=
       HH.div
         [HP.class_ (HH.ClassName "col myid-summary")]
         [
-          (card "ID" $ HH.text $ "No ID found. Please register...")
+          (card "ID" $ HH.text $ "No ID found. Please register, or confirm an address in \"Manage Addresses\"")
         ]
     Just (F.FoundationId myId) →
       HH.div
