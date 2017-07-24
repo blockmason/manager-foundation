@@ -10,6 +10,7 @@ module Network.Eth.Foundation
        , StringAddr
        , StringId
        , fiBlankId
+       , fiGetAddrs
 
        , currentAddr
        , foundationId

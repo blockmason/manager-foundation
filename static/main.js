@@ -6312,6 +6312,7 @@ var PS = {};
   exports["EthAddress"] = EthAddress;
   exports["currentAddr"] = currentAddr;
   exports["fiBlankId"] = fiBlankId;
+  exports["fiGetAddrs"] = fiGetAddrs;
   exports["foundationId"] = foundationId;
   exports["idByAddr"] = idByAddr;
   exports["runMonadF"] = runMonadF;
@@ -8362,6 +8363,7 @@ var PS = {};
                                   };
                                   $20.myId = new Data_Maybe.Just(v1);
                                   $20.loading = false;
+                                  $20.addresses = Network_Eth_Foundation.fiGetAddrs(v1);
                                   return $20;
                               });
                           });
@@ -8435,7 +8437,7 @@ var PS = {};
               loading: false, 
               errorBus: input, 
               myId: Data_Maybe.Nothing.value, 
-              addresses: mockEthAddesses, 
+              addresses: [  ], 
               sentUnification: mockSentUnification, 
               todoUnification: mockTodoUnification, 
               expiryDate: randomDate, 

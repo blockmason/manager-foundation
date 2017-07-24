@@ -57,7 +57,7 @@ component =
   initialState input = { loading: false
                        , errorBus: input
                        , myId: Nothing
-                       , addresses: mockEthAddesses
+                       , addresses: []
                        , sentUnification: mockSentUnification
                        , todoUnification: mockTodoUnification
                        , expiryDate: randomDate
@@ -254,8 +254,8 @@ loadFromBlockchain = do
   s ← H.get
   H.modify (_ { loading = true })
   myId ← handleFCall s.errorBus F.fiBlankId F.foundationId
---  hLog myId
-  H.modify (_ { myId = Just myId, loading = false })
+  H.modify (_ { myId = Just myId, loading = false
+              , addresses = F.fiGetAddrs myId })
 
 -- mocks
 randomDate ∷ String
