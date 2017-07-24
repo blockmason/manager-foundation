@@ -171,8 +171,15 @@ addressesPage addresses sentPending todoPending =
            HH.button [ HE.onClick $ HE.input_ $ GoToPage R.AddAddressScreen
                      , HP.class_ $ HH.ClassName "confirm-address-button"]
            [ HH.text "Add Address" ])
-        , (card "Waiting for confirmation from:" $ HH.text $ show sentPending)
         ] <>
+        (maybe []
+         (\sp → [(card "Waiting for confirmation from:" $ HH.text $ show sp)])
+         sentPending)
+        <>
+        (maybe []
+         (\tp → [(card "Confirmation required for id:" $ HH.text $ show tp)])
+         todoPending)
+        <>
         ((\address → card "" $ HH.text $ show address) <$> addresses)
 
 addAddressRequestBlock ∷ F.FoundationName → H.ComponentHTML Query
