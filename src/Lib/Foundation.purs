@@ -78,7 +78,7 @@ getEa ∷ EthAddress → String
 getEa (EthAddress ea) = ea
 eaMkAddr = EthAddress
 isNull ∷ EthAddress → Boolean
-isNull (EthAddress ea) = ea == "0x0"
+isNull (EthAddress ea) = ea == "0x0000000000000000000000000000000000000000"
 
 newtype FoundationName = FoundationName StringId
 instance showFoundationName ∷ Show FoundationName where
@@ -200,7 +200,6 @@ deleteAddr ∷ EthAddress → MonadF Unit
 deleteAddr (EthAddress ea) = do
   checkAndInit
   liftEff $ deleteAddrImpl ea
-
 
 depositWei ∷ Wei → MonadF Unit
 depositWei w = do

@@ -187,7 +187,7 @@ addressesPage addresses sentPending todoPending =
          (\tp → [(card "Confirmation required for id:" $ idConfirmation tp)])
          todoPending)
         <>
-        ((\address → card "" $ HH.text $ show address) <$> addresses)
+        ((\address → card "Unified Address" $ HH.text $ show address) <$> addresses)
   where idConfirmation fName =
           HH.div [ HP.class_ (HH.ClassName "col") ]
           [ HH.text $ show fName
@@ -279,6 +279,7 @@ loadFromBlockchain = do
   H.modify (_ { loading = true })
   myId        ← handleFCall s.errorBus Nothing F.foundationId
   sentPending ← handleFCall s.errorBus Nothing F.sentPending
+  hLog sentPending
   todoPending ← handleFCall s.errorBus Nothing F.todoPending
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
