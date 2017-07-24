@@ -6256,13 +6256,6 @@ var PS = {};
       NoMetamask.value = new NoMetamask();
       return NoMetamask;
   })();
-  var NoFoundationId = (function () {
-      function NoFoundationId() {
-
-      };
-      NoFoundationId.value = new NoFoundationId();
-      return NoFoundationId;
-  })();
   var showWei = new Data_Show.Show(function (v) {
       return Data_Show.show(Data_Show.showNumber)(v);
   });
@@ -6285,10 +6278,6 @@ var PS = {};
   var fiGetAddrs = function (v) {
       return v.addrs;
   }; 
-  var fiBlankId = {
-      name: "", 
-      addrs: [  ]
-  }; 
   var checkAndInit = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))(Network_Eth_Metamask.loggedIn))(function (v) {
       if (v) {
           return Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))($foreign.initImpl(Data_Unit.unit));
@@ -6304,8 +6293,8 @@ var PS = {};
               return $foreign.todoPendingImpl(s)(getEa(v));
           };
       })))(function (v1) {
-          var $58 = v1 === "";
-          if ($58) {
+          var $60 = v1 === "";
+          if ($60) {
               return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
           };
           return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
@@ -6333,31 +6322,35 @@ var PS = {};
   };
   var foundationId = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(currentAddr)(function (v) {
       return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(idByAddr(v))(function (v1) {
-          var $65 = Data_Array["null"](fiGetAddrs(v1));
-          if ($65) {
-              return Control_Monad_Error_Class.throwError(Control_Monad_Except_Trans.monadThrowExceptT(Control_Monad_Aff.monadAff))(NoFoundationId.value);
-          };
-          return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(v1);
-      });
-  });
-  var sentPending = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
-      return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
-          return function (s) {
-              return $foreign.sentPendingImpl(s)(Data_Show.show(showFoundationName)(fiGetName(v)));
-          };
-      })))(function (v1) {
-          var $69 = isNull(v1);
-          if ($69) {
+          var $67 = Data_Array["null"](fiGetAddrs(v1));
+          if ($67) {
               return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
           };
           return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
       });
   });
+  var sentPending = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
+      if (v instanceof Data_Maybe.Nothing) {
+          return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
+      };
+      if (v instanceof Data_Maybe.Just) {
+          return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
+              return function (s) {
+                  return $foreign.sentPendingImpl(s)(Data_Show.show(showFoundationName)(fiGetName(v.value0)));
+              };
+          })))(function (v1) {
+              var $74 = isNull(v1);
+              if ($74) {
+                  return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
+              };
+              return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
+          });
+      };
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 171, column 3 - line 175, column 87: " + [ v.constructor.name ]);
+  });
   exports["NoMetamask"] = NoMetamask;
-  exports["NoFoundationId"] = NoFoundationId;
   exports["EthAddress"] = EthAddress;
   exports["currentAddr"] = currentAddr;
-  exports["fiBlankId"] = fiBlankId;
   exports["fiGetAddrs"] = fiGetAddrs;
   exports["foundationId"] = foundationId;
   exports["idByAddr"] = idByAddr;
@@ -8393,9 +8386,10 @@ var PS = {};
                           $17.loading = true;
                           return $17;
                       }))(function () {
-                          return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Network_Eth_Foundation.fiBlankId)(Network_Eth_Foundation.foundationId))(function (v1) {
+                          return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Data_Maybe.Nothing.value)(Network_Eth_Foundation.foundationId))(function (v1) {
                               return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Data_Maybe.Nothing.value)(Network_Eth_Foundation.sentPending))(function (v2) {
                                   return Control_Bind.bind(dictBind)(Foundation_Blockchain.handleFCall(dictBind)(dictMonadEff)(dictMonadAff)(v.errorBus)(Data_Maybe.Nothing.value)(Network_Eth_Foundation.todoPending))(function (v3) {
+                                      var addrs = Data_Maybe.fromMaybe([  ])(Data_Functor.map(Data_Maybe.functorMaybe)(Network_Eth_Foundation.fiGetAddrs)(v1));
                                       return Control_Monad_State_Class.modify(dictMonadState)(function (v4) {
                                           var $23 = {};
                                           for (var $24 in v4) {
@@ -8403,9 +8397,9 @@ var PS = {};
                                                   $23[$24] = v4[$24];
                                               };
                                           };
-                                          $23.myId = new Data_Maybe.Just(v1);
+                                          $23.myId = v1;
                                           $23.loading = false;
-                                          $23.addresses = Network_Eth_Foundation.fiGetAddrs(v1);
+                                          $23.addresses = addrs;
                                           $23.sentPending = v2;
                                           $23.todoPending = v3;
                                           return $23;

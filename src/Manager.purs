@@ -261,12 +261,12 @@ createIdPage state =
 loadFromBlockchain = do
   s ← H.get
   H.modify (_ { loading = true })
-  myId        ← handleFCall s.errorBus F.fiBlankId F.foundationId
+  myId        ← handleFCall s.errorBus Nothing F.foundationId
   sentPending ← handleFCall s.errorBus Nothing F.sentPending
   todoPending ← handleFCall s.errorBus Nothing F.todoPending
-  H.modify (_ { myId = Just myId, loading = false
-              , addresses = F.fiGetAddrs myId, sentPending = sentPending
-              , todoPending = todoPending })
+  let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
+  H.modify (_ { myId = myId, loading = false, addresses = addrs
+              , sentPending = sentPending, todoPending = todoPending })
 
 -- mocks
 randomDate ∷ String

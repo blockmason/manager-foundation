@@ -78,6 +78,7 @@ isNull (EthAddress ea) = ea == "0x0"
 newtype FoundationName = FoundationName StringId
 instance showFoundationName ∷ Show FoundationName where
   show (FoundationName fn) = fn
+fnGetName (FoundationName fn) = fn
 
 newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
@@ -133,11 +134,13 @@ currentAddr = do
   checkAndInit
   EthAddress <$> liftEff currentUserAddress
 
-foundationId ∷ MonadF FoundationId
+foundationId ∷ MonadF (Maybe FoundationId)
 foundationId = do
   addr ← currentAddr
   myId ← idByAddr addr
-  if A.null (fiGetAddrs myId) then throwError NoFoundationId else pure myId
+  if A.null (fiGetAddrs myId)
+    then pure $ Nothing
+    else pure $ Just myId
 
 idByName ∷ FoundationName → MonadF FoundationId
 idByName (FoundationName name) = do
@@ -165,8 +168,11 @@ createId (FoundationName fn) = do
 sentPending ∷ MonadF (Maybe EthAddress)
 sentPending = do
   myId ← foundationId
-  addr ← liftAff $ makeAff (\e s → sentPendingImpl s (show $ fiGetName myId))
-  if isNull (EthAddress addr) then pure Nothing else pure $ Just (EthAddress addr)
+  case myId of
+    Nothing → pure Nothing
+    Just mi → do
+      addr ← liftAff $ makeAff (\e s → sentPendingImpl s (show $ fiGetName mi))
+      if isNull (EthAddress addr) then pure Nothing else pure $ Just (EthAddress addr)
 
 todoPending ∷ MonadF (Maybe FoundationName)
 todoPending = do
@@ -192,10 +198,14 @@ deleteAddr (EthAddress ea) = do
 
 depositWei ∷ Wei → MonadF Unit
 depositWei w = do
-  (FoundationName name) ← (fiGetName <$> foundationId)
-  liftEff $ depositWeiImpl name (weiGet w)
+  mId ← foundationId
+  case mId of
+    Nothing → throwError NoFoundationId
+    Just fi → liftEff $ depositWeiImpl ((fnGetName <<< fiGetName) fi) (weiGet w)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
-  (FoundationName name) ← (fiGetName <$> foundationId)
-  liftEff $ withdrawDepositImpl name
+  mId ← foundationId
+  case mId of
+    Nothing → throwError NoFoundationId
+    Just fi → liftEff $ withdrawDepositImpl ((fnGetName <<<fiGetName) fi)
