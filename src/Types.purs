@@ -1,4 +1,4 @@
-module Types where
+module Foundation.Types where
 
 import Foundation.Prelude
 import Network.HTTP.Affjax (AJAX)
@@ -19,6 +19,7 @@ type AppMonad eff = (Aff (exception ∷ EXCEPTION, timer ∷ TIMER, random ∷ R
 data ContainerMsg
   = FoundationError
   | CheckMetamask
+
 instance showContainerMsg ∷ Show ContainerMsg where
   show FoundationError = "FoundationError"
   show CheckMetamask   = "Checking Metamask status."

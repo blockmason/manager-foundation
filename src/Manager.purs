@@ -2,8 +2,7 @@ module Foundation.Manager where
 
 import Foundation.Prelude
 
-import Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
-import Control.Monad.Aff.Bus as Bus
+import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
 
 import Halogen as H
 import Halogen.HTML as HH
@@ -12,6 +11,7 @@ import Halogen.HTML.Properties as HP
 import Data.Array as A
 import Data.String as S
 
+import Foundation.Blockchain           (handleFCall)
 import Foundation.Routes as R
 import Network.Eth.Foundation as F
 
@@ -252,26 +252,9 @@ createIdPage state =
 loadFromBlockchain = do
   s ← H.get
   H.modify (_ { loading = true })
---  myId ← handleFoundCall s.errorBus F.fiBlankId F.foundationId
---  hLog myId
---  H.modify (_ { myId = myId, loading = false })
-
-{-
---helper to query the blockchain
---blankVal is a value to return if there's an error
---writes a message to the error bus if there's an error
-handleFoundCall errorBus blankVal affCall = do
-  case errorBus of
-    Nothing → do
-      hLog "No bus initialized"
-      pure blankVal
-    Just b → do
-      result ← H.liftAff $ F.runMonadF affCall
-      case result of
-        Left error → do _ ← H.liftAff $ Bus.write (FoundationError error) b
-                        pure blankVal
-        Right val  → pure val
--}
+  myId ← handleFCall s.errorBus F.fiBlankId F.foundationId
+  hLog myId
+  H.modify (_ { myId = myId, loading = false })
 
 -- mocks
 randomDate ∷ String

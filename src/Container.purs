@@ -2,7 +2,7 @@ module Foundation.Container where
 
 import Foundation.Prelude
 
-import Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
+import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
 import Data.Either.Nested (Either1)
 import Control.Monad.Eff.Console (logShow)
 import Data.Functor.Coproduct.Nested (Coproduct1)
@@ -143,8 +143,7 @@ refreshMetamask = do
   mmStatus ← H.liftEff MM.loggedIn
   if mmStatus
     then do _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
-            newmmStatus ← H.liftEff MM.loggedIn
-            H.modify (_ { loggedIn = newmmStatus })
+            H.modify (_ { loggedIn = mmStatus })
     else do H.modify (_ { loggedIn = mmStatus })
 
 checkMetamask ∷ ∀ e. Boolean → Boolean

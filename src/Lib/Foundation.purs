@@ -75,8 +75,13 @@ instance showFoundationName ∷ Show FoundationName where
 
 newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
+
+isValid ∷ FoundationId → Boolean
+isValid = A.null <<< fiGetAddrs
 instance showFoundationId ∷ Show FoundationId where
-  show (FoundationId fi) = show fi.name <> ", " <> show fi.addrs
+  show (FoundationId fi) = case isValid (FoundationId fi) of
+    true  → show fi.name <> ", " <> show fi.addrs
+    false → "Not a valid FoundationId."
 
 fiGetName ∷ FoundationId → FoundationName
 fiGetName (FoundationId fi) = fi.name
