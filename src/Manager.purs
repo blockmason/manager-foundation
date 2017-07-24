@@ -254,7 +254,7 @@ loadFromBlockchain = do
   H.modify (_ { loading = true })
   myId ← handleFCall s.errorBus F.fiBlankId F.foundationId
   hLog myId
-  H.modify (_ { myId = myId, loading = false })
+  H.modify (_ { myId = Just myId, loading = false })
 
 -- mocks
 randomDate ∷ String

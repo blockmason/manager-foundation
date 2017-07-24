@@ -6241,6 +6241,7 @@ var PS = {};
   var Data_Eq = PS["Data.Eq"];
   var Data_Function = PS["Data.Function"];
   var Data_Functor = PS["Data.Functor"];
+  var Data_HeytingAlgebra = PS["Data.HeytingAlgebra"];
   var Data_Ord = PS["Data.Ord"];
   var Data_Semigroup = PS["Data.Semigroup"];
   var Data_Show = PS["Data.Show"];
@@ -6298,7 +6299,7 @@ var PS = {};
       return v.addrs;
   };
   var isValid = function ($65) {
-      return Data_Array["null"](fiGetAddrs($65));
+      return !Data_Array["null"](fiGetAddrs($65));
   };
   var showFoundationId = new Data_Show.Show(function (v) {
       var v1 = isValid(v);
@@ -6306,7 +6307,7 @@ var PS = {};
           return Data_Show.show(showFoundationName)(v.name) + (", " + Data_Show.show(Data_Show.showArray(showEthAddress))(v.addrs));
       };
       if (!v1) {
-          return "Not a valid FoundationId.";
+          return "NoValidFoundationId";
       };
       throw new Error("Failed pattern match at Network.Eth.Foundation line 82, column 28 - line 86, column 1: " + [ v1.constructor.name ]);
   });
@@ -8409,7 +8410,7 @@ var PS = {};
                                               $18[$19] = v2[$19];
                                           };
                                       };
-                                      $18.myId = v1;
+                                      $18.myId = new Data_Maybe.Just(v1);
                                       $18.loading = false;
                                       return $18;
                                   });
@@ -8771,36 +8772,43 @@ var PS = {};
                               return Control_Applicative.pure(dictApplicative)(Data_Unit.unit);
                           });
                       };
-                      throw new Error("Failed pattern match at Foundation.Container line 156, column 3 - line 160, column 16: " + [ maybeBus.constructor.name ]);
+                      throw new Error("Failed pattern match at Foundation.Container line 157, column 3 - line 161, column 16: " + [ maybeBus.constructor.name ]);
                   };
               };
           };
+      };
+  };
+  var runTests = function (dictBind) {
+      return function (dictMonadAff) {
+          return Control_Bind.discard(Control_Bind.discardUnit)(dictBind)(Control_Bind.bind(dictBind)(Control_Monad_Aff_Class.liftAff(dictMonadAff)(Network_Eth_Foundation.runMonadF(Network_Eth_Foundation.currentAddr)))(Foundation_Prelude.hLog(dictMonadAff.MonadEff0())(Data_Either.showEither(Network_Eth_Foundation.showError)(Network_Eth_Foundation.showEthAddress))))(function () {
+              return Control_Bind.bind(dictBind)(Control_Monad_Aff_Class.liftAff(dictMonadAff)(Network_Eth_Foundation.runMonadF(Network_Eth_Foundation.foundationId)))(Foundation_Prelude.hLog(dictMonadAff.MonadEff0())(Data_Either.showEither(Network_Eth_Foundation.showError)(Network_Eth_Foundation.showFoundationId)));
+          });
       };
   };
   var refreshMetamask = Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Eff_Class.liftEff(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Network_Eth_Metamask.loggedIn))(function (v) {
       if (v) {
           return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query["query'"](Data_Either.eqEither(Data_Eq.eqUnit)(Data_Eq.eqVoid))(Halogen_Component_ChildPath.cp1)(Data_Unit.unit)(new Foundation_Manager.ReloadAll(Data_Unit.unit)))(function (v1) {
               return Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v2) {
-                  var $24 = {};
-                  for (var $25 in v2) {
-                      if ({}.hasOwnProperty.call(v2, $25)) {
-                          $24[$25] = v2[$25];
+                  var $26 = {};
+                  for (var $27 in v2) {
+                      if ({}.hasOwnProperty.call(v2, $27)) {
+                          $26[$27] = v2[$27];
                       };
                   };
-                  $24.loggedIn = v;
-                  return $24;
+                  $26.loggedIn = v;
+                  return $26;
               });
           });
       };
       return Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-          var $27 = {};
-          for (var $28 in v1) {
-              if ({}.hasOwnProperty.call(v1, $28)) {
-                  $27[$28] = v1[$28];
+          var $29 = {};
+          for (var $30 in v1) {
+              if ({}.hasOwnProperty.call(v1, $30)) {
+                  $29[$30] = v1[$30];
               };
           };
-          $27.loggedIn = v;
-          return $27;
+          $29.loggedIn = v;
+          return $29;
       });
   });
   var promptMetamask = function (loggedIn) {
@@ -8820,8 +8828,8 @@ var PS = {};
   var menuItem = function (screen) {
       return function (currentScreen) {
           return Halogen_HTML_Elements.a([ Halogen_HTML_Properties.href("#"), Halogen_HTML_Properties.class_(Halogen_HTML_Core.ClassName("row " + (function () {
-              var $31 = Data_Eq.eq(Foundation_Routes.eqScreen)(screen)(currentScreen);
-              if ($31) {
+              var $33 = Data_Eq.eq(Foundation_Routes.eqScreen)(screen)(currentScreen);
+              if ($33) {
                   return "active";
               };
               return "";
@@ -8836,7 +8844,7 @@ var PS = {};
           if (myId instanceof Data_Maybe.Just) {
               return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen), menuItem(Foundation_Routes.FundIDScreen.value)(currentScreen) ]);
           };
-          throw new Error("Failed pattern match at Foundation.Container line 168, column 3 - line 183, column 10: " + [ myId.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 169, column 3 - line 184, column 10: " + [ myId.constructor.name ]);
       };
   };
   var loadingOverlay = function (loading) {
@@ -8849,8 +8857,8 @@ var PS = {};
   };
   var checkMetamask = function (loggedIn) {
       return function (mmStatus) {
-          var $35 = loggedIn && mmStatus;
-          if ($35) {
+          var $37 = loggedIn && mmStatus;
+          if ($37) {
               return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(Data_Unit.unit);
           };
           return refreshMetamask;
@@ -8873,32 +8881,34 @@ var PS = {};
               return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff_Bus.make))(function (v1) {
                   return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.subscribe(Halogen_Component_Utils.busEventSource(Control_Monad_Aff_Class.monadAffAff)(Data_Function.flip(HandleMsg.create)(Halogen_Query_EventSource.Listening.value))(v1)))(function () {
                       return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v2) {
-                          var $38 = {};
-                          for (var $39 in v2) {
-                              if ({}.hasOwnProperty.call(v2, $39)) {
-                                  $38[$39] = v2[$39];
+                          var $40 = {};
+                          for (var $41 in v2) {
+                              if ({}.hasOwnProperty.call(v2, $41)) {
+                                  $40[$41] = v2[$41];
                               };
                           };
-                          $38.loggedIn = true;
-                          $38.loading = true;
-                          $38.errorBus = new Data_Maybe.Just(v1);
-                          return $38;
+                          $40.loggedIn = true;
+                          $40.loading = true;
+                          $40.errorBus = new Data_Maybe.Just(v1);
+                          return $40;
                       }))(function () {
                           return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.delay(Data_Int.toNumber(1500))))(function () {
                               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v2) {
-                                  var $41 = {};
-                                  for (var $42 in v2) {
-                                      if ({}.hasOwnProperty.call(v2, $42)) {
-                                          $41[$42] = v2[$42];
+                                  var $43 = {};
+                                  for (var $44 in v2) {
+                                      if ({}.hasOwnProperty.call(v2, $44)) {
+                                          $43[$44] = v2[$44];
                                       };
                                   };
-                                  $41.loading = false;
-                                  return $41;
+                                  $43.loading = false;
+                                  return $43;
                               }))(function () {
-                                  return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
-                                      return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(Network_Eth_Foundation.runMonadF(Network_Eth_Foundation.foundationId)))(Foundation_Prelude.hLog(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Data_Either.showEither(Network_Eth_Foundation.showError)(Network_Eth_Foundation.showFoundationId))))(function () {
-                                          return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(startCheckInterval(Halogen_Query_HalogenM.applicativeHalogenM)(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(new Data_Maybe.Just(v1))(5000))(function () {
-                                              return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
+                                  return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(runTests(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff)))(function () {
+                                      return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
+                                          return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(Network_Eth_Foundation.runMonadF(Network_Eth_Foundation.foundationId)))(Foundation_Prelude.hLog(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Data_Either.showEither(Network_Eth_Foundation.showError)(Network_Eth_Foundation.showFoundationId))))(function () {
+                                              return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(startCheckInterval(Halogen_Query_HalogenM.applicativeHalogenM)(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(new Data_Maybe.Just(v1))(5000))(function () {
+                                                  return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
+                                              });
                                           });
                                       });
                                   });
@@ -8911,14 +8921,14 @@ var PS = {};
           if (v instanceof HandleMsg) {
               if (v.value0 instanceof Foundation_Types.FoundationError) {
                   return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                      var $46 = {};
-                      for (var $47 in v1) {
-                          if ({}.hasOwnProperty.call(v1, $47)) {
-                              $46[$47] = v1[$47];
+                      var $48 = {};
+                      for (var $49 in v1) {
+                          if ({}.hasOwnProperty.call(v1, $49)) {
+                              $48[$49] = v1[$49];
                           };
                       };
-                      $46.loggedIn = false;
-                      return $46;
+                      $48.loggedIn = false;
+                      return $48;
                   }))(function () {
                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
                   });
@@ -8934,7 +8944,7 @@ var PS = {};
                       });
                   });
               };
-              throw new Error("Failed pattern match at Foundation.Container line 102, column 9 - line 110, column 22: " + [ v.value0.constructor.name ]);
+              throw new Error("Failed pattern match at Foundation.Container line 103, column 9 - line 111, column 22: " + [ v.value0.constructor.name ]);
           };
           if (v instanceof RefreshMetamask) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
@@ -8943,24 +8953,24 @@ var PS = {};
           };
           if (v instanceof SetScreen) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (state) {
-                  var $54 = {};
-                  for (var $55 in state) {
-                      if ({}.hasOwnProperty.call(state, $55)) {
-                          $54[$55] = state[$55];
+                  var $56 = {};
+                  for (var $57 in state) {
+                      if ({}.hasOwnProperty.call(state, $57)) {
+                          $56[$57] = state[$57];
                       };
                   };
-                  $54.history = Data_Semigroup.append(Data_Semigroup.semigroupArray)([ state.currentScreen ])(state.history);
-                  return $54;
+                  $56.history = Data_Semigroup.append(Data_Semigroup.semigroupArray)([ state.currentScreen ])(state.history);
+                  return $56;
               }))(function () {
                   return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
-                      var $57 = {};
-                      for (var $58 in v1) {
-                          if ({}.hasOwnProperty.call(v1, $58)) {
-                              $57[$58] = v1[$58];
+                      var $59 = {};
+                      for (var $60 in v1) {
+                          if ({}.hasOwnProperty.call(v1, $60)) {
+                              $59[$60] = v1[$60];
                           };
                       };
-                      $57.currentScreen = v.value0;
-                      return $57;
+                      $59.currentScreen = v.value0;
+                      return $59;
                   }))(function () {
                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
                   });
@@ -8968,20 +8978,20 @@ var PS = {};
           };
           if (v instanceof PreviousScreen) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (state) {
-                  var $62 = {};
-                  for (var $63 in state) {
-                      if ({}.hasOwnProperty.call(state, $63)) {
-                          $62[$63] = state[$63];
+                  var $64 = {};
+                  for (var $65 in state) {
+                      if ({}.hasOwnProperty.call(state, $65)) {
+                          $64[$65] = state[$65];
                       };
                   };
-                  $62.currentScreen = Data_Maybe.fromMaybe(Foundation_Routes.OverviewScreen.value)(Data_Array.head(state.history));
-                  $62.history = Data_Maybe.fromMaybe([  ])(Data_Array.tail(state.history));
-                  return $62;
+                  $64.currentScreen = Data_Maybe.fromMaybe(Foundation_Routes.OverviewScreen.value)(Data_Array.head(state.history));
+                  $64.history = Data_Maybe.fromMaybe([  ])(Data_Array.tail(state.history));
+                  return $64;
               }))(function () {
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
               });
           };
-          throw new Error("Failed pattern match at Foundation.Container line 90, column 12 - line 120, column 18: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 90, column 12 - line 121, column 18: " + [ v.constructor.name ]);
       };
       return Halogen_Component.lifecycleParentComponent(Data_Either.ordEither(Data_Ord.ordUnit)(Data_Ord.ordVoid))({
           initialState: Data_Function["const"](initialState), 
@@ -9006,6 +9016,7 @@ var PS = {};
   exports["mockMe"] = mockMe;
   exports["promptMetamask"] = promptMetamask;
   exports["refreshMetamask"] = refreshMetamask;
+  exports["runTests"] = runTests;
   exports["startCheckInterval"] = startCheckInterval;
   exports["ui"] = ui;
 })(PS["Foundation.Container"] = PS["Foundation.Container"] || {});

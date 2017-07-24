@@ -77,11 +77,11 @@ newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
 
 isValid ∷ FoundationId → Boolean
-isValid = A.null <<< fiGetAddrs
+isValid = not <<< A.null <<< fiGetAddrs
 instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = case isValid (FoundationId fi) of
     true  → show fi.name <> ", " <> show fi.addrs
-    false → "Not a valid FoundationId."
+    false → "NoValidFoundationId"
 
 fiGetName ∷ FoundationId → FoundationName
 fiGetName (FoundationId fi) = fi.name

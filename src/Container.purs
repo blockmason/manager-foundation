@@ -94,6 +94,7 @@ ui =
         H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
+        runTests
         refreshMetamask
         (H.liftAff $ F.runMonadF $ F.foundationId) >>= hLog
         startCheckInterval (Just bus) 5000
@@ -199,3 +200,7 @@ mockEthAddesses = [F.EthAddress "0x0", F.EthAddress "0x1"]
 
 mockMe ∷ F.FoundationId
 mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})
+
+runTests = do
+  (H.liftAff $ F.runMonadF F.currentAddr) >>= hLog
+  (H.liftAff $ F.runMonadF F.foundationId) >>= hLog
