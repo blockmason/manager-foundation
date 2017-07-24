@@ -202,5 +202,6 @@ mockMe ∷ F.FoundationId
 mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})
 
 runTests = do
-  (H.liftAff $ F.runMonadF F.currentAddr) >>= hLog
-  (H.liftAff $ F.runMonadF F.foundationId) >>= hLog
+  pure unit
+--  (H.liftAff $ F.runMonadF F.currentAddr) >>= hLog
+--  (H.liftAff $ F.runMonadF F.foundationId) >>= hLog
