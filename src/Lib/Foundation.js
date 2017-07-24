@@ -57,11 +57,11 @@ exports.createIdImpl = function(foundationId) {
     };
 };
 
-exports.getPendingUnificationImpl = function(callback) {
+exports.todoPendingImpl = function(callback) {
     return function(foundationId) {
         return function() {
             Foundation.deployed().then(function(instance) {
-                return instance.getPendingUnification(foundationId);
+                return instance.todoPending.call(foundationId);
             }).then(function(r) {
                 callback(r.valueOf())();
             });
