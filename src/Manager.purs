@@ -43,7 +43,6 @@ type State = { loading          ∷ Boolean
 type ScreenChange = R.Screen
 type Input = ContainerMsgBus
 
-
 component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
 component =
   H.component
@@ -82,8 +81,10 @@ component =
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
   eval = case _ of
     HandleInput input next → do
+      H.modify (_ { errorBus = input } )
       pure next
     ReloadAll next → do
+      s ← H.get
       loadFromBlockchain
       pure next
     RefreshAddress next → do
@@ -253,7 +254,7 @@ loadFromBlockchain = do
   s ← H.get
   H.modify (_ { loading = true })
   myId ← handleFCall s.errorBus F.fiBlankId F.foundationId
-  hLog myId
+--  hLog myId
   H.modify (_ { myId = Just myId, loading = false })
 
 -- mocks

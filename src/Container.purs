@@ -96,7 +96,6 @@ ui =
         H.modify (_ { loading = false })
         runTests
         refreshMetamask
-        (H.liftAff $ F.runMonadF $ F.foundationId) >>= hLog
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
