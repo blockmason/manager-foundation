@@ -48,7 +48,8 @@ type State = { loading          ∷ Boolean
              }
 
 type ScreenChange = R.Screen
-type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array E.TX }
+type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array E.TX
+             , foundationId ∷ Maybe F.FoundationId }
 
 component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
 component =
@@ -64,7 +65,7 @@ component =
   initialState input = { loading: false
                        , errorBus: input.msgBus
                        , txs: input.txs
-                       , myId: Nothing
+                       , myId: input.foundationId
                        , addresses: []
                        , sentPending: Nothing
                        , todoPending: Nothing
@@ -91,11 +92,12 @@ component =
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
   eval = case _ of
     HandleInput input next → do
-      H.modify (_ { errorBus = input.msgBus, txs = input.txs } )
+      H.modify (_ { errorBus = input.msgBus, txs = input.txs
+                  , myId = input.foundationId })
       pure next
     ReloadAll next → do
       s ← H.get
-      loadFromBlockchain
+      loadFromBlockchain (s.myId)
       pure next
     RefreshAddress next → do
       pure next
@@ -121,6 +123,7 @@ component =
     ExtendId next → do
       pure next
     InputFundAmount strWei next → do
+      hLog $ mkWei strWei
       H.modify (_ {fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do
@@ -303,17 +306,16 @@ createIdPage state =
       )
     ]
 
-loadFromBlockchain = do
+loadFromBlockchain myId = do
   eb ← H.gets _.errorBus
   H.modify (_ { loading = true })
-  myId        ← handleFCall eb Nothing F.foundationId
   sentPending ← handleFCall eb Nothing F.sentPending
   todoPending ← handleFCall eb Nothing F.todoPending
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
 --  hLog $ E.weiShowEth <$> depWei
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
-  H.modify (_ { myId = myId, loading = false, addresses = addrs
+  H.modify (_ { loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
               , funds = depWei, expiryDate = expiryDate })
 

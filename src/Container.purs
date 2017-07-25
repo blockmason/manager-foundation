@@ -25,6 +25,7 @@ import Network.Eth.Metamask    as MM
 import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
+import Foundation.Blockchain   (handleFCall)
 
 import Data.Array as A
 
@@ -85,7 +86,7 @@ ui =
       , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component
-          { msgBus: state.errorBus, txs: state.txs }
+          { msgBus: state.errorBus, txs: state.txs, foundationId: state.myId }
           $ HE.input SetScreen
         ]
       , menu state.currentScreen state.myId
@@ -101,6 +102,8 @@ ui =
         H.modify (_ { loading = false })
         runTests
         refreshMetamask
+        myId        ← handleFCall (Just bus) Nothing F.foundationId
+        H.modify (_ { myId = myId })
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do
