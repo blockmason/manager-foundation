@@ -5,6 +5,8 @@ import Data.String                 as S
 import Data.Array                  as A
 import Data.Int                    (round, toNumber, fromString)
 import Data.Maybe                  (Maybe(..), maybe, isJust)
+import Data.Either                 (Either(..))
+import Control.Monad.Error.Class   (class MonadError, throwError)
 
 infixr 9 compose as ∘
 infixr 5 append as ⊕
@@ -14,14 +16,17 @@ type StringId = String
 type StringNum = String
 type StringHash = String
 
-type RawTx = { txHash ∷ StringHash }
-rawToTX ∷ RawTx → TX
-rawToTX rawTx = (TX ∘ eaMkAddr) rawTx.txHash
+type RawTx = { txHash ∷ StringHash, error ∷ Boolean }
+--errorVal is some type to be used for error throwing if the transaction fails
+rawToTX ∷ ∀ e m. MonadError e m => e → RawTx → m TX
+rawToTX errorVal rawTx = if rawTx.error
+                         then throwError errorVal
+                         else (pure ∘ TX) rawTx.txHash
 
-data TX = TX EthAddress
+data TX = TX String
 instance showTX ∷ Show TX where
   show (TX e) = "Transaction: " ⊕ show e
-blankTx = TX $ eaMkAddr ""
+blankTx = TX ""
 
 newtype EthAddress = EthAddress StringAddr
 instance showEthAddress ∷ Show EthAddress where

@@ -3,7 +3,7 @@ module Network.Eth.Foundation
          FOUNDATION
        , FoundationId(..)
        , FoundationName(..)
-       , Error(..)
+       , FoundationError(..)
        , PendingUnification
        , printTransaction
 
@@ -54,21 +54,23 @@ import Network.Eth                 as E
 
 infixr 9 compose as ∘
 foreign import data FOUNDATION ∷ Effect
-type MonadF a = ∀ e. ExceptT Error (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
+type MonadF a = ∀ e. ExceptT FoundationError (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
 runMonadF = runExceptT
 
 type PendingUnification = FoundationId
 
 -- error
-data Error =
+data FoundationError =
     NoMetamask
   | InvalidDebtId
   | NoFoundationId
+  | TxError
 
-instance showError ∷ Show Error where
+instance showError ∷ Show FoundationError where
   show NoMetamask     = "NoMetamask"
   show InvalidDebtId  = "InvalidDebtId"
   show NoFoundationId = "NoFoundationId"
+  show TxError        = "TxError"
 
 newtype FoundationName = FoundationName E.StringId
 instance showFoundationName ∷ Show FoundationName where
@@ -163,7 +165,8 @@ areSameId (E.EthAddress ea1) (E.EthAddress ea2) = do
 createId ∷ FoundationName → MonadF E.TX
 createId (FoundationName fn) = do
   checkAndInit
-  E.rawToTX <$> (liftAff $ makeAff (\e s → createIdImpl s fn))
+  rawTx ← (liftAff $ makeAff (\e s → createIdImpl s fn))
+  E.rawToTX TxError rawTx
 
 sentPending ∷ MonadF (Maybe E.EthAddress)
 sentPending = do

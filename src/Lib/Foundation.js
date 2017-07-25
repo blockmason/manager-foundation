@@ -159,7 +159,10 @@ var sendFoundationTx = function(data, callback) {
          from: myAddress,
          data: data},
         function(err, result) {
-            callback(toTx(result))();
+            if ( !err )
+                callback(goodTx(result))();
+            else
+                callback(errTx())();
         });
 };
 
@@ -182,8 +185,12 @@ var b2s = function(bytes) {
     return s;
 };
 
-var toTx = function(t) {
-    return { txHash: t };
+var goodTx = function(t) {
+    return { txHash: t, error: false };
+};
+
+var errTx = function() {
+    return { txHash: "", error: true };
 };
 
 /* ************************ */
