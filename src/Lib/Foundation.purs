@@ -165,8 +165,7 @@ areSameId (E.EthAddress ea1) (E.EthAddress ea2) = do
 createId ∷ FoundationName → MonadF E.TX
 createId (FoundationName fn) = do
   checkAndInit
-  rawTx ← (liftAff $ makeAff (\e s → createIdImpl s fn))
-  E.rawToTX TxError rawTx
+  (liftAff $ makeAff (\e s → createIdImpl s fn)) >>= (E.rawToTX TxError)
 
 sentPending ∷ MonadF (Maybe E.EthAddress)
 sentPending = do

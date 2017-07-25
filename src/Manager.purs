@@ -79,13 +79,13 @@ component =
   render state =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
-          page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
-        , page R.ManageAddressesScreen
+        page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
+      , page R.ManageAddressesScreen
           (addressesPage state.addresses state.sentPending state.todoPending)
-        , page R.AddAddressScreen (addAddressPage state)
-        , page R.RegisterScreen (createIdPage state)
-        , page R.ExtendIDScreen (extendIdPage state.expiryDate)
-        , page R.FundIDScreen (fundsPage state)
+      , page R.AddAddressScreen (addAddressPage state)
+      , page R.RegisterScreen (createIdPage state)
+      , page R.ExtendIDScreen (extendIdPage state.expiryDate)
+      , page R.FundIDScreen (fundsPage state)
       ]
 
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
@@ -319,27 +319,3 @@ loadFromBlockchain = do
 
 formatDate ∷ DateTime → String
 formatDate = (either (const "") id) ∘ (DTF.formatDateTime "YYYY-MM-DD")
--- mocks
-randomDate ∷ String
-randomDate = "2018-11-01"
-
-mockFoundationName1 ∷ F.FoundationName
-mockFoundationName1 = F.FoundationName "Luke"
-
-mockFoundationName2 ∷ F.FoundationName
-mockFoundationName2 = F.FoundationName "Tim"
-
-mockEthAddesses ∷ Array E.EthAddress
-mockEthAddesses = [E.EthAddress "0x0", E.EthAddress "0x1"]
-
-mockMe ∷ F.FoundationId
-mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})
-
-mockTim ∷ F.FoundationId
-mockTim = (F.FoundationId {name: mockFoundationName2, addrs: mockEthAddesses})
-
-mockSentUnification ∷ Array F.PendingUnification
-mockSentUnification = [mockTim]
-
-mockTodoUnification ∷ Array F.FoundationName
-mockTodoUnification = [mockFoundationName2]

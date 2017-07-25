@@ -105,7 +105,8 @@ ui =
         pure next
       HandleMsg msg next → do
         case msg of
-          FoundationError → do
+          (FoundationError fe) → do
+            hLog $ show (FoundationError fe)
             H.modify (_ { loggedIn = false })
             pure next
           CheckMetamask → do

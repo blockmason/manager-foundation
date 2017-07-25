@@ -17,6 +17,6 @@ handleFCall errorBus blankVal affCall = do
     Just b → do
       result ← H.liftAff $ F.runMonadF affCall
       case result of
-        Left error → do _ ← H.liftAff $ Bus.write FoundationError b
+        Left error → do _ ← H.liftAff $ Bus.write (FoundationError error) b
                         pure blankVal
         Right val  → pure val
