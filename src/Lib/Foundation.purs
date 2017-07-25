@@ -136,7 +136,12 @@ weiShowEth (Wei w) =
   in if len > 18
      then dropZeros $ S.take (len-18) w <> "." <> S.drop (len-18) w
      else dropZeros $ "0." <> (S.fromCharArray $ A.replicate (18-len) '0') <> w
-  where dropZeros = S.fromCharArray ∘ A.reverse ∘ (A.dropWhile (\c → c == '0')) ∘ A.reverse ∘ S.toCharArray
+  where dropZeros s =
+          let rev = (A.dropWhile (\c → c == '0')) ∘ A.reverse ∘ S.toCharArray $ s
+          in if A.head rev == (Just '.')
+             then S.fromCharArray ∘ A.reverse ∘ (A.drop 1) $ rev
+             else S.fromCharArray ∘ A.reverse $ rev
+
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
 type SingleAddrLookupFn = ∀ e. (StringAddr → Eff e Unit) → StringId → Eff e Unit
