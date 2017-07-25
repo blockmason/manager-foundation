@@ -9466,6 +9466,20 @@ var PS = {};
       TxError.value = new TxError();
       return TxError;
   })();
+  var NameInUse = (function () {
+      function NameInUse() {
+
+      };
+      NameInUse.value = new NameInUse();
+      return NameInUse;
+  })();
+  var AddrInUse = (function () {
+      function AddrInUse() {
+
+      };
+      AddrInUse.value = new AddrInUse();
+      return AddrInUse;
+  })();
   var showFoundationName = new Data_Show.Show(function (v) {
       return v;
   });
@@ -9482,7 +9496,13 @@ var PS = {};
       if (v instanceof TxError) {
           return "TxError";
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 70, column 3 - line 71, column 3: " + [ v.constructor.name ]);
+      if (v instanceof NameInUse) {
+          return "NameInUse";
+      };
+      if (v instanceof AddrInUse) {
+          return "AddrInUse";
+      };
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 72, column 3 - line 73, column 3: " + [ v.constructor.name ]);
   });
   var runMonadF = Control_Monad_Except_Trans.runExceptT;                                                                                                                           
   var fnMkName = FoundationName;
@@ -9492,14 +9512,14 @@ var PS = {};
   var fiGetName = function (v) {
       return v.name;
   };
-  var fiStrName = function ($73) {
-      return fnGetName(fiGetName($73));
+  var fiStrName = function ($77) {
+      return fnGetName(fiGetName($77));
   };
   var fiGetAddrs = function (v) {
       return v.addrs;
   };
-  var isValid = function ($74) {
-      return !Data_Array["null"](fiGetAddrs($74));
+  var isValid = function ($78) {
+      return !Data_Array["null"](fiGetAddrs($78));
   };
   var showFoundationId = new Data_Show.Show(function (v) {
       var v1 = isValid(v);
@@ -9509,7 +9529,7 @@ var PS = {};
       if (!v1) {
           return "NoValidFoundationId";
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 87, column 28 - line 91, column 1: " + [ v1.constructor.name ]);
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 91, column 28 - line 95, column 1: " + [ v1.constructor.name ]);
   });
   var checkAndInit = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))(Network_Eth_Metamask.loggedIn))(function (v) {
       if (v) {
@@ -9520,15 +9540,6 @@ var PS = {};
   var confirmPendingUnification = function (v) {
       return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
           return Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))($foreign.confirmPendingUnificationImpl(v));
-      });
-  };
-  var createId = function (v) {
-      return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
-          return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
-              return function (s) {
-                  return $foreign.createIdImpl(s)(v);
-              };
-          })))(Network_Eth.rawToTX(Control_Monad_Except_Trans.monadErrorExceptT(Control_Monad_Aff.monadAff))(TxError.value));
       });
   };
   var currentAddr = Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
@@ -9584,7 +9595,7 @@ var PS = {};
           if (v instanceof Data_Maybe.Just) {
               return Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))($foreign.depositWeiImpl(fnGetName(fiGetName(v.value0)))(Network_Eth.weiStr(w)));
           };
-          throw new Error("Failed pattern match at Network.Eth.Foundation line 203, column 3 - line 205, column 81: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Network.Eth.Foundation line 219, column 3 - line 221, column 81: " + [ v.constructor.name ]);
       });
   };
   var expirationDate = (function () {
@@ -9604,7 +9615,7 @@ var PS = {};
                   return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(secsToDT(v1));
               });
           };
-          throw new Error("Failed pattern match at Network.Eth.Foundation line 225, column 3 - line 229, column 32: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Network.Eth.Foundation line 241, column 3 - line 245, column 32: " + [ v.constructor.name ]);
       });
   })();
   var getDepositWei = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
@@ -9612,15 +9623,15 @@ var PS = {};
           return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Maybe.Nothing.value);
       };
       if (v instanceof Data_Maybe.Just) {
-          return Data_Functor.map(Control_Monad_Except_Trans.functorExceptT(Control_Monad_Aff.functorAff))(function ($75) {
-              return Data_Maybe.Just.create(Network_Eth.mkWei($75));
+          return Data_Functor.map(Control_Monad_Except_Trans.functorExceptT(Control_Monad_Aff.functorAff))(function ($79) {
+              return Data_Maybe.Just.create(Network_Eth.mkWei($79));
           })(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
               return function (s) {
                   return $foreign.getDepositWeiImpl(s)(fiStrName(v.value0));
               };
           })));
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 217, column 3 - line 220, column 69: " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 233, column 3 - line 236, column 69: " + [ v.constructor.name ]);
   });
   var sentPending = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
       if (v instanceof Data_Maybe.Nothing) {
@@ -9639,8 +9650,46 @@ var PS = {};
               return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
           });
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 173, column 3 - line 177, column 93: " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 189, column 3 - line 193, column 93: " + [ v.constructor.name ]);
   });
+  var idByName = function (v) {
+      return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
+          return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (err) {
+              return function (succ) {
+                  return $foreign.resolveToAddrImpl(succ)(v);
+              };
+          })))(function (v1) {
+              return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))({
+                  name: v, 
+                  addrs: Data_Functor.map(Data_Functor.functorArray)(Network_Eth.EthAddress)(v1)
+              });
+          });
+      });
+  };
+  var freshNameAndAddr = function (fn) {
+      return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(idByName(fn))(function (v) {
+          var $72 = isValid(v);
+          if ($72) {
+              return Control_Monad_Error_Class.throwError(Control_Monad_Except_Trans.monadThrowExceptT(Control_Monad_Aff.monadAff))(NameInUse.value);
+          };
+          return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(currentAddr)(idByAddr))(function (v1) {
+              var $74 = isValid(v1);
+              if ($74) {
+                  return Control_Monad_Error_Class.throwError(Control_Monad_Except_Trans.monadThrowExceptT(Control_Monad_Aff.monadAff))(AddrInUse.value);
+              };
+              return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(Data_Unit.unit);
+          });
+      });
+  };
+  var createId = function (fn) {
+      return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(freshNameAndAddr(fn))(function () {
+          return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(Control_Monad_Aff_Class.liftAff(Control_Monad_Aff_Class.monadAffExceptT(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.makeAff(function (e) {
+              return function (s) {
+                  return $foreign.createIdImpl(s)(fnGetName(fn));
+              };
+          })))(Network_Eth.rawToTX(Control_Monad_Except_Trans.monadErrorExceptT(Control_Monad_Aff.monadAff))(TxError.value));
+      });
+  };
   var addPendingUnification = function (ea) {
       return Control_Bind.discard(Control_Bind.discardUnit)(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(checkAndInit)(function () {
           return Control_Monad_Eff_Class.liftEff(Control_Monad_Except_Trans.monadEffExceptT(Control_Monad_Aff.monadEffAff))($foreign.addPendingUnificationImpl(Network_Eth.getEa(ea)));
@@ -9650,6 +9699,8 @@ var PS = {};
   exports["InvalidDebtId"] = InvalidDebtId;
   exports["NoFoundationId"] = NoFoundationId;
   exports["TxError"] = TxError;
+  exports["NameInUse"] = NameInUse;
+  exports["AddrInUse"] = AddrInUse;
   exports["FoundationName"] = FoundationName;
   exports["addPendingUnification"] = addPendingUnification;
   exports["confirmPendingUnification"] = confirmPendingUnification;
@@ -9664,6 +9715,7 @@ var PS = {};
   exports["foundationId"] = foundationId;
   exports["getDepositWei"] = getDepositWei;
   exports["idByAddr"] = idByAddr;
+  exports["idByName"] = idByName;
   exports["runMonadF"] = runMonadF;
   exports["sentPending"] = sentPending;
   exports["todoPending"] = todoPending;

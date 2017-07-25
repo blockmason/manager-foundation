@@ -65,12 +65,16 @@ data FoundationError =
   | InvalidDebtId
   | NoFoundationId
   | TxError
+  | NameInUse
+  | AddrInUse
 
 instance showError ∷ Show FoundationError where
   show NoMetamask     = "NoMetamask"
   show InvalidDebtId  = "InvalidDebtId"
   show NoFoundationId = "NoFoundationId"
   show TxError        = "TxError"
+  show NameInUse      = "NameInUse"
+  show AddrInUse      = "AddrInUse"
 
 newtype FoundationName = FoundationName E.StringId
 instance showFoundationName ∷ Show FoundationName where
@@ -162,10 +166,22 @@ areSameId (E.EthAddress ea1) (E.EthAddress ea2) = do
   checkAndInit
   liftAff $ makeAff (\e s → areSameIdImpl s ea1 ea2)
 
+--make sure name and address haven't been used prior (ie aren't valid)
+freshNameAndAddr ∷ FoundationName → MonadF Unit
+freshNameAndAddr fn = do
+  id1 ← idByName fn
+  if isValid $ id1
+    then throwError NameInUse
+    else do
+      id2 ← (currentAddr >>= idByAddr)
+      if isValid id2
+        then throwError AddrInUse
+        else pure unit
+
 createId ∷ FoundationName → MonadF E.TX
-createId (FoundationName fn) = do
-  checkAndInit
-  (liftAff $ makeAff (\e s → createIdImpl s fn)) >>= (E.rawToTX TxError)
+createId fn = do
+  freshNameAndAddr fn
+  (liftAff $ makeAff (\e s → createIdImpl s (fnGetName fn))) >>= (E.rawToTX TxError)
 
 sentPending ∷ MonadF (Maybe E.EthAddress)
 sentPending = do
