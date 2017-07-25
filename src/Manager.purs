@@ -2,7 +2,7 @@ module Foundation.Manager where
 
 import Foundation.Prelude
 
-import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
+import Foundation.Types                (ContainerMsg(..), ContainerMsgBus, AppMonad)
 
 import Halogen as H
 import Halogen.HTML as HH
@@ -10,6 +10,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Data.Array as A
 import Data.String as S
+import Data.DateTime                   (DateTime(..))
 
 import Foundation.Blockchain           (handleFCall)
 import Foundation.Routes as R

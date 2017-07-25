@@ -112,7 +112,7 @@ fiStrName = fnGetName ∘ fiGetName
 newtype Wei = Wei Number
 mkWei = Wei
 instance showWei ∷ Show Wei where
-  show (Wei num) = show num
+  show (Wei num) = "Wei: " <> show num
 weiGet ∷ Wei → Number
 weiGet (Wei num) = num
 
@@ -233,9 +233,12 @@ getDepositWei = do
     Just i  → (Just ∘ Wei) <$>
       (liftAff $ makeAff (\e s → getDepositWeiImpl s (fiStrName i)))
 
-expirationDate ∷ MonadF (Maybe Number)
+expirationDate ∷ MonadF (Maybe DateTime)
 expirationDate = do
   mId ← foundationId
   case mId of
     Nothing → pure Nothing
-    Just i  → Just <$> (liftAff $ makeAff (\e s → expirationDateImpl s (fiStrName i)))
+    Just i  → do
+      timestamp ← (liftAff $ makeAff (\e s → expirationDateImpl s (fiStrName i)))
+      pure $ secsToDT timestamp
+        where secsToDT secs = toDateTime <$> (instant (Milliseconds $ secs * 1000.0))
