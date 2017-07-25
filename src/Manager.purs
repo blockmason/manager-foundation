@@ -10,6 +10,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Data.Array as A
 import Data.String as S
+import Data.Int as I
 import Data.DateTime                   (DateTime(..))
 import Data.Formatter.DateTime as DTF
 
@@ -28,7 +29,8 @@ data Query a
   | CreateNewId String a
   | AddNewAddress (Either String F.EthAddress) a
   | ExtendId a
-  | FundId a
+  | InputFundAmount String a
+  | FundId F.Wei a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -40,6 +42,7 @@ type State = { loading          ∷ Boolean
              , funds            ∷ Maybe F.Wei
              , newAddress       ∷ Either String F.EthAddress
              , newName          ∷ String
+             , fundAmountWei    ∷ F.Wei
              }
 
 type ScreenChange = R.Screen
@@ -66,6 +69,7 @@ component =
                        , funds: Nothing
                        , newAddress: Left ""
                        , newName: ""
+                       , fundAmountWei: F.zeroWei
                      }
 
   render ∷ State → H.ComponentHTML Query
@@ -113,7 +117,11 @@ component =
           pure next
     ExtendId next → do
       pure next
-    FundId next → do
+    InputFundAmount strWei next → do
+      H.modify (_ {fundAmountWei = F.mkWei strWei })
+      pure next
+    FundId weiAmount next → do
+      hLog weiAmount
       pure next
     InputNewName nameStr next → do
       H.modify (_ { newName = nameStr })
@@ -154,7 +162,7 @@ card cardTitle child =
 summary ∷ Maybe F.FoundationId → Maybe DateTime → Int → Maybe F.Wei
         → H.ComponentHTML Query
 summary optionalID expiryDate addressCount funds =
-  let balance = fromMaybe (F.mkWei 0.0) funds
+  let balance = fromMaybe (F.zeroWei) funds
   in case optionalID of
     Nothing →
       HH.div
@@ -169,7 +177,7 @@ summary optionalID expiryDate addressCount funds =
           (card "ID" $ HH.text $ show myId.name),
           (card "Expires" $ HH.text $ maybe "" formatDate expiryDate ),
           (card "Addresses" $ HH.text $ show addressCount ⊕ " associated"),
-          (card "Current Deposit" $ HH.text $ show balance ⊕ " Wei" )
+          (card "Current Deposit" $ HH.text $ F.weiShowEth balance ⊕ " Eth" )
         ]
 
 addressesPage ∷ Array F.EthAddress → Maybe F.EthAddress → Maybe F.FoundationName
@@ -237,11 +245,11 @@ extendIdPage expiryDate =
   HH.div
     [HP.class_ (HH.ClassName "col extend-id-page")]
     [
-      (card "Expires" $ HH.text $ maybe "" formatDate expiryDate ),
-      (card "Extend for 1 Year" $
-        HH.button [ HE.onClick $ HE.input_ $ ExtendId
-                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
-                  [ HH.text "Extend for 0.1 ETH" ])
+      (card "Expires" $ HH.text $ maybe "" formatDate expiryDate )
+    , (card "Extend for 1 Year" $
+       HH.button [ HE.onClick $ HE.input_ $ ExtendId
+                 , HP.class_ $ HH.ClassName "btn btn-secondary"]
+       [ HH.text "Extend for 0.1 ETH" ])
     ]
 
 fundsPage ∷ State → H.ComponentHTML Query
@@ -249,11 +257,20 @@ fundsPage state =
   HH.div
     [HP.class_ (HH.ClassName "col funds-page")]
     [
-      (card "Balance" $ HH.text $ show state.funds ⊕ " Wei"),
+      (card "Balance" $ HH.text $ (maybe "" show state.funds) ⊕ " Wei"),
       (card "Deposit" $
-        HH.button [ HE.onClick $ HE.input_ $ FundId
-                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
-                  [ HH.text "Deposit ETH" ])
+       HH.div [ HP.class_ (HH.ClassName "col") ]
+       [ HH.input [ HP.type_ HP.InputText
+                  , HP.class_ $ HH.ClassName "row"
+                  , HP.placeholder $ "Enter wei to deposit here"
+                  , HP.value $ F.weiStr state.fundAmountWei
+                  , HE.onValueInput
+                    (HE.input (\val → InputFundAmount val))
+                  ]
+       , HH.button [ HE.onClick $ HE.input_ $ FundId state.fundAmountWei
+                   , HP.class_ $ HH.ClassName "btn btn-secondary" ]
+         [ HH.text "Deposit ETH" ]
+        ])
     ]
 
 createIdPage ∷ State → H.ComponentHTML Query
@@ -267,7 +284,7 @@ createIdPage state =
           HH.input [ HP.type_ HP.InputText
                    , HP.value $ ""
                    , HP.class_ $ HH.ClassName "row"
-                   , HP.placeholder $ "some_name"
+                   , HP.placeholder $ "Enter an id"
                    , HE.onValueInput
                      (HE.input (\val → InputNewName val))
                    ]
@@ -286,6 +303,7 @@ loadFromBlockchain = do
   todoPending ← handleFCall eb Nothing F.todoPending
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
+  hLog $ F.weiShowEth <$> depWei
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending

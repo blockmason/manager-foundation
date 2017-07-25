@@ -106,10 +106,13 @@ exports.deleteAddrImpl = function(addr) {
 };
 
 exports.depositWeiImpl = function(foundationId) {
-    return function() {
-        Foundation.deployed().then(function(instance) {
-            return instance.deposit(foundationId, {value: weiAmount});
-        });
+    return(weiAmountStr) {
+        return function() {
+            var w = new BigNumber(weiAmountStr);
+            Foundation.deployed().then(function(instance) {
+                return instance.deposit(foundationId, {value: w});
+            });
+        };
     };
 };
 
@@ -127,7 +130,7 @@ exports.getDepositWeiImpl = function(callback) {
             Foundation.deployed().then(function(instance) {
                 return instance.getDepositWei.call(foundationId);
             }).then(function(r) {
-                callback(parseInt(r.valueOf()))();
+                callback(r.valueOf())();
             });
         };
     };

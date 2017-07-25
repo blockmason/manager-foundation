@@ -16,6 +16,9 @@ module Network.Eth.Foundation
        , fnGetName
        , fnMkName
        , mkWei
+       , weiStr
+       , weiShowEth
+       , zeroWei
 
        , currentAddr
        , foundationId
@@ -45,9 +48,10 @@ import Control.Monad.Aff.Class     (liftAff)
 import Control.Monad.Aff           (Aff, makeAff)
 import Control.Monad.Except.Trans  (ExceptT, throwError, runExceptT, lift)
 import Data.Either                 (Either(..))
-import Data.Maybe                  (Maybe(..))
-import Data.String                 (localeCompare)
-import Data.Int                    (round, toNumber)
+import Data.Maybe                  (Maybe(..), maybe, isJust)
+import Data.String                 as S
+import Data.Array                  as A
+import Data.Int                    (round, toNumber, fromString)
 import Data.DateTime.Instant       (instant, toDateTime)
 import Data.Time.Duration          (Milliseconds(..))
 import Data.DateTime               (DateTime(..))
@@ -61,6 +65,7 @@ runMonadF = runExceptT
 
 type StringAddr = String
 type StringId = String
+type StringNum = String
 type PendingUnification = FoundationId
 
 -- error
@@ -80,7 +85,7 @@ instance showEthAddress ∷ Show EthAddress where
 instance eqEthAddress ∷ Eq EthAddress where
   eq (EthAddress ua1) (EthAddress ua2) = ua1 == ua2
 instance ordEthAddress ∷ Ord EthAddress where
-  compare (EthAddress ua1) (EthAddress ua2) = localeCompare ua1 ua2
+  compare (EthAddress ua1) (EthAddress ua2) = S.localeCompare ua1 ua2
 getEa ∷ EthAddress → String
 getEa (EthAddress ea) = ea
 eaMkAddr = EthAddress
@@ -111,19 +116,33 @@ fiBlankId ∷ FoundationId
 fiBlankId = FoundationId { name: (FoundationName ""), addrs: [] }
 fiStrName = fnGetName ∘ fiGetName
 
-newtype Wei = Wei Int
-mkWei = (Wei ∘ round)
+newtype Wei = Wei String
+mkWei ∷ String → Wei
+mkWei ""  = Wei "0"
+mkWei str = if isInt str then Wei str else zeroWei
+  where isInt "" = true
+        isInt s  = (isJust (fromString $ S.take 9 s)) && (isInt $ S.drop 9 s)
+zeroWei ∷ Wei
+zeroWei = Wei "0"
 instance showWei ∷ Show Wei where
-  show (Wei i) = show i
-weiGet ∷ Wei → Int
-weiGet (Wei i) = i
-weiNum ∷ Wei → Number
-weiNum (Wei i) = toNumber i
+  show (Wei s) = s
+weiGet ∷ Wei → String
+weiGet (Wei s) = s
+weiStr ∷ Wei → String
+weiStr (Wei s) = s
+weiShowEth ∷ Wei → String
+weiShowEth (Wei w) =
+  let len = S.length w
+  in if len > 18
+     then dropZeros $ S.take (len-18) w <> "." <> S.drop (len-18) w
+     else dropZeros $ "0." <> (S.fromCharArray $ A.replicate (18-len) '0') <> w
+  where dropZeros = S.fromCharArray ∘ A.reverse ∘ (A.dropWhile (\c → c == '0')) ∘ A.reverse ∘ S.toCharArray
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
 type SingleAddrLookupFn = ∀ e. (StringAddr → Eff e Unit) → StringId → Eff e Unit
 type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
 type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
+type StringNumLookupFn = ∀ e. (StringNum → Eff e Unit) → StringId → Eff e Unit
 type NumberLookupFn = ∀ e. (Number → Eff e Unit) → StringId → Eff e Unit
 
 foreign import initImpl ∷ ∀ e. Unit → Eff (foundation ∷ FOUNDATION | e) Unit
@@ -137,9 +156,9 @@ foreign import todoPendingImpl ∷ NameLookupFn
 foreign import addPendingUnificationImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import depositWeiImpl ∷ ∀ e. StringId → Number → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import depositWeiImpl ∷ ∀ e. StringId → StringNum → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import getDepositWeiImpl  ∷ NumberLookupFn
+foreign import getDepositWeiImpl  ∷ StringNumLookupFn
 foreign import expirationDateImpl ∷ NumberLookupFn
 
 checkAndInit ∷ MonadF Unit
@@ -220,7 +239,7 @@ depositWei w = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (weiNum w)
+    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (weiStr w)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
