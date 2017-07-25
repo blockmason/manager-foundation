@@ -21,7 +21,7 @@ exports.currentUserImpl = function(dummyVal) {
 
 exports.printTransactionImpl = function(unit) {
     return function() {
-        web3.eth.getTransactionReceipt("0x7a406952d4bcc5f600a397f4101fe64b4a6116a08a4a8f7d79ded9ecbbde51c3", function(error, result) {
+        web3.eth.getTransaction("0x7a406952d4bcc5f600a397f4101fe64b4a6116a08a4a8f7d79ded9ecbbde51c3", function(error, result) {
             console.log(result);
         });
     };

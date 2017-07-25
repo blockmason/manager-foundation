@@ -2,7 +2,7 @@ module Foundation.Container where
 
 import Foundation.Prelude
 
-import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
+import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad, TX(..))
 import Data.Either.Nested (Either1)
 import Control.Monad.Eff.Console (logShow)
 import Data.Functor.Coproduct.Nested (Coproduct1)
@@ -38,6 +38,7 @@ type ScreenChange = R.Screen
 type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
+             , txs      ∷ Array TX
              , currentScreen ∷ R.Screen
              , history ∷ Array R.Screen
              , myId ∷ Maybe F.FoundationId}
@@ -61,6 +62,7 @@ ui =
     initialState = { loggedIn: true
                    , loading: true
                    , errorBus: Nothing
+                   , txs: []
                    , currentScreen: R.OverviewScreen
                    , history: []
                    , myId: Just mockMe}
@@ -81,7 +83,9 @@ ui =
         ]
       , HH.div [ HP.id_ "body" ]
         [
-          HH.slot' CP.cp1 unit MainView.component state.errorBus $ HE.input SetScreen
+          HH.slot' CP.cp1 unit MainView.component
+          { msgBus: state.errorBus, txs: state.txs }
+          $ HE.input SetScreen
         ]
       , menu state.currentScreen state.myId
       ]

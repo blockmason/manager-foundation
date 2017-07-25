@@ -2,7 +2,7 @@ module Foundation.Manager where
 
 import Foundation.Prelude
 
-import Foundation.Types                (ContainerMsg(..), ContainerMsgBus, AppMonad)
+import Foundation.Types                (ContainerMsg(..), ContainerMsgBus, AppMonad, TX(..))
 
 import Halogen as H
 import Halogen.HTML as HH
@@ -34,6 +34,7 @@ data Query a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
+             , txs              ∷ Array TX
              , myId             ∷ Maybe F.FoundationId
              , addresses        ∷ Array F.EthAddress
              , sentPending      ∷ Maybe F.EthAddress
@@ -46,7 +47,7 @@ type State = { loading          ∷ Boolean
              }
 
 type ScreenChange = R.Screen
-type Input = ContainerMsgBus
+type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array TX }
 
 component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
 component =
@@ -60,7 +61,8 @@ component =
 
   initialState ∷ Input → State
   initialState input = { loading: false
-                       , errorBus: input
+                       , errorBus: input.msgBus
+                       , txs: input.txs
                        , myId: Nothing
                        , addresses: []
                        , sentPending: Nothing
@@ -88,7 +90,7 @@ component =
   eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
   eval = case _ of
     HandleInput input next → do
-      H.modify (_ { errorBus = input } )
+      H.modify (_ { errorBus = input.msgBus, txs = input.txs } )
       pure next
     ReloadAll next → do
       s ← H.get

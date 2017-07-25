@@ -10,7 +10,7 @@ import Control.Monad.Aff.Bus as Bus
 import Control.Monad.Eff.Timer (TIMER)
 import Control.Monad.Eff.Exception (EXCEPTION)
 import Network.Eth.Metamask (MetamaskStatus(..), METAMASK)
-import Network.Eth.Foundation (FOUNDATION)
+import Network.Eth.Foundation (FOUNDATION, EthAddress)
 
 ------------------- App Monad(s) ---------------------------
 type AppMonad eff = (Aff (exception ∷ EXCEPTION, timer ∷ TIMER, random ∷ RANDOM, avar ∷ AVAR, console ∷ CONSOLE, ajax ∷ AJAX, metamask ∷ METAMASK, foundation ∷ FOUNDATION | eff))
@@ -25,3 +25,7 @@ instance showContainerMsg ∷ Show ContainerMsg where
   show CheckMetamask   = "Checking Metamask status."
 
 type ContainerMsgBus = Maybe (Bus.BusRW ContainerMsg)
+
+data TX = TX EthAddress
+instance showTX ∷ Show TX where
+  show (TX e) = "Transaction: " ⊕ show e

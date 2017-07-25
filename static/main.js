@@ -5562,6 +5562,17 @@ var PS = {};
     };
   };
 
+  var replicatePolyfill = function (count) {
+    return function (value) {
+      var result = [];
+      var n = 0;
+      for (var i = 0; i < count; i++) {
+        result[n++] = value;
+      }
+      return result;
+    };
+  };
+
   // In browsers that have Array.prototype.fill we use it, as it's faster.
   exports.replicate = typeof Array.prototype.fill === "function" ?
       replicate :
@@ -9174,7 +9185,7 @@ var PS = {};
 
   exports.printTransactionImpl = function(unit) {
       return function() {
-          web3.eth.getTransactionReceipt("0x7a406952d4bcc5f600a397f4101fe64b4a6116a08a4a8f7d79ded9ecbbde51c3", function(error, result) {
+          web3.eth.getTransaction("0x7a406952d4bcc5f600a397f4101fe64b4a6116a08a4a8f7d79ded9ecbbde51c3", function(error, result) {
               console.log(result);
           });
       };
@@ -9510,11 +9521,12 @@ var PS = {};
   var Control_Monad_Eff_Exception = PS["Control.Monad.Eff.Exception"];
   var Control_Monad_Eff_Random = PS["Control.Monad.Eff.Random"];
   var Control_Monad_Eff_Timer = PS["Control.Monad.Eff.Timer"];
+  var Data_Semigroup = PS["Data.Semigroup"];
   var Data_Show = PS["Data.Show"];
   var Foundation_Prelude = PS["Foundation.Prelude"];
   var Network_Eth_Foundation = PS["Network.Eth.Foundation"];
   var Network_Eth_Metamask = PS["Network.Eth.Metamask"];
-  var Network_HTTP_Affjax = PS["Network.HTTP.Affjax"];        
+  var Network_HTTP_Affjax = PS["Network.HTTP.Affjax"];
   var FoundationError = (function () {
       function FoundationError() {
 
@@ -11621,7 +11633,7 @@ var PS = {};
                   if (optionalID instanceof Data_Maybe.Just) {
                       return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col myid-summary") ])([ card("ID")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showFoundationName)(optionalID.value0.name))), card("Expires")(Halogen_HTML_Core.text(Data_Maybe.maybe("")(formatDate)(expiryDate))), card("Addresses")(Halogen_HTML_Core.text(Data_Show.show(Data_Show.showInt)(addressCount) + " associated")), card("Current Deposit")(Halogen_HTML_Core.text(Network_Eth_Foundation.weiShowEth(balance) + " Eth")) ]);
                   };
-                  throw new Error("Failed pattern match at Foundation.Manager line 169, column 6 - line 184, column 10: " + [ optionalID.constructor.name ]);
+                  throw new Error("Failed pattern match at Foundation.Manager line 171, column 6 - line 186, column 10: " + [ optionalID.constructor.name ]);
               };
           };
       };
@@ -11656,7 +11668,8 @@ var PS = {};
       var initialState = function (input) {
           return {
               loading: false, 
-              errorBus: input, 
+              errorBus: input.msgBus, 
+              txs: input.txs, 
               myId: Data_Maybe.Nothing.value, 
               addresses: [  ], 
               sentPending: Data_Maybe.Nothing.value, 
@@ -11677,7 +11690,8 @@ var PS = {};
                           $44[$45] = v1[$45];
                       };
                   };
-                  $44.errorBus = v.value0;
+                  $44.errorBus = v.value0.msgBus;
+                  $44.txs = v.value0.txs;
                   return $44;
               }))(function () {
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
@@ -11748,7 +11762,7 @@ var PS = {};
                           return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
                       });
                   };
-                  throw new Error("Failed pattern match at Foundation.Manager line 113, column 7 - line 117, column 20: " + [ v.value0.constructor.name ]);
+                  throw new Error("Failed pattern match at Foundation.Manager line 115, column 7 - line 119, column 20: " + [ v.value0.constructor.name ]);
               });
           };
           if (v instanceof ExtendId) {
@@ -11816,7 +11830,7 @@ var PS = {};
           if (v instanceof CreateNewId) {
               return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
           };
-          throw new Error("Failed pattern match at Foundation.Manager line 89, column 10 - line 133, column 16: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Manager line 91, column 10 - line 135, column 16: " + [ v.constructor.name ]);
       };
       return Halogen_Component.component(Halogen_HTML_Core.bifunctorHTML)({
           initialState: initialState, 
@@ -12013,7 +12027,7 @@ var PS = {};
                               return Control_Applicative.pure(dictApplicative)(Data_Unit.unit);
                           });
                       };
-                      throw new Error("Failed pattern match at Foundation.Container line 156, column 3 - line 160, column 16: " + [ maybeBus.constructor.name ]);
+                      throw new Error("Failed pattern match at Foundation.Container line 160, column 3 - line 164, column 16: " + [ maybeBus.constructor.name ]);
                   };
               };
           };
@@ -12085,7 +12099,7 @@ var PS = {};
           if (myId instanceof Data_Maybe.Just) {
               return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen), menuItem(Foundation_Routes.FundIDScreen.value)(currentScreen) ]);
           };
-          throw new Error("Failed pattern match at Foundation.Container line 168, column 3 - line 183, column 10: " + [ myId.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 172, column 3 - line 187, column 10: " + [ myId.constructor.name ]);
       };
   };
   var loadingOverlay = function (loading) {
@@ -12107,12 +12121,16 @@ var PS = {};
   };
   var ui = (function () {
       var render = function (state) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("container"), Halogen_HTML_Properties.class_(Halogen_HTML_Core.ClassName("container-fluid " + Foundation_Routes.getRouteNameFor(state.currentScreen))) ])([ promptMetamask(state.loggedIn), loadingOverlay(state.loading), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("home-bar"), Halogen_HTML_Properties.class_("row home-bar") ])([ Halogen_HTML_Core.text("Foundation Manager") ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("back-nav-bar"), Halogen_HTML_Properties.class_("row back-nav-bar") ])([ Halogen_HTML_Elements.a([ Halogen_HTML_Properties.href("#"), Halogen_HTML_Properties.class_("close-pop-button"), Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(PreviousScreen.create)) ])([ Halogen_HTML_Elements.i([ Halogen_HTML_Properties.class_("fa fa-chevron-left") ])([  ]), Halogen_HTML_Core.text(" Back") ]) ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("body") ])([ Halogen_HTML["slot'"](Halogen_Component_ChildPath.cp1)(Data_Unit.unit)(Foundation_Manager.component)(state.errorBus)(Halogen_HTML_Events.input(SetScreen.create)) ]), menu(state.currentScreen)(state.myId) ]);
+          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("container"), Halogen_HTML_Properties.class_(Halogen_HTML_Core.ClassName("container-fluid " + Foundation_Routes.getRouteNameFor(state.currentScreen))) ])([ promptMetamask(state.loggedIn), loadingOverlay(state.loading), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("home-bar"), Halogen_HTML_Properties.class_("row home-bar") ])([ Halogen_HTML_Core.text("Foundation Manager") ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("back-nav-bar"), Halogen_HTML_Properties.class_("row back-nav-bar") ])([ Halogen_HTML_Elements.a([ Halogen_HTML_Properties.href("#"), Halogen_HTML_Properties.class_("close-pop-button"), Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(PreviousScreen.create)) ])([ Halogen_HTML_Elements.i([ Halogen_HTML_Properties.class_("fa fa-chevron-left") ])([  ]), Halogen_HTML_Core.text(" Back") ]) ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("body") ])([ Halogen_HTML["slot'"](Halogen_Component_ChildPath.cp1)(Data_Unit.unit)(Foundation_Manager.component)({
+              msgBus: state.errorBus, 
+              txs: state.txs
+          })(Halogen_HTML_Events.input(SetScreen.create)) ]), menu(state.currentScreen)(state.myId) ]);
       };
       var initialState = {
           loggedIn: true, 
           loading: true, 
           errorBus: Data_Maybe.Nothing.value, 
+          txs: [  ], 
           currentScreen: Foundation_Routes.OverviewScreen.value, 
           history: [  ], 
           myId: new Data_Maybe.Just(mockMe)
@@ -12183,7 +12201,7 @@ var PS = {};
                       });
                   });
               };
-              throw new Error("Failed pattern match at Foundation.Container line 102, column 9 - line 110, column 22: " + [ v.value0.constructor.name ]);
+              throw new Error("Failed pattern match at Foundation.Container line 106, column 9 - line 114, column 22: " + [ v.value0.constructor.name ]);
           };
           if (v instanceof RefreshMetamask) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
@@ -12230,7 +12248,7 @@ var PS = {};
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
               });
           };
-          throw new Error("Failed pattern match at Foundation.Container line 90, column 12 - line 120, column 18: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 94, column 12 - line 124, column 18: " + [ v.constructor.name ]);
       };
       return Halogen_Component.lifecycleParentComponent(Data_Either.ordEither(Data_Ord.ordUnit)(Data_Ord.ordVoid))({
           initialState: Data_Function["const"](initialState), 
