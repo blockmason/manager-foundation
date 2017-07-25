@@ -15,6 +15,7 @@ module Network.Eth.Foundation
        , fiGetAddrs
        , fnGetName
        , fnMkName
+       , mkWei
 
        , currentAddr
        , foundationId
@@ -46,6 +47,7 @@ import Control.Monad.Except.Trans  (ExceptT, throwError, runExceptT, lift)
 import Data.Either                 (Either(..))
 import Data.Maybe                  (Maybe(..))
 import Data.String                 (localeCompare)
+import Data.Int                    (round, toNumber)
 import Data.DateTime.Instant       (instant, toDateTime)
 import Data.Time.Duration          (Milliseconds(..))
 import Data.DateTime               (DateTime(..))
@@ -109,12 +111,14 @@ fiBlankId ∷ FoundationId
 fiBlankId = FoundationId { name: (FoundationName ""), addrs: [] }
 fiStrName = fnGetName ∘ fiGetName
 
-newtype Wei = Wei Number
-mkWei = Wei
+newtype Wei = Wei Int
+mkWei = (Wei ∘ round)
 instance showWei ∷ Show Wei where
-  show (Wei num) = "Wei: " <> show num
-weiGet ∷ Wei → Number
-weiGet (Wei num) = num
+  show (Wei i) = show i
+weiGet ∷ Wei → Int
+weiGet (Wei i) = i
+weiNum ∷ Wei → Number
+weiNum (Wei i) = toNumber i
 
 type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
 type SingleAddrLookupFn = ∀ e. (StringAddr → Eff e Unit) → StringId → Eff e Unit
@@ -216,7 +220,7 @@ depositWei w = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (weiGet w)
+    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (weiNum w)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
@@ -230,7 +234,7 @@ getDepositWei = do
   mId ← foundationId
   case mId of
     Nothing → pure Nothing
-    Just i  → (Just ∘ Wei) <$>
+    Just i  → (Just ∘ mkWei) <$>
       (liftAff $ makeAff (\e s → getDepositWeiImpl s (fiStrName i)))
 
 expirationDate ∷ MonadF (Maybe DateTime)

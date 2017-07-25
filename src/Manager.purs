@@ -36,7 +36,7 @@ type State = { loading          ∷ Boolean
              , sentPending      ∷ Maybe F.EthAddress
              , todoPending      ∷ Maybe F.FoundationName
              , expiryDate       ∷ String
-             , funds            ∷ F.Wei
+             , funds            ∷ Maybe F.Wei
              , newAddress       ∷ Either String F.EthAddress
              , newName          ∷ String
              }
@@ -62,7 +62,7 @@ component =
                        , sentPending: Nothing
                        , todoPending: Nothing
                        , expiryDate: randomDate
-                       , funds: F.Wei 10000.0
+                       , funds: Nothing
                        , newAddress: Left ""
                        , newName: ""
                      }
@@ -150,9 +150,10 @@ card cardTitle child =
             [child]
         ]
 
-summary ∷ Maybe F.FoundationId → String → Int → F.Wei → H.ComponentHTML Query
-summary optionalID expiryDate addressCount balance=
-  case optionalID of
+summary ∷ Maybe F.FoundationId → String → Int → Maybe F.Wei → H.ComponentHTML Query
+summary optionalID expiryDate addressCount funds =
+  let balance = fromMaybe (F.mkWei 0.0) funds
+  in case optionalID of
     Nothing →
       HH.div
         [HP.class_ (HH.ClassName "col myid-summary")]
@@ -165,8 +166,8 @@ summary optionalID expiryDate addressCount balance=
         [
           (card "ID" $ HH.text $ show myId.name),
           (card "Expires" $ HH.text randomDate),
-          (card "Addresses" $ HH.text $ show addressCount <> " associated"),
-          (card "Current Balance" $ HH.text $ show balance <> " Wei")
+          (card "Addresses" $ HH.text $ show addressCount ⊕ " associated"),
+          (card "Current Deposit" $ HH.text $ show balance ⊕ " Wei" )
         ]
 
 addressesPage ∷ Array F.EthAddress → Maybe F.EthAddress → Maybe F.FoundationName
@@ -179,15 +180,15 @@ addressesPage addresses sentPending todoPending =
            HH.button [ HE.onClick $ HE.input_ $ GoToPage R.AddAddressScreen
                      , HP.class_ $ HH.ClassName "confirm-address-button"]
            [ HH.text "Add Address" ])
-        ] <>
+        ] ⊕
         (maybe []
          (\sp → [(card "Waiting for confirmation from:" $ HH.text $ show sp)])
          sentPending)
-        <>
+        ⊕
         (maybe []
          (\tp → [(card "Confirmation required for id:" $ idConfirmation tp)])
          todoPending)
-        <>
+        ⊕
         ((\address → card "Unified Address" $ HH.text $ show address) <$> addresses)
   where idConfirmation fName =
           HH.div [ HP.class_ (HH.ClassName "col") ]
@@ -203,14 +204,14 @@ addAddressRequestBlock name =
     [HP.class_ (HH.ClassName "")]
     [HH.button [ HE.onClick $ HE.input_ $ ConfirmUnification name
                   , HP.class_ $ HH.ClassName "confirm-unification-button"]
-                  [ HH.text $ "Combine with: " <> show name]]
+                  [ HH.text $ "Combine with: " ⊕ show name]]
 
 addAddressPage ∷ State → H.ComponentHTML Query
 addAddressPage state =
   HH.div
     [HP.class_ (HH.ClassName "col add-address-page")]
     [
-      (card ("Link a new address to " <> (maybe "" (show ∘ F.fiGetName) state.myId)) $
+      (card ("Link a new address to " ⊕ (maybe "" (show ∘ F.fiGetName) state.myId)) $
        HH.div
         [HP.class_ (HH.ClassName "col")]
         [
@@ -246,7 +247,7 @@ fundsPage state =
   HH.div
     [HP.class_ (HH.ClassName "col funds-page")]
     [
-      (card "Balance" $ HH.text $ show state.funds <> " Wei"),
+      (card "Balance" $ HH.text $ show state.funds ⊕ " Wei"),
       (card "Deposit" $
         HH.button [ HE.onClick $ HE.input_ $ FundId
                     , HP.class_ $ HH.ClassName "btn btn-secondary"]
@@ -284,10 +285,10 @@ loadFromBlockchain = do
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
   hLog expiryDate
-  hLog depWei
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
-              , sentPending = sentPending, todoPending = todoPending })
+              , sentPending = sentPending, todoPending = todoPending
+              , funds = depWei })
 
 -- mocks
 randomDate ∷ String
