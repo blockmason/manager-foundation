@@ -11,6 +11,7 @@ import Halogen.HTML.Properties as HP
 import Data.Array as A
 import Data.String as S
 import Data.DateTime                   (DateTime(..))
+import Data.Formatter.DateTime as DTF
 
 import Foundation.Blockchain           (handleFCall)
 import Foundation.Routes as R
@@ -35,7 +36,7 @@ type State = { loading          ∷ Boolean
              , addresses        ∷ Array F.EthAddress
              , sentPending      ∷ Maybe F.EthAddress
              , todoPending      ∷ Maybe F.FoundationName
-             , expiryDate       ∷ String
+             , expiryDate       ∷ Maybe DateTime
              , funds            ∷ Maybe F.Wei
              , newAddress       ∷ Either String F.EthAddress
              , newName          ∷ String
@@ -61,7 +62,7 @@ component =
                        , addresses: []
                        , sentPending: Nothing
                        , todoPending: Nothing
-                       , expiryDate: randomDate
+                       , expiryDate: Nothing
                        , funds: Nothing
                        , newAddress: Left ""
                        , newName: ""
@@ -150,7 +151,8 @@ card cardTitle child =
             [child]
         ]
 
-summary ∷ Maybe F.FoundationId → String → Int → Maybe F.Wei → H.ComponentHTML Query
+summary ∷ Maybe F.FoundationId → Maybe DateTime → Int → Maybe F.Wei
+        → H.ComponentHTML Query
 summary optionalID expiryDate addressCount funds =
   let balance = fromMaybe (F.mkWei 0.0) funds
   in case optionalID of
@@ -165,7 +167,7 @@ summary optionalID expiryDate addressCount funds =
         [HP.class_ (HH.ClassName "col myid-summary")]
         [
           (card "ID" $ HH.text $ show myId.name),
-          (card "Expires" $ HH.text randomDate),
+          (card "Expires" $ HH.text $ maybe "" formatDate expiryDate ),
           (card "Addresses" $ HH.text $ show addressCount ⊕ " associated"),
           (card "Current Deposit" $ HH.text $ show balance ⊕ " Wei" )
         ]
@@ -230,12 +232,12 @@ addAddressPage state =
       )
     ]
 
-extendIdPage ∷ String → H.ComponentHTML Query
+extendIdPage ∷ Maybe DateTime → H.ComponentHTML Query
 extendIdPage expiryDate =
   HH.div
     [HP.class_ (HH.ClassName "col extend-id-page")]
     [
-      (card "Expires" $ HH.text expiryDate),
+      (card "Expires" $ HH.text $ maybe "" formatDate expiryDate ),
       (card "Extend for 1 Year" $
         HH.button [ HE.onClick $ HE.input_ $ ExtendId
                     , HP.class_ $ HH.ClassName "btn btn-secondary"]
@@ -284,12 +286,13 @@ loadFromBlockchain = do
   todoPending ← handleFCall eb Nothing F.todoPending
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
-  hLog expiryDate
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
-              , funds = depWei })
+              , funds = depWei, expiryDate = expiryDate })
 
+formatDate ∷ DateTime → String
+formatDate = (either (const "") id) ∘ (DTF.formatDateTime "YYYY-MM-DD")
 -- mocks
 randomDate ∷ String
 randomDate = "2018-11-01"
