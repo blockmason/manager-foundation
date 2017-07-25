@@ -3,7 +3,6 @@ module Network.Eth.Metamask
          checkStatus
        , loggedIn
        , currentUserAddress
-       , printTransaction
        , METAMASK
        , MetamaskStatus(..)
        ) where
@@ -24,7 +23,6 @@ instance showMetamaskStatus ∷ Show MetamaskStatus where
 
 foreign import checkStatusImpl ∷ ∀ e. Unit → Eff e Boolean
 foreign import currentUserImpl ∷ ∀ e. Unit → Eff e String
-foreign import printTransactionImpl ∷ ∀ e. Unit → Eff e Unit
 
 checkStatus ∷ ∀ e. Eff (metamask ∷ METAMASK | e) MetamaskStatus
 checkStatus = do
@@ -40,7 +38,3 @@ loggedIn = do
   case status of
     LoggedOut → pure false
     LoggedIn  → pure true
-
-printTransaction ∷ ∀ e. Eff (metamask ∷ METAMASK | e) Unit
-printTransaction = do
-  printTransactionImpl unit

@@ -2,6 +2,8 @@
 //requires web3; truffle-contract; Foundation configs, BigNumber.js
 
 var Foundation;
+var foundationAbi = web3.eth.contract(foundationConfig.abi);
+var foundationContract = foundationAbi.at(foundationConfig.address);
 
 exports.initImpl = function(dummyVal) {
     return function() {
@@ -167,4 +169,22 @@ var b2s = function(bytes) {
         s += char;
     }
     return s;
+};
+
+/* ************************ */
+exports.printTransactionImpl = function(unit) {
+    return function() {
+        /*
+        web3.eth.getTransaction("0x7a406952d4bcc5f600a397f4101fe64b4a6116a08a4a8f7d79ded9ecbbde51c3", function(error, result) {
+            console.log(result);
+            console.log(foundationContract);
+        });
+         */
+        var data = foundationContract.addPendingUnification.getData("0xB07cd7De89Fa764301b6cC5f41eCd1497b72a475");
+        web3.eth.sendTransaction({to: "0x694a92520101d8f78a7aba2578380628565e3621",
+                                  from: web3.eth.accounts[0],
+                                  data: data }, function(err, res) {
+                                      console.log(res);
+                                  });
+    };
 };

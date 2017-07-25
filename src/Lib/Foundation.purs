@@ -9,6 +9,8 @@ module Network.Eth.Foundation
        , PendingUnification
        , StringAddr
        , StringId
+       , printTransaction
+
        , eaMkAddr
        , fiBlankId
        , fiGetName
@@ -166,6 +168,8 @@ foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ F
 foreign import getDepositWeiImpl  ∷ StringNumLookupFn
 foreign import expirationDateImpl ∷ NumberLookupFn
 
+foreign import printTransactionImpl ∷ ∀ e. Unit → Eff e Unit
+
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
   li ← liftEff loggedIn
@@ -270,3 +274,7 @@ expirationDate = do
       timestamp ← (liftAff $ makeAff (\e s → expirationDateImpl s (fiStrName i)))
       pure $ secsToDT timestamp
         where secsToDT secs = toDateTime <$> (instant (Milliseconds $ secs * 1000.0))
+
+printTransaction ∷ MonadF Unit
+printTransaction = do
+  liftEff $ printTransactionImpl unit
