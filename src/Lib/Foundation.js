@@ -121,6 +121,18 @@ exports.withdrawDepositImpl = function(foundationId) {
     };
 };
 
+exports.getDepositWeiImpl = function(callback) {
+    return function(foundationId) {
+        return function() {
+            Foundation.deployed().then(function(instance) {
+                return instance.getDepositWei.call(foundationId);
+            }).then(function(r) {
+                callback(parseInt(r.valueOf()))();
+            });
+        };
+    };
+};
+
 exports.expirationDateImpl = function(callback) {
     return function(foundationId) {
         return function() {

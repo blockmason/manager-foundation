@@ -33,6 +33,7 @@ module Network.Eth.Foundation
 
        , depositWei
        , withdrawDeposit
+       , getDepositWei
        , expirationDate
        ) where
 
@@ -45,6 +46,9 @@ import Control.Monad.Except.Trans  (ExceptT, throwError, runExceptT, lift)
 import Data.Either                 (Either(..))
 import Data.Maybe                  (Maybe(..))
 import Data.String                 (localeCompare)
+import Data.DateTime.Instant       (instant, toDateTime)
+import Data.Time.Duration          (Milliseconds(..))
+import Data.DateTime               (DateTime(..))
 import Data.Array                  as A
 import Network.Eth.Metamask        (loggedIn, currentUserAddress, METAMASK)
 
@@ -91,7 +95,7 @@ newtype FoundationId = FoundationId { name      ∷ FoundationName
                                     , addrs ∷ Array EthAddress }
 
 isValid ∷ FoundationId → Boolean
-isValid = not <<< A.null <<< fiGetAddrs
+isValid = not ∘ A.null ∘ fiGetAddrs
 instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = case isValid (FoundationId fi) of
     true  → show fi.name <> ", " <> show fi.addrs
@@ -103,9 +107,10 @@ fiGetAddrs ∷ FoundationId → Array EthAddress
 fiGetAddrs (FoundationId fi) = fi.addrs
 fiBlankId ∷ FoundationId
 fiBlankId = FoundationId { name: (FoundationName ""), addrs: [] }
-fiStrName = fnGetName <<< fiGetName
+fiStrName = fnGetName ∘ fiGetName
 
 newtype Wei = Wei Number
+mkWei = Wei
 instance showWei ∷ Show Wei where
   show (Wei num) = show num
 weiGet ∷ Wei → Number
@@ -130,6 +135,7 @@ foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (founda
 foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import depositWeiImpl ∷ ∀ e. StringId → Number → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import getDepositWeiImpl  ∷ NumberLookupFn
 foreign import expirationDateImpl ∷ NumberLookupFn
 
 checkAndInit ∷ MonadF Unit
@@ -210,14 +216,22 @@ depositWei w = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ depositWeiImpl ((fnGetName <<< fiGetName) fi) (weiGet w)
+    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (weiGet w)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ withdrawDepositImpl ((fnGetName <<<fiGetName) fi)
+    Just fi → liftEff $ withdrawDepositImpl ((fnGetName ∘fiGetName) fi)
+
+getDepositWei ∷ MonadF (Maybe Wei)
+getDepositWei = do
+  mId ← foundationId
+  case mId of
+    Nothing → pure Nothing
+    Just i  → (Just ∘ Wei) <$>
+      (liftAff $ makeAff (\e s → getDepositWeiImpl s (fiStrName i)))
 
 expirationDate ∷ MonadF (Maybe Number)
 expirationDate = do

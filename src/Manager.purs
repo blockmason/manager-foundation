@@ -275,13 +275,15 @@ createIdPage state =
     ]
 
 loadFromBlockchain = do
-  s ← H.get
+  eb ← H.gets _.errorBus
   H.modify (_ { loading = true })
-  myId        ← handleFCall s.errorBus Nothing F.foundationId
-  sentPending ← handleFCall s.errorBus Nothing F.sentPending
-  todoPending ← handleFCall s.errorBus Nothing F.todoPending
-  expiryDate  ← handleFCall s.errorBus Nothing F.expirationDate
+  myId        ← handleFCall eb Nothing F.foundationId
+  sentPending ← handleFCall eb Nothing F.sentPending
+  todoPending ← handleFCall eb Nothing F.todoPending
+  expiryDate  ← handleFCall eb Nothing F.expirationDate
+  depWei      ← handleFCall eb Nothing F.getDepositWei
   hLog expiryDate
+  hLog depWei
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending })
