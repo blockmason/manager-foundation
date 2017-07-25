@@ -49,7 +49,7 @@ type State = { loading          ∷ Boolean
 
 type ScreenChange = R.Screen
 type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array E.TX
-             , foundationId ∷ Maybe F.FoundationId }
+             , myId ∷ Maybe F.FoundationId }
 
 component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
 component =
@@ -65,7 +65,7 @@ component =
   initialState input = { loading: false
                        , errorBus: input.msgBus
                        , txs: input.txs
-                       , myId: input.foundationId
+                       , myId: input.myId
                        , addresses: []
                        , sentPending: Nothing
                        , todoPending: Nothing
@@ -93,7 +93,7 @@ component =
   eval = case _ of
     HandleInput input next → do
       H.modify (_ { errorBus = input.msgBus, txs = input.txs
-                  , myId = input.foundationId })
+                  , myId = input.myId })
       pure next
     ReloadAll next → do
       s ← H.get
@@ -123,7 +123,7 @@ component =
     ExtendId next → do
       pure next
     InputFundAmount strWei next → do
-      hLog $ mkWei strWei
+      hLog $ E.mkWei strWei
       H.modify (_ {fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do

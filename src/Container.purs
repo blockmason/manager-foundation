@@ -86,7 +86,7 @@ ui =
       , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component
-          { msgBus: state.errorBus, txs: state.txs, foundationId: state.myId }
+          { msgBus: state.errorBus, txs: state.txs, myId: state.myId }
           $ HE.input SetScreen
         ]
       , menu state.currentScreen state.myId
