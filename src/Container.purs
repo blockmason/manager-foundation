@@ -101,9 +101,9 @@ ui =
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
         runTests
-        refreshMetamask
         myId        ← handleFCall (Just bus) Nothing F.foundationId
         H.modify (_ { myId = myId })
+        refreshMetamask
         startCheckInterval (Just bus) 5000
         pure next
       HandleMsg msg next → do

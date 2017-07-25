@@ -124,7 +124,7 @@ component =
       pure next
     InputFundAmount strWei next → do
       hLog $ E.mkWei strWei
-      H.modify (_ {fundAmountWei = E.mkWei strWei })
+      H.modify (_ { fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do
       eb ← H.gets _.errorBus
@@ -269,7 +269,7 @@ fundsPage state =
     [HP.class_ (HH.ClassName "col funds-page")]
     [
       (card "Balance" $ HH.text $ (maybe "" show state.funds) ⊕ " Wei"),
-      (card "Deposit" $
+      (card ("Deposit: " ⊕ E.weiShowEth state.fundAmountWei ⊕ " Eth") $
        HH.div [ HP.class_ (HH.ClassName "col") ]
        [ HH.input [ HP.type_ HP.InputText
                   , HP.class_ $ HH.ClassName "row"
@@ -314,7 +314,8 @@ loadFromBlockchain myId = do
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
 --  hLog $ E.weiShowEth <$> depWei
-  let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
+  hLog $ "myId: " ⊕ show myId
+  let addrs = maybe [] F.fiGetAddrs myId
   H.modify (_ { loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
               , funds = depWei, expiryDate = expiryDate })
