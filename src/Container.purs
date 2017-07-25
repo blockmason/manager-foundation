@@ -2,7 +2,7 @@ module Foundation.Container where
 
 import Foundation.Prelude
 
-import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad, TX(..))
+import Foundation.Types (ContainerMsg(..), ContainerMsgBus, AppMonad)
 import Data.Either.Nested (Either1)
 import Control.Monad.Eff.Console (logShow)
 import Data.Functor.Coproduct.Nested (Coproduct1)
@@ -20,10 +20,11 @@ import Halogen.Component.ChildPath as CP
 import Halogen.Component.Utils (busEventSource)
 import Halogen.Query.EventSource as ES
 
-import Network.Eth.Metamask as MM
-import Network.Eth.Foundation as F
-import Foundation.Manager as MainView
-import Foundation.Routes as R
+import Network.Eth             as E
+import Network.Eth.Metamask    as MM
+import Network.Eth.Foundation  as F
+import Foundation.Manager      as MainView
+import Foundation.Routes       as R
 
 import Data.Array as A
 
@@ -38,7 +39,7 @@ type ScreenChange = R.Screen
 type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
-             , txs      ∷ Array TX
+             , txs      ∷ Array E.TX
              , currentScreen ∷ R.Screen
              , history ∷ Array R.Screen
              , myId ∷ Maybe F.FoundationId}
@@ -65,7 +66,7 @@ ui =
                    , txs: []
                    , currentScreen: R.OverviewScreen
                    , history: []
-                   , myId: Just mockMe}
+                   , myId: Nothing }
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
@@ -194,15 +195,6 @@ menuItem screen currentScreen =
         HE.onClick $ HE.input_ $ SetScreen screen]
   [ HH.text $ R.getMenuNameFor screen]
 
---  mocks
-mockFoundationName1 ∷ F.FoundationName
-mockFoundationName1 = F.FoundationName "Luke"
-
-mockEthAddesses ∷ Array F.EthAddress
-mockEthAddesses = [F.EthAddress "0x0", F.EthAddress "0x1"]
-
-mockMe ∷ F.FoundationId
-mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})
 
 runTests = do
 --  _ ← H.liftAff $ F.runMonadF F.printTransaction

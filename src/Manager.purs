@@ -2,7 +2,7 @@ module Foundation.Manager where
 
 import Foundation.Prelude
 
-import Foundation.Types                (ContainerMsg(..), ContainerMsgBus, AppMonad, TX(..))
+import Foundation.Types                (ContainerMsg(..), ContainerMsgBus, AppMonad)
 
 import Halogen as H
 import Halogen.HTML as HH
@@ -16,7 +16,8 @@ import Data.Formatter.DateTime as DTF
 
 import Foundation.Blockchain           (handleFCall)
 import Foundation.Routes as R
-import Network.Eth.Foundation as F
+import Network.Eth.Foundation  as F
+import Network.Eth             as E
 
 data Query a
   = RefreshAddress a
@@ -27,27 +28,27 @@ data Query a
   | InputNewAddress String a
   | InputNewName String a
   | CreateNewId String a
-  | AddNewAddress (Either String F.EthAddress) a
+  | AddNewAddress (Either String E.EthAddress) a
   | ExtendId a
   | InputFundAmount String a
-  | FundId F.Wei a
+  | FundId E.Wei a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
-             , txs              ∷ Array TX
+             , txs              ∷ Array E.TX
              , myId             ∷ Maybe F.FoundationId
-             , addresses        ∷ Array F.EthAddress
-             , sentPending      ∷ Maybe F.EthAddress
+             , addresses        ∷ Array E.EthAddress
+             , sentPending      ∷ Maybe E.EthAddress
              , todoPending      ∷ Maybe F.FoundationName
              , expiryDate       ∷ Maybe DateTime
-             , funds            ∷ Maybe F.Wei
-             , newAddress       ∷ Either String F.EthAddress
+             , funds            ∷ Maybe E.Wei
+             , newAddress       ∷ Either String E.EthAddress
              , newName          ∷ String
-             , fundAmountWei    ∷ F.Wei
+             , fundAmountWei    ∷ E.Wei
              }
 
 type ScreenChange = R.Screen
-type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array TX }
+type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array E.TX }
 
 component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
 component =
@@ -71,7 +72,7 @@ component =
                        , funds: Nothing
                        , newAddress: Left ""
                        , newName: ""
-                       , fundAmountWei: F.zeroWei
+                       , fundAmountWei: E.zeroWei
                      }
 
   render ∷ State → H.ComponentHTML Query
@@ -107,7 +108,7 @@ component =
       pure next
     InputNewAddress addrs next → do
       if ((S.length addrs) == 42) --
-        then H.modify (_ { newAddress = Right $ F.EthAddress addrs })
+        then H.modify (_ { newAddress = Right $ E.EthAddress addrs })
         else H.modify (_ { newAddress = Left addrs })
       pure next
     AddNewAddress eitherAddr next → do
@@ -120,7 +121,7 @@ component =
     ExtendId next → do
       pure next
     InputFundAmount strWei next → do
-      H.modify (_ {fundAmountWei = F.mkWei strWei })
+      H.modify (_ {fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do
       eb ← H.gets _.errorBus
@@ -132,8 +133,10 @@ component =
       H.modify (_ { newName = nameStr })
       pure next
     CreateNewId name next → do
+      eb ← H.gets _.errorBus
+      tx ← handleFCall eb E.blankTx (F.createId $ F.fnMkName name)
+      hLog tx
       pure next
-
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
 page screen child =
@@ -164,10 +167,10 @@ card cardTitle child =
             [child]
         ]
 
-summary ∷ Maybe F.FoundationId → Maybe DateTime → Int → Maybe F.Wei
+summary ∷ Maybe F.FoundationId → Maybe DateTime → Int → Maybe E.Wei
         → H.ComponentHTML Query
 summary optionalID expiryDate addressCount funds =
-  let balance = fromMaybe (F.zeroWei) funds
+  let balance = fromMaybe (E.zeroWei) funds
   in case optionalID of
     Nothing →
       HH.div
@@ -182,10 +185,10 @@ summary optionalID expiryDate addressCount funds =
           (card "ID" $ HH.text $ show myId.name),
           (card "Expires" $ HH.text $ maybe "" formatDate expiryDate ),
           (card "Addresses" $ HH.text $ show addressCount ⊕ " associated"),
-          (card "Current Deposit" $ HH.text $ F.weiShowEth balance ⊕ " Eth" )
+          (card "Current Deposit" $ HH.text $ E.weiShowEth balance ⊕ " Eth" )
         ]
 
-addressesPage ∷ Array F.EthAddress → Maybe F.EthAddress → Maybe F.FoundationName
+addressesPage ∷ Array E.EthAddress → Maybe E.EthAddress → Maybe F.FoundationName
               → H.ComponentHTML Query
 addressesPage addresses sentPending todoPending =
       HH.div
@@ -268,7 +271,7 @@ fundsPage state =
        [ HH.input [ HP.type_ HP.InputText
                   , HP.class_ $ HH.ClassName "row"
                   , HP.placeholder $ "Enter wei to deposit here"
-                  , HP.value $ F.weiStr state.fundAmountWei
+                  , HP.value $ E.weiStr state.fundAmountWei
                   , HE.onValueInput
                     (HE.input (\val → InputFundAmount val))
                   ]
@@ -308,7 +311,7 @@ loadFromBlockchain = do
   todoPending ← handleFCall eb Nothing F.todoPending
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
---  hLog $ F.weiShowEth <$> depWei
+--  hLog $ E.weiShowEth <$> depWei
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
@@ -326,8 +329,8 @@ mockFoundationName1 = F.FoundationName "Luke"
 mockFoundationName2 ∷ F.FoundationName
 mockFoundationName2 = F.FoundationName "Tim"
 
-mockEthAddesses ∷ Array F.EthAddress
-mockEthAddesses = [F.EthAddress "0x0", F.EthAddress "0x1"]
+mockEthAddesses ∷ Array E.EthAddress
+mockEthAddesses = [E.EthAddress "0x0", E.EthAddress "0x1"]
 
 mockMe ∷ F.FoundationId
 mockMe = (F.FoundationId {name: mockFoundationName1, addrs: mockEthAddesses})

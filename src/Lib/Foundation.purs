@@ -3,24 +3,15 @@ module Network.Eth.Foundation
          FOUNDATION
        , FoundationId(..)
        , FoundationName(..)
-       , EthAddress(..)
        , Error(..)
-       , Wei(..)
        , PendingUnification
-       , StringAddr
-       , StringId
        , printTransaction
 
-       , eaMkAddr
        , fiBlankId
        , fiGetName
        , fiGetAddrs
        , fnGetName
        , fnMkName
-       , mkWei
-       , weiStr
-       , weiShowEth
-       , zeroWei
 
        , currentAddr
        , foundationId
@@ -59,15 +50,13 @@ import Data.Time.Duration          (Milliseconds(..))
 import Data.DateTime               (DateTime(..))
 import Data.Array                  as A
 import Network.Eth.Metamask        (loggedIn, currentUserAddress, METAMASK)
+import Network.Eth                 as E
 
 infixr 9 compose as ∘
 foreign import data FOUNDATION ∷ Effect
 type MonadF a = ∀ e. ExceptT Error (Aff (foundation ∷ FOUNDATION, metamask ∷ METAMASK | e)) a
 runMonadF = runExceptT
 
-type StringAddr = String
-type StringId = String
-type StringNum = String
 type PendingUnification = FoundationId
 
 -- error
@@ -81,27 +70,14 @@ instance showError ∷ Show Error where
   show InvalidDebtId  = "InvalidDebtId"
   show NoFoundationId = "NoFoundationId"
 
-newtype EthAddress = EthAddress StringAddr
-instance showEthAddress ∷ Show EthAddress where
-  show (EthAddress ua) = ua
-instance eqEthAddress ∷ Eq EthAddress where
-  eq (EthAddress ua1) (EthAddress ua2) = ua1 == ua2
-instance ordEthAddress ∷ Ord EthAddress where
-  compare (EthAddress ua1) (EthAddress ua2) = S.localeCompare ua1 ua2
-getEa ∷ EthAddress → String
-getEa (EthAddress ea) = ea
-eaMkAddr = EthAddress
-isNull ∷ EthAddress → Boolean
-isNull (EthAddress ea) = ea == "0x0000000000000000000000000000000000000000"
-
-newtype FoundationName = FoundationName StringId
+newtype FoundationName = FoundationName E.StringId
 instance showFoundationName ∷ Show FoundationName where
   show (FoundationName fn) = fn
 fnGetName (FoundationName fn) = fn
 fnMkName = FoundationName
 
 newtype FoundationId = FoundationId { name      ∷ FoundationName
-                                    , addrs ∷ Array EthAddress }
+                                    , addrs ∷ Array E.EthAddress }
 
 isValid ∷ FoundationId → Boolean
 isValid = not ∘ A.null ∘ fiGetAddrs
@@ -112,59 +88,35 @@ instance showFoundationId ∷ Show FoundationId where
 
 fiGetName ∷ FoundationId → FoundationName
 fiGetName (FoundationId fi) = fi.name
-fiGetAddrs ∷ FoundationId → Array EthAddress
+fiGetAddrs ∷ FoundationId → Array E.EthAddress
 fiGetAddrs (FoundationId fi) = fi.addrs
 fiBlankId ∷ FoundationId
 fiBlankId = FoundationId { name: (FoundationName ""), addrs: [] }
 fiStrName = fnGetName ∘ fiGetName
 
-newtype Wei = Wei String
-mkWei ∷ String → Wei
-mkWei ""  = Wei "0"
-mkWei str = if isInt str then Wei str else zeroWei
-  where isInt "" = true
-        isInt s  = (isJust (fromString $ S.take 9 s)) && (isInt $ S.drop 9 s)
-zeroWei ∷ Wei
-zeroWei = Wei "0"
-instance showWei ∷ Show Wei where
-  show (Wei s) = s
-weiGet ∷ Wei → String
-weiGet (Wei s) = s
-weiStr ∷ Wei → String
-weiStr (Wei s) = s
-weiShowEth ∷ Wei → String
-weiShowEth (Wei w) =
-  let len = S.length w
-  in if len > 18
-     then dropZeros $ S.take (len-18) w <> "." <> S.drop (len-18) w
-     else dropZeros $ "0." <> (S.fromCharArray $ A.replicate (18-len) '0') <> w
-  where dropZeros s =
-          let rev = (A.dropWhile (\c → c == '0')) ∘ A.reverse ∘ S.toCharArray $ s
-          in if A.head rev == (Just '.')
-             then S.fromCharArray ∘ A.reverse ∘ (A.drop 1) $ rev
-             else S.fromCharArray ∘ A.reverse $ rev
-
-
-type AddrLookupFn = ∀ e. (Array StringAddr → Eff e Unit) → StringId → Eff e Unit
-type SingleAddrLookupFn = ∀ e. (StringAddr → Eff e Unit) → StringId → Eff e Unit
-type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → StringAddr → StringAddr → Eff e Unit
-type NameLookupFn = ∀ e. (StringId → Eff e Unit) → StringAddr → Eff e Unit
-type StringNumLookupFn = ∀ e. (StringNum → Eff e Unit) → StringId → Eff e Unit
-type NumberLookupFn = ∀ e. (Number → Eff e Unit) → StringId → Eff e Unit
+type AddrLookupFn = ∀ e. (Array E.StringAddr → Eff e Unit) → E.StringId → Eff e Unit
+type SingleAddrLookupFn = ∀ e. (E.StringAddr → Eff e Unit) → E.StringId → Eff e Unit
+type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → E.StringAddr → E.StringAddr → Eff e Unit
+type NameLookupFn = ∀ e. (E.StringId → Eff e Unit) → E.StringAddr → Eff e Unit
+type StringNumLookupFn = ∀ e. (E.StringNum → Eff e Unit) → E.StringId → Eff e Unit
+type NumberLookupFn = ∀ e. (Number → Eff e Unit) → E.StringId  → Eff e Unit
+type ZeroArgTx = ∀ e. (E.RawTx → Eff e Unit)                   → Eff e Unit
+type OneArgTx  = ∀ e. (E.RawTx → Eff e Unit) → String          → Eff e Unit
+type TwoArgTx  = ∀ e. (E.RawTx → Eff e Unit) → String → String → Eff e Unit
 
 foreign import initImpl ∷ ∀ e. Unit → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import resolveToAddrImpl ∷ AddrLookupFn
 foreign import resolveToNameImpl ∷ NameLookupFn
 foreign import areSameIdImpl ∷ AddrComparisonFn
 
-foreign import createIdImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import createIdImpl ∷ OneArgTx
 foreign import sentPendingImpl ∷ SingleAddrLookupFn
 foreign import todoPendingImpl ∷ NameLookupFn
-foreign import addPendingUnificationImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import confirmPendingUnificationImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import deleteAddrImpl ∷ ∀ e. StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import depositWeiImpl ∷ ∀ e. StringId → StringNum → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import withdrawDepositImpl ∷ ∀ e. StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import addPendingUnificationImpl ∷ ∀ e. E.StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import confirmPendingUnificationImpl ∷ ∀ e. E.StringId → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import deleteAddrImpl ∷ ∀ e. E.StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import depositWeiImpl ∷ ∀ e. E.StringId → E.StringNum → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import withdrawDepositImpl ∷ ∀ e. E.StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import getDepositWeiImpl  ∷ StringNumLookupFn
 foreign import expirationDateImpl ∷ NumberLookupFn
 
@@ -177,10 +129,10 @@ checkAndInit = do
     then liftEff $ initImpl unit
     else throwError NoMetamask
 
-currentAddr ∷ MonadF EthAddress
+currentAddr ∷ MonadF E.EthAddress
 currentAddr = do
   checkAndInit
-  EthAddress <$> liftEff currentUserAddress
+  E.EthAddress <$> liftEff currentUserAddress
 
 foundationId ∷ MonadF (Maybe FoundationId)
 foundationId = do
@@ -194,61 +146,61 @@ idByName ∷ FoundationName → MonadF FoundationId
 idByName (FoundationName name) = do
   checkAndInit
   addrs ← liftAff $ makeAff (\err succ → resolveToAddrImpl succ name)
-  pure $ FoundationId { name: FoundationName name, addrs: EthAddress <$> addrs }
+  pure $ FoundationId { name: FoundationName name, addrs: E.EthAddress <$> addrs }
 
-idByAddr ∷ EthAddress → MonadF FoundationId
-idByAddr (EthAddress ea) = do
+idByAddr ∷ E.EthAddress → MonadF FoundationId
+idByAddr (E.EthAddress ea) = do
   checkAndInit
   name ← liftAff $ makeAff (\err succ → resolveToNameImpl succ ea)
   addrs ← liftAff $ makeAff (\err succ → resolveToAddrImpl succ name)
-  pure $ FoundationId { name: FoundationName name, addrs: EthAddress <$> addrs }
+  pure $ FoundationId { name: FoundationName name, addrs: E.EthAddress <$> addrs }
 
-areSameId ∷ EthAddress → EthAddress → MonadF Boolean
-areSameId (EthAddress ea1) (EthAddress ea2) = do
+areSameId ∷ E.EthAddress → E.EthAddress → MonadF Boolean
+areSameId (E.EthAddress ea1) (E.EthAddress ea2) = do
   checkAndInit
   liftAff $ makeAff (\e s → areSameIdImpl s ea1 ea2)
 
-createId ∷ FoundationName → MonadF Unit
+createId ∷ FoundationName → MonadF E.TX
 createId (FoundationName fn) = do
   checkAndInit
-  liftEff $ createIdImpl fn
+  E.rawToTX <$> (liftAff $ makeAff (\e s → createIdImpl s fn))
 
-sentPending ∷ MonadF (Maybe EthAddress)
+sentPending ∷ MonadF (Maybe E.EthAddress)
 sentPending = do
   myId ← foundationId
   case myId of
     Nothing → pure Nothing
     Just mi → do
       addr ← liftAff $ makeAff (\e s → sentPendingImpl s (show $ fiGetName mi))
-      if isNull (EthAddress addr) then pure Nothing else pure $ Just (EthAddress addr)
+      if E.isNull (E.EthAddress addr) then pure Nothing else pure $ Just (E.EthAddress addr)
 
 todoPending ∷ MonadF (Maybe FoundationName)
 todoPending = do
   addr ← currentAddr
-  fn ← liftAff $ makeAff (\e s → todoPendingImpl s $ getEa addr)
+  fn ← liftAff $ makeAff (\e s → todoPendingImpl s $ E.getEa addr)
   if fn == "" then pure Nothing else pure $ Just (FoundationName fn)
 
-addPendingUnification ∷ EthAddress → MonadF Unit
+addPendingUnification ∷ E.EthAddress → MonadF Unit
 addPendingUnification ea = do
   checkAndInit
-  liftEff $ addPendingUnificationImpl (getEa ea)
+  liftEff $ addPendingUnificationImpl (E.getEa ea)
 
 confirmPendingUnification ∷ FoundationName → MonadF Unit
 confirmPendingUnification (FoundationName fn) = do
   checkAndInit
   liftEff $ confirmPendingUnificationImpl fn
 
-deleteAddr ∷ EthAddress → MonadF Unit
-deleteAddr (EthAddress ea) = do
+deleteAddr ∷ E.EthAddress → MonadF Unit
+deleteAddr (E.EthAddress ea) = do
   checkAndInit
   liftEff $ deleteAddrImpl ea
 
-depositWei ∷ Wei → MonadF Unit
+depositWei ∷ E.Wei → MonadF Unit
 depositWei w = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (weiStr w)
+    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (E.weiStr w)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
@@ -257,12 +209,12 @@ withdrawDeposit = do
     Nothing → throwError NoFoundationId
     Just fi → liftEff $ withdrawDepositImpl ((fnGetName ∘fiGetName) fi)
 
-getDepositWei ∷ MonadF (Maybe Wei)
+getDepositWei ∷ MonadF (Maybe E.Wei)
 getDepositWei = do
   mId ← foundationId
   case mId of
     Nothing → pure Nothing
-    Just i  → (Just ∘ mkWei) <$>
+    Just i  → (Just ∘ E.mkWei) <$>
       (liftAff $ makeAff (\e s → getDepositWeiImpl s (fiStrName i)))
 
 expirationDate ∷ MonadF (Maybe DateTime)

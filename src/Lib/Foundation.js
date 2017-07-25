@@ -3,7 +3,9 @@
 
 var Foundation;
 var foundationAbi = web3.eth.contract(foundationConfig.abi);
-var foundationContract = foundationAbi.at(foundationConfig.address);
+var fContract = foundationAbi.at(foundationConfig.address);
+var fAddress = foundationConfig.address;
+var myAddress = web3.eth.accounts[0];
 
 exports.initImpl = function(dummyVal) {
     return function() {
@@ -50,12 +52,12 @@ exports.areSameIdImpl = function(callback) {
     };
 };
 
-
-exports.createIdImpl = function(foundationId) {
-    return function() {
-        Foundation.deployed().then(function(instance) {
-            return instance.createId(foundationId);
-        });
+exports.createIdImpl = function(callback) {
+    return function(foundationId) {
+        return function() {
+            var data = fContract.createId.getData(foundationId);
+            sendFoundationTx(data, callback);
+        };
     };
 };
 
@@ -151,6 +153,15 @@ exports.expirationDateImpl = function(callback) {
 };
 
 /* ********** helpers ********** */
+var sendFoundationTx = function(data, callback) {
+    web3.eth.sendTransaction(
+        {to: fAddress,
+         from: myAddress,
+         data: data},
+        function(err, result) {
+            callback(toTx(result))();
+        });
+};
 
 var bytes2addrList = function(byteArrayList) {
     var l = [];
@@ -171,6 +182,10 @@ var b2s = function(bytes) {
     return s;
 };
 
+var toTx = function(t) {
+    return { txHash: t };
+};
+
 /* ************************ */
 exports.printTransactionImpl = function(unit) {
     return function() {
@@ -180,9 +195,9 @@ exports.printTransactionImpl = function(unit) {
             console.log(foundationContract);
         });
          */
-        var data = foundationContract.addPendingUnification.getData("0xB07cd7De89Fa764301b6cC5f41eCd1497b72a475");
-        web3.eth.sendTransaction({to: "0x694a92520101d8f78a7aba2578380628565e3621",
-                                  from: web3.eth.accounts[0],
+        var data = fContract.addPendingUnification.getData("0xB07cd7De89Fa764301b6cC5f41eCd1497b72a475");
+        web3.eth.sendTransaction({to: fAddress,
+                                  from: myAddress,
                                   data: data }, function(err, res) {
                                       console.log(res);
                                   });
