@@ -1,5 +1,5 @@
 "use strict";
-//requires web3; truffle-contract; Foundation configs
+//requires web3; truffle-contract; Foundation configs, BigNumber.js
 
 var Foundation;
 
@@ -106,11 +106,11 @@ exports.deleteAddrImpl = function(addr) {
 };
 
 exports.depositWeiImpl = function(foundationId) {
-    return(weiAmountStr) {
+    return function(weiAmountStr) {
         return function() {
             var w = new BigNumber(weiAmountStr);
             Foundation.deployed().then(function(instance) {
-                return instance.deposit(foundationId, {value: w});
+                return instance.depositWei({value: w});
             });
         };
     };

@@ -121,7 +121,10 @@ component =
       H.modify (_ {fundAmountWei = F.mkWei strWei })
       pure next
     FundId weiAmount next → do
-      hLog weiAmount
+      eb ← H.gets _.errorBus
+      H.modify (_ { loading = true })
+      handleFCall eb unit (F.depositWei weiAmount)
+      H.modify (_ { loading = false })
       pure next
     InputNewName nameStr next → do
       H.modify (_ { newName = nameStr })
@@ -303,7 +306,7 @@ loadFromBlockchain = do
   todoPending ← handleFCall eb Nothing F.todoPending
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
-  hLog $ F.weiShowEth <$> depWei
+--  hLog $ F.weiShowEth <$> depWei
   let addrs = fromMaybe [] (F.fiGetAddrs <$> myId)
   H.modify (_ { myId = myId, loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
