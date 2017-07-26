@@ -108,7 +108,7 @@ component =
       pure next
     ConfirmUnification name next → do
       errorBus ← H.gets _.errorBus
-      handleFCall errorBus unit $ F.confirmPendingUnification name
+      tx ← handleFCall errorBus E.blankTx $ F.confirmPendingUnification name
       pure next
     InputNewAddress addrs next → do
       if ((S.length addrs) == 42) --
@@ -120,7 +120,7 @@ component =
       case eitherAddr of
         Left _      → pure next
         Right addr  → do
-          handleFCall errorBus unit $ F.addPendingUnification addr
+          tx ← handleFCall errorBus E.blankTx $ F.addPendingUnification addr
           pure next
     ExtendId next → do
       pure next

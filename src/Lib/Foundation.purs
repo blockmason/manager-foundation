@@ -116,17 +116,17 @@ foreign import resolveToAddrImpl ∷ AddrLookupFn
 foreign import resolveToNameImpl ∷ NameLookupFn
 foreign import areSameIdImpl ∷ AddrComparisonFn
 
-foreign import createIdImpl ∷ OneArgTx
-foreign import sentPendingImpl ∷ SingleAddrLookupFn
-foreign import todoPendingImpl ∷ NameLookupFn
-foreign import addPendingUnificationImpl ∷ ∀ e. E.StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import confirmPendingUnificationImpl ∷ ∀ e. E.StringId → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import deleteAddrImpl ∷ ∀ e. E.StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import depositWeiImpl     ∷ TwoArgTx
-foreign import withdrawDepositImpl ∷ ∀ e. E.StringId → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import getDepositWeiImpl  ∷ StringNumLookupFn
-foreign import getWeiToExtendImpl ∷ ZeroArgLookupFn
-foreign import expirationDateImpl ∷ NumberLookupFn
+foreign import createIdImpl        ∷ OneArgTx
+foreign import sentPendingImpl     ∷ SingleAddrLookupFn
+foreign import todoPendingImpl     ∷ NameLookupFn
+foreign import addPendingUnificationImpl ∷ OneArgTx
+foreign import confirmPendingUnificationImpl ∷ OneArgTx
+foreign import deleteAddrImpl      ∷ OneArgTx
+foreign import depositWeiImpl      ∷ TwoArgTx
+foreign import withdrawDepositImpl ∷ OneArgTx
+foreign import getDepositWeiImpl   ∷ StringNumLookupFn
+foreign import getWeiToExtendImpl  ∷ ZeroArgLookupFn
+foreign import expirationDateImpl  ∷ NumberLookupFn
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
@@ -198,20 +198,23 @@ todoPending = do
   fn ← liftAff $ makeAff (\e s → todoPendingImpl s $ E.getEa addr)
   if fn == "" then pure Nothing else pure $ Just (FoundationName fn)
 
-addPendingUnification ∷ E.EthAddress → MonadF Unit
+addPendingUnification ∷ E.EthAddress → MonadF E.TX
 addPendingUnification ea = do
   checkAndInit
-  liftEff $ addPendingUnificationImpl (E.getEa ea)
+  tx ← liftAff $ makeAff (\_ s → addPendingUnificationImpl s $ E.getEa ea)
+  E.rawToTX TxError tx
 
-confirmPendingUnification ∷ FoundationName → MonadF Unit
+confirmPendingUnification ∷ FoundationName → MonadF E.TX
 confirmPendingUnification (FoundationName fn) = do
   checkAndInit
-  liftEff $ confirmPendingUnificationImpl fn
+  tx ← liftAff $ makeAff (\_ s → confirmPendingUnificationImpl s fn)
+  E.rawToTX TxError tx
 
-deleteAddr ∷ E.EthAddress → MonadF Unit
+deleteAddr ∷ E.EthAddress → MonadF E.TX
 deleteAddr (E.EthAddress ea) = do
   checkAndInit
-  liftEff $ deleteAddrImpl ea
+  tx ← liftAff $ makeAff (\_ s → deleteAddrImpl s ea)
+  E.rawToTX TxError tx
 
 depositWei ∷ E.Wei → MonadF E.TX
 depositWei w = do
@@ -220,12 +223,14 @@ depositWei w = do
     Nothing → throwError NoFoundationId
     Just fi → (liftAff $ makeAff (\_ s → depositWeiImpl s ((fnGetName ∘ fiGetName) fi) (E.weiStr w))) >>= (E.rawToTX TxError)
 
-withdrawDeposit ∷ MonadF Unit
+withdrawDeposit ∷ MonadF E.TX
 withdrawDeposit = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ withdrawDepositImpl ((fnGetName ∘fiGetName) fi)
+    Just fi → do
+      tx ← liftAff $ makeAff (\_ s → withdrawDepositImpl s ((fnGetName ∘fiGetName) fi))
+      E.rawToTX TxError tx
 
 getDepositWei ∷ MonadF (Maybe E.Wei)
 getDepositWei = do
