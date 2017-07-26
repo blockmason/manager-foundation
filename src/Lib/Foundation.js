@@ -56,7 +56,7 @@ exports.createIdImpl = function(callback) {
     return function(foundationId) {
         return function() {
             var data = fContract.createId.getData(foundationId);
-            sendFoundationTx(data, callback);
+            sendFoundationTx(data, 0, callback);
         };
     };
 };
@@ -112,10 +112,9 @@ exports.deleteAddrImpl = function(addr) {
 exports.depositWeiImpl = function(foundationId) {
     return function(weiAmountStr) {
         return function() {
-            var w = new BigNumber(weiAmountStr);
-            Foundation.deployed().then(function(instance) {
-                return instance.depositWei({value: w});
-            });
+            var wei = new BigNumber(weiAmountStr);
+            var data = fContract.depositWei.getData();
+            sendFoundationTx(data, wei, callback);
         };
     };
 };
@@ -124,6 +123,16 @@ exports.withdrawDepositImpl = function(foundationId) {
     return function() {
         Foundation.deployed().then(function(instance) {
             return instance.withdrawDeposit(foundationId);
+        });
+    };
+};
+
+exports.getWeiToExtendImpl = function(callback) {
+    return function() {
+        Foundation.deployed().then(function(ins) {
+            return ins.getWeiToExtend.call();
+        }).then(function(r) {
+            callback(r.valueOf())();
         });
     };
 };
@@ -153,11 +162,12 @@ exports.expirationDateImpl = function(callback) {
 };
 
 /* ********** helpers ********** */
-var sendFoundationTx = function(data, callback) {
+var sendFoundationTx = function(data, value, callback) {
     web3.eth.sendTransaction(
         {to: fAddress,
          from: myAddress,
-         data: data},
+         data: data,
+         value: value},
         function(err, result) {
             if ( !err )
                 callback(goodTx(result))();

@@ -45,6 +45,7 @@ type State = { loading          ∷ Boolean
              , newAddress       ∷ Either String E.EthAddress
              , newName          ∷ String
              , fundAmountWei    ∷ E.Wei
+             , weiToExtend      ∷ E.Wei
              }
 
 type ScreenChange = R.Screen
@@ -74,6 +75,7 @@ component =
                        , newAddress: Left ""
                        , newName: ""
                        , fundAmountWei: E.zeroWei
+                       , weiToExtend:   E.zeroWei
                      }
 
   render ∷ State → H.ComponentHTML Query
@@ -129,7 +131,7 @@ component =
     FundId weiAmount next → do
       eb ← H.gets _.errorBus
       H.modify (_ { loading = true })
-      handleFCall eb unit (F.depositWei weiAmount)
+      tx ← handleFCall eb E.blankTx (F.depositWei weiAmount)
       H.modify (_ { loading = false })
       pure next
     InputNewName nameStr next → do
@@ -138,7 +140,6 @@ component =
     CreateNewId name next → do
       eb ← H.gets _.errorBus
       tx ← handleFCall eb E.blankTx (F.createId $ F.fnMkName name)
-      hLog tx
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -313,8 +314,8 @@ loadFromBlockchain myId = do
   todoPending ← handleFCall eb Nothing F.todoPending
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
---  hLog $ E.weiShowEth <$> depWei
-  hLog $ "myId: " ⊕ show myId
+  weiToExtend ← handleFCall eb E.zeroWei F.getWeiToExtend
+  hLog weiToExtend
   let addrs = maybe [] F.fiGetAddrs myId
   H.modify (_ { loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending

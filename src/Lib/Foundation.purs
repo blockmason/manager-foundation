@@ -5,7 +5,6 @@ module Network.Eth.Foundation
        , FoundationName(..)
        , FoundationError(..)
        , PendingUnification
-       , printTransaction
 
        , fiBlankId
        , fiGetName
@@ -31,6 +30,7 @@ module Network.Eth.Foundation
        , depositWei
        , withdrawDeposit
        , getDepositWei
+       , getWeiToExtend
        , expirationDate
        ) where
 
@@ -106,6 +106,7 @@ type AddrComparisonFn = ∀ e. (Boolean → Eff e Unit) → E.StringAddr → E.S
 type NameLookupFn = ∀ e. (E.StringId → Eff e Unit) → E.StringAddr → Eff e Unit
 type StringNumLookupFn = ∀ e. (E.StringNum → Eff e Unit) → E.StringId → Eff e Unit
 type NumberLookupFn = ∀ e. (Number → Eff e Unit) → E.StringId  → Eff e Unit
+type ZeroArgLookupFn = ∀ e. (String → Eff e Unit) → Eff e Unit
 type ZeroArgTx = ∀ e. (E.RawTx → Eff e Unit)                   → Eff e Unit
 type OneArgTx  = ∀ e. (E.RawTx → Eff e Unit) → String          → Eff e Unit
 type TwoArgTx  = ∀ e. (E.RawTx → Eff e Unit) → String → String → Eff e Unit
@@ -121,12 +122,11 @@ foreign import todoPendingImpl ∷ NameLookupFn
 foreign import addPendingUnificationImpl ∷ ∀ e. E.StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import confirmPendingUnificationImpl ∷ ∀ e. E.StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import deleteAddrImpl ∷ ∀ e. E.StringAddr → Eff (foundation ∷ FOUNDATION | e) Unit
-foreign import depositWeiImpl ∷ ∀ e. E.StringId → E.StringNum → Eff (foundation ∷ FOUNDATION | e) Unit
+foreign import depositWeiImpl     ∷ TwoArgTx
 foreign import withdrawDepositImpl ∷ ∀ e. E.StringId → Eff (foundation ∷ FOUNDATION | e) Unit
 foreign import getDepositWeiImpl  ∷ StringNumLookupFn
+foreign import getWeiToExtendImpl ∷ ZeroArgLookupFn
 foreign import expirationDateImpl ∷ NumberLookupFn
-
-foreign import printTransactionImpl ∷ ∀ e. Unit → Eff e Unit
 
 checkAndInit ∷ MonadF Unit
 checkAndInit = do
@@ -213,12 +213,12 @@ deleteAddr (E.EthAddress ea) = do
   checkAndInit
   liftEff $ deleteAddrImpl ea
 
-depositWei ∷ E.Wei → MonadF Unit
+depositWei ∷ E.Wei → MonadF E.TX
 depositWei w = do
   mId ← foundationId
   case mId of
     Nothing → throwError NoFoundationId
-    Just fi → liftEff $ depositWeiImpl ((fnGetName ∘ fiGetName) fi) (E.weiStr w)
+    Just fi → (liftAff $ makeAff (\_ s → depositWeiImpl s ((fnGetName ∘ fiGetName) fi) (E.weiStr w))) >>= (E.rawToTX TxError)
 
 withdrawDeposit ∷ MonadF Unit
 withdrawDeposit = do
@@ -233,7 +233,11 @@ getDepositWei = do
   case mId of
     Nothing → pure Nothing
     Just i  → (Just ∘ E.mkWei) <$>
-      (liftAff $ makeAff (\e s → getDepositWeiImpl s (fiStrName i)))
+      (liftAff $ makeAff (\_ s → getDepositWeiImpl s (fiStrName i)))
+
+getWeiToExtend ∷ MonadF E.Wei
+getWeiToExtend =
+  E.mkWei <$> (liftAff $ makeAff (\_ s → getWeiToExtendImpl s))
 
 expirationDate ∷ MonadF (Maybe DateTime)
 expirationDate = do
@@ -241,10 +245,6 @@ expirationDate = do
   case mId of
     Nothing → pure Nothing
     Just i  → do
-      timestamp ← (liftAff $ makeAff (\e s → expirationDateImpl s (fiStrName i)))
+      timestamp ← (liftAff $ makeAff (\_ s → expirationDateImpl s (fiStrName i)))
       pure $ secsToDT timestamp
         where secsToDT secs = toDateTime <$> (instant (Milliseconds $ secs * 1000.0))
-
-printTransaction ∷ MonadF Unit
-printTransaction = do
-  liftEff $ printTransactionImpl unit
