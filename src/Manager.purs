@@ -81,8 +81,8 @@ component =
   render ∷ State → H.ComponentHTML Query
   render state =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
-      [
-        page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
+      [ HH.text $ "Pending transactions: " <> (show $ A.length state.txs)
+      ,  page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
       , page R.ManageAddressesScreen
           (addressesPage state.addresses state.sentPending state.todoPending)
       , page R.AddAddressScreen (addAddressPage state)
@@ -107,9 +107,7 @@ component =
       H.raise route
       pure next
     ConfirmUnification name next → do
-      s ← H.get
-      tx ← handleFCall s.errorBus E.blankTx $ F.confirmPendingUnification name
-      H.modify (_ { txs = s.txs <> [tx] })
+      handleTx $ F.confirmPendingUnification name
       pure next
     InputNewAddress addrs next → do
       if ((S.length addrs) == 42) --
@@ -130,17 +128,15 @@ component =
       H.modify (_ { fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do
-      eb ← H.gets _.errorBus
       H.modify (_ { loading = true })
-      tx ← handleFCall eb E.blankTx (F.depositWei weiAmount)
+      handleTx $ F.depositWei weiAmount
       H.modify (_ { loading = false })
       pure next
     InputNewName nameStr next → do
       H.modify (_ { newName = nameStr })
       pure next
     CreateNewId name next → do
-      eb ← H.gets _.errorBus
-      tx ← handleFCall eb E.blankTx (F.createId $ F.fnMkName name)
+      handleTx $ F.createId $ F.fnMkName name
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query

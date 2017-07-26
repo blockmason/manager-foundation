@@ -85,45 +85,51 @@ exports.todoPendingImpl = function(callback) {
     };
 };
 
-exports.addPendingUnificationImpl = function(addr) {
-    return function() {
-        Foundation.deployed().then(function(instance) {
-            return instance.addPendingUnification(addr);
-        });
-    };
-};
-
-exports.confirmPendingUnificationImpl = function(foundationId) {
-    return function() {
-        Foundation.deployed().then(function(instance) {
-            return instance.confirmPendingUnification(foundationId);
-        });
-    };
-};
-
-exports.deleteAddrImpl = function(addr) {
-    return function() {
-        Foundation.deployed().then(function(instance) {
-            return instance.deleteAddr(addr);
-        });
-    };
-};
-
-exports.depositWeiImpl = function(foundationId) {
-    return function(weiAmountStr) {
+exports.addPendingUnificationImpl = function(callback) {
+    return function(addr) {
         return function() {
-            var wei = new BigNumber(weiAmountStr);
-            var data = fContract.depositWei.getData();
-            sendFoundationTx(data, wei, callback);
+            var data = fContract.addPendingUnification.getData(addr);
+            sendFoundationTx(data, 0, callback);
         };
     };
 };
 
-exports.withdrawDepositImpl = function(foundationId) {
-    return function() {
-        Foundation.deployed().then(function(instance) {
-            return instance.withdrawDeposit(foundationId);
-        });
+exports.confirmPendingUnificationImpl = function(callback) {
+    return function(foundationId) {
+        return function() {
+            var data = fContract.confirmPendingUnification(foundationId);
+            sendFoundationTx(data, 0, callback);
+        };
+    };
+};
+
+exports.deleteAddrImpl = function(callback) {
+    return function(addr) {
+        return function() {
+            var data = fContract.deleteAddr(addr);
+            sendFoundationTx(data, 0, callback);
+        };
+    };
+};
+
+exports.depositWeiImpl = function(callback) {
+    return function(foundationId) {
+        return function(weiAmountStr) {
+            return function() {
+                var wei = new BigNumber(weiAmountStr);
+                var data = fContract.depositWei.getData();
+                sendFoundationTx(data, wei, callback);
+            };
+        };
+    };
+};
+
+exports.withdrawDepositImpl = function(callback) {
+    return function(foundationId) {
+        return function() {
+            var data = fContract.withdrawDeposit.getData(foundationId);
+            sendFoundationTx(data, 0, callback);
+        };
     };
 };
 
