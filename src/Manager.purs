@@ -107,8 +107,9 @@ component =
       H.raise route
       pure next
     ConfirmUnification name next → do
-      errorBus ← H.gets _.errorBus
-      tx ← handleFCall errorBus E.blankTx $ F.confirmPendingUnification name
+      s ← H.get
+      tx ← handleFCall s.errorBus E.blankTx $ F.confirmPendingUnification name
+      H.modify (_ { txs = s.txs <> [tx] })
       pure next
     InputNewAddress addrs next → do
       if ((S.length addrs) == 42) --
@@ -116,11 +117,11 @@ component =
         else H.modify (_ { newAddress = Left addrs })
       pure next
     AddNewAddress eitherAddr next → do
-      errorBus ← H.gets _.errorBus
+      s ← H.get
       case eitherAddr of
         Left _      → pure next
         Right addr  → do
-          tx ← handleFCall errorBus E.blankTx $ F.addPendingUnification addr
+          handleTx $ F.addPendingUnification addr
           pure next
     ExtendId next → do
       pure next
@@ -323,3 +324,11 @@ loadFromBlockchain myId = do
 
 formatDate ∷ DateTime → String
 formatDate = (either (const "") id) ∘ (DTF.formatDateTime "YYYY-MM-DD")
+
+watchTx state tx = do
+  H.modify (_ { txs = state.txs <> (if E.isBlank tx then [] else [tx])})
+
+handleTx f = do
+  s ← H.get
+  tx ← handleFCall s.errorBus E.blankTx f
+  watchTx s tx

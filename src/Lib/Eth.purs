@@ -27,6 +27,7 @@ data TX = TX String
 instance showTX ∷ Show TX where
   show (TX e) = "Transaction: " ⊕ show e
 blankTx = TX ""
+isBlank (TX tx) = tx == ""
 
 newtype EthAddress = EthAddress StringAddr
 instance showEthAddress ∷ Show EthAddress where
