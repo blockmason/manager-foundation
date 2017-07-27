@@ -35,7 +35,6 @@ data Query a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
-             , txs              ∷ Array E.TX
              , myId             ∷ Maybe F.FoundationId
              , addresses        ∷ Array E.EthAddress
              , sentPending      ∷ Maybe E.EthAddress
@@ -48,11 +47,13 @@ type State = { loading          ∷ Boolean
              , weiToExtend      ∷ E.Wei
              }
 
-type ScreenChange = R.Screen
-type Input = { msgBus ∷ ContainerMsgBus, txs ∷ Array E.TX
-             , myId ∷ Maybe F.FoundationId }
+--type ScreenChange = R.Screen
+data Message
+  = ScreenChange R.Screen
+  | NewTX        E.TX
+type Input = { msgBus ∷ ContainerMsgBus, myId ∷ Maybe F.FoundationId }
 
-component ∷ ∀ eff. H.Component HH.HTML Query Input ScreenChange (AppMonad eff)
+component ∷ ∀ eff. H.Component HH.HTML Query Input Message (AppMonad eff)
 component =
   H.component
   { initialState: initialState
@@ -65,7 +66,6 @@ component =
   initialState ∷ Input → State
   initialState input = { loading: false
                        , errorBus: input.msgBus
-                       , txs: input.txs
                        , myId: input.myId
                        , addresses: []
                        , sentPending: Nothing
@@ -81,8 +81,8 @@ component =
   render ∷ State → H.ComponentHTML Query
   render state =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
-      [ HH.text $ "Pending transactions: " <> (show $ A.length state.txs)
-      ,  page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
+      [
+        page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
       , page R.ManageAddressesScreen
           (addressesPage state.addresses state.sentPending state.todoPending)
       , page R.AddAddressScreen (addAddressPage state)
@@ -91,11 +91,10 @@ component =
       , page R.FundIDScreen (fundsPage state)
       ]
 
-  eval ∷ Query ~> H.ComponentDSL State Query ScreenChange (AppMonad eff)
+  eval ∷ Query ~> H.ComponentDSL State Query Message (AppMonad eff)
   eval = case _ of
     HandleInput input next → do
-      H.modify (_ { errorBus = input.msgBus, txs = input.txs
-                  , myId = input.myId })
+      H.modify (_ { errorBus = input.msgBus, myId = input.myId })
       pure next
     ReloadAll next → do
       s ← H.get
@@ -104,7 +103,7 @@ component =
     RefreshAddress next → do
       pure next
     GoToPage route next → do
-      H.raise route
+      H.raise $ ScreenChange route
       pure next
     ConfirmUnification name next → do
       handleTx $ F.confirmPendingUnification name
@@ -321,10 +320,9 @@ loadFromBlockchain myId = do
 formatDate ∷ DateTime → String
 formatDate = (either (const "") id) ∘ (DTF.formatDateTime "YYYY-MM-DD")
 
-watchTx state tx = do
-  H.modify (_ { txs = state.txs <> (if E.isBlank tx then [] else [tx])})
+watchTx tx = if E.isBlank tx then pure unit else H.raise $ NewTX tx
 
 handleTx f = do
   s ← H.get
   tx ← handleFCall s.errorBus E.blankTx f
-  watchTx s tx
+  watchTx tx

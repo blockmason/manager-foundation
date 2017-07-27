@@ -11,6 +11,7 @@ import Control.Monad.Aff (delay, launchAff)
 import Control.Monad.Eff.Timer (setInterval)
 import Data.Time.Duration (Milliseconds(..))
 import Data.Int (toNumber)
+import Data.Array as A
 
 import Halogen as H
 import Halogen.HTML as HH
@@ -32,11 +33,11 @@ import Data.Array as A
 data Query a
   = Init a
   | HandleMsg ContainerMsg a
+  | MainViewMsg MainView.Message a
   | RefreshMetamask a
-  | SetScreen R.Screen a
   | PreviousScreen a
+  | SetScreen R.Screen a
 
-type ScreenChange = R.Screen
 type State = { loggedIn ∷ Boolean
              , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
@@ -76,7 +77,7 @@ ui =
       , loadingOverlay state.loading
       , HH.div [ HP.id_ "home-bar", HP.class_ (HH.ClassName "row home-bar")]
         [
-          HH.text "Foundation Manager"
+          HH.text $ "Foundation Manager, Pending TXs: " <> show (A.length state.txs)
         ]
       , HH.div [ HP.id_ "back-nav-bar", HP.class_ (HH.ClassName "row back-nav-bar")]
         [
@@ -86,8 +87,8 @@ ui =
       , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component
-          { msgBus: state.errorBus, txs: state.txs, myId: state.myId }
-          $ HE.input SetScreen
+          { msgBus: state.errorBus, myId: state.myId }
+          $ HE.input MainViewMsg
         ]
       , menu state.currentScreen state.myId
       ]
@@ -109,8 +110,7 @@ ui =
       HandleMsg msg next → do
         case msg of
           (FoundationError fe) → do
-            hLog $ show (FoundationError fe)
-            H.modify (_ { loggedIn = false })
+            handleFoundationError fe
             pure next
           CheckMetamask → do
             mmStatus ← H.liftEff MM.loggedIn
@@ -121,13 +121,31 @@ ui =
         refreshMetamask
         pure next
       SetScreen screen next → do
-        H.modify (\state → state {history = append [state.currentScreen] state.history })
-        H.modify (_ {currentScreen = screen})
+        H.modify (\s → s { history = append [s.currentScreen] s.history })
+        H.modify (_ { currentScreen = screen  })
         pure next
+      MainViewMsg msg next →
+        case msg of
+          MainView.ScreenChange screen → do
+            H.modify (\s → s { history = append [s.currentScreen] s.history })
+            H.modify (_ { currentScreen = screen  })
+            pure next
+          MainView.NewTX newTx → do
+            H.modify (\s → s { txs = s.txs <> [newTx] })
+            pure next
       PreviousScreen next → do
         H.modify (\state → state {currentScreen = (fromMaybe R.OverviewScreen $ A.head state.history), history = (fromMaybe [] $ A.tail state.history)})
         pure next
 
+handleFoundationError fError =
+  case fError of
+    F.NoFoundationId → do
+      hLog fError
+      H.modify (_ { loggedIn = false })
+    F.TxError → do
+      hLog "Transaction not completed."
+    _         → do
+      hLog $ show (FoundationError fError)
 
 loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
 loadingOverlay loading =

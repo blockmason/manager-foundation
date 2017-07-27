@@ -2,6 +2,7 @@
 //requires web3; truffle-contract; Foundation configs, BigNumber.js
 
 var Foundation;
+
 var foundationAbi = web3.eth.contract(foundationConfig.abi);
 var fContract = foundationAbi.at(foundationConfig.address);
 var fAddress = foundationConfig.address;
