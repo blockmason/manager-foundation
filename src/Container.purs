@@ -105,7 +105,7 @@ ui =
         myId        ← handleFCall (Just bus) Nothing F.foundationId
         H.modify (_ { myId = myId })
         refreshMetamask
-        startCheckInterval (Just bus) 5000
+        startCheckInterval (Just bus) 5000 10000
         pure next
       HandleMsg msg next →
         case msg of
@@ -118,6 +118,13 @@ ui =
             checkMetamask loggedIn mmStatus
             pure next
           CheckTxs  → do
+            txs ← H.gets _.txs
+            statii ← H.liftAff $ sequence (MM.checkTxStatus <$> txs)
+            let pending = A.filter (\(Tuple s _) → E.notDone s) $ A.zip statii txs
+            if A.length pending /= A.length txs
+              then refreshMetamask
+              else pure unit
+            H.modify (_ { txs = (\(Tuple _ tx) → tx) <$> pending })
             pure next
       RefreshMetamask next → do
         refreshMetamask
@@ -188,12 +195,12 @@ checkMetamask loggedIn mmStatus =
   if (loggedIn && mmStatus) then pure unit else refreshMetamask
 
 
-startCheckInterval maybeBus ms = do
+startCheckInterval maybeBus mmInterval txInterval = do
   case maybeBus of
     Nothing → pure unit
     Just bus  → do
-      _ ← H.liftEff $ setInterval ms $ checkMMEff  bus
-      _ ← H.liftEff $ setInterval ms $ checkTxsEff bus
+      _ ← H.liftEff $ setInterval mmInterval $ checkMMEff  bus
+      _ ← H.liftEff $ setInterval txInterval $ checkTxsEff bus
       pure unit
       where checkMMEff b = do
               _ ← launchAff $ Bus.write CheckMetamask b

@@ -3,15 +3,19 @@ module Network.Eth.Metamask
          checkStatus
        , loggedIn
        , currentUserAddress
+       , checkTxStatus
        , METAMASK
        , MetamaskStatus(..)
        ) where
 
 import Prelude
-import Control.Monad.Eff (Eff, kind Effect)
-import Control.Monad.Eff.Class (liftEff)
-import Data.Maybe (Maybe(..), maybe')
-import Data.Either (Either(..), either)
+import Control.Monad.Eff           (Eff, kind Effect)
+import Control.Monad.Eff.Class     (liftEff)
+import Control.Monad.Aff           (Aff, makeAff)
+import Control.Monad.Aff.Class     (liftAff)
+import Data.Maybe                  (Maybe(..), maybe')
+import Data.Either                 (Either(..), either)
+import Network.Eth     as E
 
 foreign import data METAMASK ∷ Effect
 
@@ -23,6 +27,7 @@ instance showMetamaskStatus ∷ Show MetamaskStatus where
 
 foreign import checkStatusImpl ∷ ∀ e. Unit → Eff e Boolean
 foreign import currentUserImpl ∷ ∀ e. Unit → Eff e String
+foreign import checkTxStatusImpl ∷ ∀ e. (String → Eff e Unit) → String → Eff e Unit
 
 checkStatus ∷ ∀ e. Eff (metamask ∷ METAMASK | e) MetamaskStatus
 checkStatus = do
@@ -38,3 +43,7 @@ loggedIn = do
   case status of
     LoggedOut → pure false
     LoggedIn  → pure true
+
+checkTxStatus ∷ ∀ e. E.TX → Aff (metamask ∷ METAMASK | e) E.TxStatus
+checkTxStatus tx = do
+  E.rawToTxStatus <$> (liftAff $ makeAff (\_ s → checkTxStatusImpl s $ E.txStr tx))

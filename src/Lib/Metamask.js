@@ -18,3 +18,21 @@ exports.currentUserImpl = function(dummyVal) {
         return web3.eth.accounts[0];
     };
 };
+
+exports.checkTxStatusImpl = function(callback) {
+    return function(txHash) {
+        return function() {
+            web3.eth.getTransaction(txHash, function(err, result) {
+                callback(txResultToRaw(result))();
+            });
+        };
+    };
+};
+
+var txResultToRaw = function(txResult) {
+    if ( txResult == null )
+        return "Pending";
+    else
+        return "Done";
+    return "BadTx";
+};

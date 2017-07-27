@@ -327,3 +327,4 @@ handleTx f = do
   s ← H.get
   tx ← handleFCall s.errorBus E.blankTx f
   watchTx tx
+  H.raise $ ScreenChange R.OverviewScreen

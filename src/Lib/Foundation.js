@@ -3,13 +3,17 @@
 
 var Foundation;
 
-var foundationAbi = web3.eth.contract(foundationConfig.abi);
-var fContract = foundationAbi.at(foundationConfig.address);
-var fAddress = foundationConfig.address;
-var myAddress = web3.eth.accounts[0];
+var foundationAbi;
+var fContract;
+var fAddress;
+var myAddress;
 
 exports.initImpl = function(dummyVal) {
     return function() {
+        foundationAbi = web3.eth.contract(foundationConfig.abi);
+        fContract = foundationAbi.at(foundationConfig.address);
+        fAddress = foundationConfig.address;
+        myAddress = web3.eth.accounts[0];
         Foundation = TruffleContract(foundationConfig);
         Foundation.setProvider(web3.currentProvider);
     };

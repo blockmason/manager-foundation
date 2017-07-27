@@ -28,6 +28,24 @@ instance showTX ∷ Show TX where
   show (TX e) = "Transaction: " ⊕ show e
 blankTx = TX ""
 isBlank (TX tx) = tx == ""
+txStr (TX tx) = tx
+
+type RawTxStatus = String
+data TxStatus = Pending | Done | Failed | BadRaw
+instance showTxStatus ∷ Show TxStatus where
+  show Pending = "Pending"
+  show Done    = "Done"
+  show Failed  = "Failed"
+  show BadRaw  = "BadRaw"
+notDone ∷ TxStatus → Boolean
+notDone Done = false
+notDone _    = true
+
+rawToTxStatus ∷ RawTxStatus → TxStatus
+rawToTxStatus "Pending" = Pending
+rawToTxStatus "Done"    = Done
+rawToTxStatus "Failed"  = Failed
+rawToTxStatus _         = BadRaw
 
 newtype EthAddress = EthAddress StringAddr
 instance showEthAddress ∷ Show EthAddress where
