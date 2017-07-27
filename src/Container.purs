@@ -107,7 +107,7 @@ ui =
         refreshMetamask
         startCheckInterval (Just bus) 5000
         pure next
-      HandleMsg msg next → do
+      HandleMsg msg next →
         case msg of
           (FoundationError fe) → do
             handleFoundationError fe
@@ -116,6 +116,8 @@ ui =
             mmStatus ← H.liftEff MM.loggedIn
             loggedIn ← H.gets _.loggedIn
             checkMetamask loggedIn mmStatus
+            pure next
+          CheckTxs  → do
             pure next
       RefreshMetamask next → do
         refreshMetamask
@@ -139,13 +141,20 @@ ui =
 
 handleFoundationError fError =
   case fError of
-    F.NoFoundationId → do
+    F.NoMetamask → do
       hLog fError
       H.modify (_ { loggedIn = false })
+    F.NoFoundationId → do
+      hLog fError
+      H.modify (_ { myId = Nothing })
     F.TxError → do
       hLog "Transaction not completed."
-    _         → do
-      hLog $ show (FoundationError fError)
+    F.NameInUse → do
+      hLog fError
+    F.AddrInUse → do
+      hLog fError
+    _  → do
+      hLog fError
 
 loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
 loadingOverlay loading =
@@ -182,11 +191,15 @@ checkMetamask loggedIn mmStatus =
 startCheckInterval maybeBus ms = do
   case maybeBus of
     Nothing → pure unit
-    Just b  → do
-      _ ← H.liftEff $ setInterval ms $ effToRun b
+    Just bus  → do
+      _ ← H.liftEff $ setInterval ms $ checkMMEff  bus
+      _ ← H.liftEff $ setInterval ms $ checkTxsEff bus
       pure unit
-      where effToRun bus = do
-              _ ← launchAff $ Bus.write CheckMetamask bus
+      where checkMMEff b = do
+              _ ← launchAff $ Bus.write CheckMetamask b
+              pure unit
+            checkTxsEff b = do
+              _ ← launchAff $ Bus.write CheckTxs b
               pure unit
 
 -- view Components

@@ -31,6 +31,7 @@ module Network.Eth.Foundation
        , withdrawDeposit
        , getDepositWei
        , getWeiToExtend
+       , extendIdOneYear
        , expirationDate
        ) where
 
@@ -126,10 +127,11 @@ foreign import depositWeiImpl      ∷ TwoArgTx
 foreign import withdrawDepositImpl ∷ OneArgTx
 foreign import getDepositWeiImpl   ∷ StringNumLookupFn
 foreign import getWeiToExtendImpl  ∷ ZeroArgLookupFn
+foreign import extendIdOneYearImpl ∷ TwoArgTx
 foreign import expirationDateImpl  ∷ NumberLookupFn
 
-checkAndInit ∷ MonadF Unit
-checkAndInit = do
+checkMM ∷ MonadF Unit
+checkMM = do
   li ← liftEff loggedIn
   if li
     then liftEff $ initImpl unit
@@ -137,7 +139,7 @@ checkAndInit = do
 
 currentAddr ∷ MonadF E.EthAddress
 currentAddr = do
-  checkAndInit
+  checkMM
   E.EthAddress <$> liftEff currentUserAddress
 
 foundationId ∷ MonadF (Maybe FoundationId)
@@ -150,37 +152,39 @@ foundationId = do
 
 idByName ∷ FoundationName → MonadF FoundationId
 idByName (FoundationName name) = do
-  checkAndInit
+  checkMM
   addrs ← liftAff $ makeAff (\err succ → resolveToAddrImpl succ name)
   pure $ FoundationId { name: FoundationName name, addrs: E.EthAddress <$> addrs }
 
 idByAddr ∷ E.EthAddress → MonadF FoundationId
 idByAddr (E.EthAddress ea) = do
-  checkAndInit
+  checkMM
   name ← liftAff $ makeAff (\err succ → resolveToNameImpl succ ea)
   addrs ← liftAff $ makeAff (\err succ → resolveToAddrImpl succ name)
   pure $ FoundationId { name: FoundationName name, addrs: E.EthAddress <$> addrs }
 
 areSameId ∷ E.EthAddress → E.EthAddress → MonadF Boolean
 areSameId (E.EthAddress ea1) (E.EthAddress ea2) = do
-  checkAndInit
+  checkMM
   liftAff $ makeAff (\e s → areSameIdImpl s ea1 ea2)
 
---make sure name and address haven't been used prior (ie aren't valid)
-freshNameAndAddr ∷ FoundationName → MonadF Unit
-freshNameAndAddr fn = do
-  id1 ← idByName fn
-  if isValid $ id1
-    then throwError NameInUse
-    else do
-      id2 ← (currentAddr >>= idByAddr)
-      if isValid id2
-        then throwError AddrInUse
-        else pure unit
+--throws AddrInUse if Address is in use
+isFreshAddr ∷ E.EthAddress → MonadF Unit
+isFreshAddr ea = do
+  id' ← idByAddr ea
+  if isValid id' then throwError AddrInUse else pure unit
+
+--make sure name and current address haven't been used prior (ie aren't valid)
+--throws NameInUse and AddrInUse
+isFreshNameAndUser ∷ FoundationName → MonadF Unit
+isFreshNameAndUser fn = do
+  currentAddr >>= isFreshAddr
+  id' ← idByName fn
+  if isValid id' then throwError NameInUse else pure unit
 
 createId ∷ FoundationName → MonadF E.TX
 createId fn = do
-  freshNameAndAddr fn
+  isFreshNameAndUser fn
   (liftAff $ makeAff (\e s → createIdImpl s (fnGetName fn))) >>= (E.rawToTX TxError)
 
 sentPending ∷ MonadF (Maybe E.EthAddress)
@@ -200,19 +204,20 @@ todoPending = do
 
 addPendingUnification ∷ E.EthAddress → MonadF E.TX
 addPendingUnification ea = do
-  checkAndInit
+  checkMM
+  isFreshAddr ea
   tx ← liftAff $ makeAff (\_ s → addPendingUnificationImpl s $ E.getEa ea)
   E.rawToTX TxError tx
 
 confirmPendingUnification ∷ FoundationName → MonadF E.TX
 confirmPendingUnification (FoundationName fn) = do
-  checkAndInit
+  checkMM
   tx ← liftAff $ makeAff (\_ s → confirmPendingUnificationImpl s fn)
   E.rawToTX TxError tx
 
 deleteAddr ∷ E.EthAddress → MonadF E.TX
 deleteAddr (E.EthAddress ea) = do
-  checkAndInit
+  checkMM
   tx ← liftAff $ makeAff (\_ s → deleteAddrImpl s ea)
   E.rawToTX TxError tx
 
@@ -229,7 +234,7 @@ withdrawDeposit = do
   case mId of
     Nothing → throwError NoFoundationId
     Just fi → do
-      tx ← liftAff $ makeAff (\_ s → withdrawDepositImpl s ((fnGetName ∘fiGetName) fi))
+      tx ← liftAff $ makeAff (\_ s → withdrawDepositImpl s (fiStrName fi))
       E.rawToTX TxError tx
 
 getDepositWei ∷ MonadF (Maybe E.Wei)
@@ -243,6 +248,16 @@ getDepositWei = do
 getWeiToExtend ∷ MonadF E.Wei
 getWeiToExtend =
   E.mkWei <$> (liftAff $ makeAff (\_ s → getWeiToExtendImpl s))
+
+extendIdOneYear ∷ MonadF E.TX
+extendIdOneYear = do
+  mId  ← foundationId
+  wStr ← E.weiStr <$> getWeiToExtend
+  case mId of
+    Nothing → throwError NoFoundationId
+    Just fi → do
+      tx ← liftAff $ makeAff (\_ s → extendIdOneYearImpl s (fiStrName fi) wStr)
+      E.rawToTX TxError tx
 
 expirationDate ∷ MonadF (Maybe DateTime)
 expirationDate = do

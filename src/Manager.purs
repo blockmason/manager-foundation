@@ -87,7 +87,7 @@ component =
           (addressesPage state.addresses state.sentPending state.todoPending)
       , page R.AddAddressScreen (addAddressPage state)
       , page R.RegisterScreen (createIdPage state)
-      , page R.ExtendIDScreen (extendIdPage state.expiryDate)
+      , page R.ExtendIDScreen (extendIdPage state.expiryDate state.weiToExtend)
       , page R.FundIDScreen (fundsPage state)
       ]
 
@@ -114,13 +114,14 @@ component =
         else H.modify (_ { newAddress = Left addrs })
       pure next
     AddNewAddress eitherAddr next → do
-      s ← H.get
       case eitherAddr of
         Left _      → pure next
         Right addr  → do
+          H.modify (_ { newAddress = Left "" })
           handleTx $ F.addPendingUnification addr
           pure next
     ExtendId next → do
+      handleTx $ F.extendIdOneYear
       pure next
     InputFundAmount strWei next → do
       hLog $ E.mkWei strWei
@@ -248,8 +249,8 @@ addAddressPage state =
       )
     ]
 
-extendIdPage ∷ Maybe DateTime → H.ComponentHTML Query
-extendIdPage expiryDate =
+extendIdPage ∷ Maybe DateTime → E.Wei → H.ComponentHTML Query
+extendIdPage expiryDate weiToExtend =
   HH.div
     [HP.class_ (HH.ClassName "col extend-id-page")]
     [
@@ -257,7 +258,7 @@ extendIdPage expiryDate =
     , (card "Extend for 1 Year" $
        HH.button [ HE.onClick $ HE.input_ $ ExtendId
                  , HP.class_ $ HH.ClassName "btn btn-secondary"]
-       [ HH.text "Extend for 0.1 ETH" ])
+       [ HH.text $ "Extend for " ⊕ E.weiShowEth weiToExtend ⊕ " ETH" ])
     ]
 
 fundsPage ∷ State → H.ComponentHTML Query
@@ -311,11 +312,11 @@ loadFromBlockchain myId = do
   expiryDate  ← handleFCall eb Nothing F.expirationDate
   depWei      ← handleFCall eb Nothing F.getDepositWei
   weiToExtend ← handleFCall eb E.zeroWei F.getWeiToExtend
-  hLog weiToExtend
   let addrs = maybe [] F.fiGetAddrs myId
   H.modify (_ { loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
-              , funds = depWei, expiryDate = expiryDate })
+              , funds = depWei, expiryDate = expiryDate
+              , weiToExtend = weiToExtend })
 
 formatDate ∷ DateTime → String
 formatDate = (either (const "") id) ∘ (DTF.formatDateTime "YYYY-MM-DD")

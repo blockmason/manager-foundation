@@ -144,6 +144,18 @@ exports.getWeiToExtendImpl = function(callback) {
     };
 };
 
+exports.extendIdOneYearImpl = function(callback) {
+    return function(foundationId) {
+        return function(weiToExtend) {
+            return function() {
+                var w = new BigNumber(weiToExtend);
+                var data = fContract.extendIdOneYear.getData(foundationId);
+                sendFoundationTx(data, w, callback);
+            };
+        };
+    };
+};
+
 exports.getDepositWeiImpl = function(callback) {
     return function(foundationId) {
         return function() {

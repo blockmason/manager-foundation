@@ -20,9 +20,11 @@ type AppMonad eff = (Aff (exception ∷ EXCEPTION, timer ∷ TIMER, random ∷ R
 data ContainerMsg
   = FoundationError F.FoundationError
   | CheckMetamask
+  | CheckTxs
 
 instance showContainerMsg ∷ Show ContainerMsg where
   show (FoundationError fe) = "FoundationError: " ⊕ show fe
   show CheckMetamask        = "Checking Metamask status."
+  show CheckTxs             = "Checking pending transactions."
 
 type ContainerMsgBus = Maybe (Bus.BusRW ContainerMsg)
