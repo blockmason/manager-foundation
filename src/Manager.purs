@@ -98,6 +98,7 @@ component =
       pure next
     ReloadAll next → do
       s ← H.get
+      hLog "Reloading"
       loadFromBlockchain (s.myId)
       pure next
     RefreshAddress next → do

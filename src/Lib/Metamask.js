@@ -23,6 +23,8 @@ exports.checkTxStatusImpl = function(callback) {
     return function(txHash) {
         return function() {
             web3.eth.getTransaction(txHash, function(err, result) {
+                if ( err )
+                    console.log(err);
                 callback(txResultToRaw(result))();
             });
         };
