@@ -125,7 +125,6 @@ component =
       handleTx $ F.extendIdOneYear
       pure next
     InputFundAmount strWei next → do
-      hLog $ E.mkWei strWei
       H.modify (_ { fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do

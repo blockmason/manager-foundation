@@ -21,10 +21,12 @@ data ContainerMsg
   = FoundationError F.FoundationError
   | CheckMetamask
   | CheckTxs
+  | NetworkError
 
 instance showContainerMsg ∷ Show ContainerMsg where
   show (FoundationError fe) = "FoundationError: " ⊕ show fe
   show CheckMetamask        = "Checking Metamask status."
   show CheckTxs             = "Checking pending transactions."
+  show NetworkError         = "Network not connected"
 
 type ContainerMsgBus = Maybe (Bus.BusRW ContainerMsg)

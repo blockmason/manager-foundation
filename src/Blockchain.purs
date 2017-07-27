@@ -2,8 +2,10 @@ module Foundation.Blockchain where
 
 import Foundation.Prelude
 import Foundation.Types (ContainerMsg(..))
-import Control.Monad.Aff.Bus as Bus
-import Halogen as H
+import Data.Array             as A
+import Control.Monad.Aff.Bus  as Bus
+import Halogen                as H
+import Network.Eth            as E
 import Network.Eth.Foundation as F
 
 --helper to query the blockchain
@@ -20,3 +22,6 @@ handleFCall errorBus blankVal affCall = do
         Left error → do _ ← H.liftAff $ Bus.write (FoundationError error) b
                         pure blankVal
         Right val  → pure val
+
+hasNetworkError ∷ Array E.TxStatus → Boolean
+hasNetworkError = not ∘ A.null ∘ (A.filter E.hasError)

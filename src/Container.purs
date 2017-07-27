@@ -26,7 +26,7 @@ import Network.Eth.Metamask    as MM
 import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
-import Foundation.Blockchain   (handleFCall)
+import Foundation.Blockchain   (handleFCall, hasNetworkError)
 
 import Data.Array as A
 
@@ -112,19 +112,31 @@ ui =
           (FoundationError fe) → do
             handleFoundationError fe
             pure next
+          NetworkError → do
+            hLog NetworkError
+            H.modify (_ { loggedIn = false })
+            pure next
           CheckMetamask → do
             mmStatus ← H.liftEff MM.loggedIn
             loggedIn ← H.gets _.loggedIn
             checkMetamask loggedIn mmStatus
             pure next
           CheckTxs  → do
+            hLog "checking Tx"
             txs ← H.gets _.txs
+            bus ← H.gets _.errorBus
             statii ← H.liftAff $ sequence (MM.checkTxStatus <$> txs)
-            let pending = A.filter (\(Tuple s _) → E.notDone s) $ A.zip statii txs
-            if A.length pending /= A.length txs
-              then refreshMetamask
-              else pure unit
-            H.modify (_ { txs = (\(Tuple _ tx) → tx) <$> pending })
+            if hasNetworkError statii
+              then case bus of
+                Nothing → pure unit
+                Just b  → H.liftAff $ Bus.write NetworkError b
+              else do
+                let pending = A.filter (\(Tuple s _) → E.notDone s) $ A.zip statii txs
+                if A.length pending /= A.length txs
+                  then do
+                    H.modify (_ { txs = (\(Tuple _ tx) → tx) <$> pending })
+                    refreshMetamask
+                  else pure unit
             pure next
       RefreshMetamask next → do
         refreshMetamask
@@ -176,7 +188,7 @@ promptMetamask loggedIn =
          , if loggedIn then HP.class_ (HH.ClassName "inActive")
            else HP.class_ (HH.ClassName "active")]
   [ HH.div_
-    [ HH.h6_ [ HH.text "Not logged in to Metamask." ]
+    [ HH.h6_ [ HH.text "No internet connection or not logged in to Metamask." ]
     , HH.button [ HE.onClick $ HE.input_ $ RefreshMetamask
                 , HP.class_ $ HH.ClassName "btn-info"]
       [ HH.text "Retry" ]]]

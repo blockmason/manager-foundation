@@ -31,19 +31,24 @@ isBlank (TX tx) = tx == ""
 txStr (TX tx) = tx
 
 type RawTxStatus = String
-data TxStatus = Pending | Done | Failed | BadRaw
+data TxStatus = Pending | Done | Failed | BadRaw | NetworkError
 instance showTxStatus ∷ Show TxStatus where
   show Pending = "Pending"
   show Done    = "Done"
   show Failed  = "Failed"
   show BadRaw  = "BadRaw"
+  show NetworkError = "NetworkError"
 notDone ∷ TxStatus → Boolean
 notDone Done = false
 notDone _    = true
+hasError ∷ TxStatus → Boolean
+hasError NetworkError = true
+hasError _            = false
 
 rawToTxStatus ∷ RawTxStatus → TxStatus
 rawToTxStatus "Pending" = Pending
 rawToTxStatus "Done"    = Done
+rawToTxStatus "NetworkError" = NetworkError
 rawToTxStatus "Failed"  = Failed
 rawToTxStatus _         = BadRaw
 
