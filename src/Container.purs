@@ -26,6 +26,7 @@ import Network.Eth.Metamask    as MM
 import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
+import Foundation.Config       as C
 import Foundation.Blockchain   (handleFCall, hasNetworkError)
 
 import Data.Array as A
@@ -43,8 +44,9 @@ type State = { loggedIn ∷ Boolean
              , errorBus ∷ ContainerMsgBus
              , txs      ∷ Array E.TX
              , currentScreen ∷ R.Screen
-             , history ∷ Array R.Screen
-             , myId ∷ Maybe F.FoundationId}
+             , history  ∷ Array R.Screen
+             , myId     ∷ Maybe F.FoundationId
+             , myAddr   ∷ Maybe E.EthAddress }
 
 type ChildQuery = Coproduct1 MainView.Query
 type ChildSlot = Either1 Unit
@@ -68,7 +70,8 @@ ui =
                    , txs: []
                    , currentScreen: R.OverviewScreen
                    , history: []
-                   , myId: Nothing }
+                   , myId: Nothing
+                   , myAddr: Nothing }
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
@@ -105,7 +108,7 @@ ui =
         myId        ← handleFCall (Just bus) Nothing F.foundationId
         H.modify (_ { myId = myId })
         refreshMetamask
-        startCheckInterval (Just bus) 5000 10000
+        startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
         pure next
       HandleMsg msg next →
         case msg of
