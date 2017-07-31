@@ -22,8 +22,10 @@ html {
 
 .card {
   border-left: 3px solid orange; }
-  .card .card-title {
-    text-transform: uppercase; }
+  .card .card-title, .card h4 {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 100; }
 
 .overview-screen-container {
   transition: all 0.5s;
@@ -881,7 +883,8 @@ html {
     width: 100%;
     background: white;
     color: black;
-    border: 0; }
+    border: 0;
+    font-size: 12px; }
     .add-address-page .card button:disabled {
       color: #ddd; }
     .add-address-page .card button:hover {
@@ -896,10 +899,6 @@ html {
   .extend-id-page .card .card-header {
     background: rgba(0, 0, 0, 0.1);
     padding: 10px 0 0 20px; }
-  .extend-id-page .card .card-header h4 {
-    font-size: 16px;
-    font-weight: 300;
-    color: white; }
   .extend-id-page .card input[type=text], .extend-id-page .card input[type=number], .extend-id-page .card select {
     border: 0;
     background: none;
@@ -917,7 +916,8 @@ html {
     width: 100%;
     background: white;
     color: black;
-    border: 0; }
+    border: 0;
+    font-size: 12px; }
     .extend-id-page .card button:disabled {
       color: #ddd; }
     .extend-id-page .card button:hover {
@@ -932,10 +932,6 @@ html {
   .funds-page .card .card-header {
     background: rgba(0, 0, 0, 0.1);
     padding: 10px 0 0 20px; }
-  .funds-page .card .card-header h4 {
-    font-size: 16px;
-    font-weight: 300;
-    color: white; }
   .funds-page .card input[type=text], .funds-page .card input[type=number], .funds-page .card select {
     border: 0;
     background: none;
@@ -954,7 +950,8 @@ html {
     width: 100%;
     background: white;
     color: black;
-    border: 0; }
+    border: 0;
+    font-size: 12px; }
     .funds-page .card button:disabled {
       color: #ddd; }
     .funds-page .card button:hover {
@@ -988,4 +985,5 @@ html {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     color: white;
-    width: 100%; }
+    width: 100%;
+    font-size: 12px; }

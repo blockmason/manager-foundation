@@ -279,7 +279,7 @@ fundsPage state =
       (card ("Deposit: " ⊕ E.weiShowEth state.fundAmountWei ⊕ " Eth") $
        HH.div [ HP.class_ (HH.ClassName "col") ]
        [ HH.input [ HP.type_ HP.InputText
-                  , HP.class_ $ HH.ClassName "row"
+                  , HP.class_ $ HH.ClassName ""
                   , HP.placeholder $ "Enter wei to deposit here"
                   , HP.value $ E.weiStr state.fundAmountWei
                   , HE.onValueInput

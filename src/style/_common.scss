@@ -28,7 +28,9 @@ html {
 .card {
   border-left: 3px solid orange;
 
-  .card-title {
+  .card-title, h4  {
     text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 100;
   }
 }
