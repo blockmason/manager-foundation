@@ -14,20 +14,39 @@
     color: white;
   }
 
-  input[type=text] {
+  input[type=text], input[type=number], select {
+    border: 0;
+    background: none;
+    border-bottom: 1px solid $highlight;
+    border-radius: 0;
     width: 100%;
-    border: 1px solid white;
-    margin: 0;
-    border-radius: 5px;
-    padding: 8px;
-    background: rgba(255,255,255,0.1);
+    height: 30px;
+    margin-bottom: 20px;
+
+    &::placeholder {
+      color: #aaa;
+    }
+
+    &:focus {
+      border: 0;
+    }
   }
 
-  .btn {
-    margin-top: 10px;
-    background: rgba(0,0,0,0.5);
-    border: none;
-    color: #ddd;
+  button {
+    text-transform: uppercase;
     width: 100%;
+    background: white;
+    color: black;
+    border: 0;
+
+    &:disabled {
+      color: #ddd;
+    }
+
+    &:hover {
+      background-color: $highlight;
+      color: white;
+      border-color: $highlight;
+    }
   }
 }

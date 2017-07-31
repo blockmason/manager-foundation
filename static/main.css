@@ -1,461 +1,737 @@
 @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900");
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: none; }
+/* general */
+@import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900");
+body {
+  height: 100%;
+  color: #444;
+  font-family: "Lato", Arial, sans-serif;
+  background-color: #444; }
 
-.show-overview-screen .back-nav-bar {
-  display: block; }
+html {
+  height: 100%; }
+
+.container {
+  background-image: url("45-degree-fabric-light.png");
+  max-width: 600px;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.3);
+  height: 100vh;
+  overflow-y: scroll; }
+
+.main-view {
+  margin-top: 20px; }
+
+.card {
+  border-left: 3px solid orange; }
+  .card .card-title {
+    text-transform: uppercase; }
+
+.overview-screen-container {
+  transition: all 0.5s;
+  transform: translateX(0); }
+
+.manage-addresses-screen-container {
+  transition: all 0.5s;
+  transform: translateX(0); }
+
+.add-address-screen-container {
+  transition: all 0.5s;
+  transform: translateX(0); }
+
+.register-screen-container {
+  transition: all 0.5s;
+  transform: translateX(0); }
+
+.extend-id-screen-container {
+  transition: all 0.5s;
+  transform: translateX(0); }
+
+.fund-id-screen-container {
+  transition: all 0.5s;
+  transform: translateX(0); }
+
+.show-overview-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-overview-screen .overview-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: none; }
+.show-overview-screen .logo-section {
+  margin-left: -25em; }
 
-.show-overview-screen .back-nav-bar {
-  display: block; }
+.show-overview-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-overview-screen .manage-addresses-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: none; }
+.show-overview-screen .logo-section {
+  margin-left: -25em; }
 
-.show-overview-screen .back-nav-bar {
-  display: block; }
+.show-overview-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-overview-screen .add-address-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: none; }
+.show-overview-screen .logo-section {
+  margin-left: -25em; }
 
-.show-overview-screen .back-nav-bar {
-  display: block; }
+.show-overview-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-overview-screen .register-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: none; }
+.show-overview-screen .logo-section {
+  margin-left: -25em; }
 
-.show-overview-screen .back-nav-bar {
-  display: block; }
+.show-overview-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-overview-screen .extend-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: none; }
+.show-overview-screen .logo-section {
+  margin-left: -25em; }
 
-.show-overview-screen .back-nav-bar {
-  display: block; }
+.show-overview-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-overview-screen .fund-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
-  display: none; }
+.show-overview-screen .logo-section {
+  margin-left: -25em; }
 
-.show-manage-addresses-screen .back-nav-bar {
-  display: block; }
+.show-manage-addresses-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-manage-addresses-screen .overview-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
-  display: none; }
+.show-manage-addresses-screen .logo-section {
+  margin-left: -25em; }
 
-.show-manage-addresses-screen .back-nav-bar {
-  display: block; }
-
-.show-manage-addresses-screen .manage-addresses-screen-container {
-  display: none; }
+.show-manage-addresses-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  display: block; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
-.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
-  display: none; }
+.show-manage-addresses-screen .manage-addresses-screen-container {
+  transform: none; }
 
-.show-manage-addresses-screen .back-nav-bar {
-  display: block; }
+.show-manage-addresses-screen .logo-section {
+  margin-left: -25em; }
+
+.show-manage-addresses-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-manage-addresses-screen .add-address-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
-  display: none; }
+.show-manage-addresses-screen .logo-section {
+  margin-left: -25em; }
 
-.show-manage-addresses-screen .back-nav-bar {
-  display: block; }
+.show-manage-addresses-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-manage-addresses-screen .register-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
-  display: none; }
+.show-manage-addresses-screen .logo-section {
+  margin-left: -25em; }
 
-.show-manage-addresses-screen .back-nav-bar {
-  display: block; }
+.show-manage-addresses-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-manage-addresses-screen .extend-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-manage-addresses-screen .header-menu, .show-manage-addresses-screen .home-bar {
-  display: none; }
+.show-manage-addresses-screen .logo-section {
+  margin-left: -25em; }
 
-.show-manage-addresses-screen .back-nav-bar {
-  display: block; }
+.show-manage-addresses-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-manage-addresses-screen .fund-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
-  display: none; }
+.show-manage-addresses-screen .logo-section {
+  margin-left: -25em; }
 
-.show-add-address-screen .back-nav-bar {
-  display: block; }
+.show-add-address-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-add-address-screen .overview-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
-  display: none; }
+.show-add-address-screen .logo-section {
+  margin-left: -25em; }
 
-.show-add-address-screen .back-nav-bar {
-  display: block; }
+.show-add-address-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-add-address-screen .manage-addresses-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
-  display: none; }
+.show-add-address-screen .logo-section {
+  margin-left: -25em; }
 
-.show-add-address-screen .back-nav-bar {
-  display: block; }
-
-.show-add-address-screen .add-address-screen-container {
-  display: none; }
+.show-add-address-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-add-address-screen .add-address-screen-container {
-  display: block; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
-.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
-  display: none; }
+.show-add-address-screen .add-address-screen-container {
+  transform: none; }
 
-.show-add-address-screen .back-nav-bar {
-  display: block; }
+.show-add-address-screen .logo-section {
+  margin-left: -25em; }
+
+.show-add-address-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-add-address-screen .register-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
-  display: none; }
+.show-add-address-screen .logo-section {
+  margin-left: -25em; }
 
-.show-add-address-screen .back-nav-bar {
-  display: block; }
+.show-add-address-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-add-address-screen .extend-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-add-address-screen .header-menu, .show-add-address-screen .home-bar {
-  display: none; }
+.show-add-address-screen .logo-section {
+  margin-left: -25em; }
 
-.show-add-address-screen .back-nav-bar {
-  display: block; }
+.show-add-address-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-add-address-screen .fund-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-register-screen .header-menu, .show-register-screen .home-bar {
-  display: none; }
+.show-add-address-screen .logo-section {
+  margin-left: -25em; }
 
-.show-register-screen .back-nav-bar {
-  display: block; }
+.show-register-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-register-screen .overview-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-register-screen .register-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-register-screen .header-menu, .show-register-screen .home-bar {
-  display: none; }
+.show-register-screen .logo-section {
+  margin-left: -25em; }
 
-.show-register-screen .back-nav-bar {
-  display: block; }
+.show-register-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-register-screen .manage-addresses-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-register-screen .register-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-register-screen .header-menu, .show-register-screen .home-bar {
-  display: none; }
+.show-register-screen .logo-section {
+  margin-left: -25em; }
 
-.show-register-screen .back-nav-bar {
-  display: block; }
+.show-register-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-register-screen .add-address-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-register-screen .register-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-register-screen .header-menu, .show-register-screen .home-bar {
-  display: none; }
+.show-register-screen .logo-section {
+  margin-left: -25em; }
 
-.show-register-screen .back-nav-bar {
-  display: block; }
-
-.show-register-screen .register-screen-container {
-  display: none; }
+.show-register-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-register-screen .register-screen-container {
-  display: block; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
-.show-register-screen .header-menu, .show-register-screen .home-bar {
-  display: none; }
+.show-register-screen .register-screen-container {
+  transform: none; }
 
-.show-register-screen .back-nav-bar {
-  display: block; }
+.show-register-screen .logo-section {
+  margin-left: -25em; }
+
+.show-register-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-register-screen .extend-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-register-screen .register-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-register-screen .header-menu, .show-register-screen .home-bar {
-  display: none; }
+.show-register-screen .logo-section {
+  margin-left: -25em; }
 
-.show-register-screen .back-nav-bar {
-  display: block; }
+.show-register-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-register-screen .fund-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-register-screen .register-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
-  display: none; }
+.show-register-screen .logo-section {
+  margin-left: -25em; }
 
-.show-extend-id-screen .back-nav-bar {
-  display: block; }
+.show-extend-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-extend-id-screen .overview-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
-  display: none; }
+.show-extend-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-extend-id-screen .back-nav-bar {
-  display: block; }
+.show-extend-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-extend-id-screen .manage-addresses-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
-  display: none; }
+.show-extend-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-extend-id-screen .back-nav-bar {
-  display: block; }
+.show-extend-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-extend-id-screen .add-address-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
-  display: none; }
+.show-extend-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-extend-id-screen .back-nav-bar {
-  display: block; }
+.show-extend-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-extend-id-screen .register-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
-  display: none; }
+.show-extend-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-extend-id-screen .back-nav-bar {
-  display: block; }
-
-.show-extend-id-screen .extend-id-screen-container {
-  display: none; }
+.show-extend-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-extend-id-screen .extend-id-screen-container {
-  display: block; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
-.show-extend-id-screen .header-menu, .show-extend-id-screen .home-bar {
-  display: none; }
+.show-extend-id-screen .extend-id-screen-container {
+  transform: none; }
 
-.show-extend-id-screen .back-nav-bar {
-  display: block; }
+.show-extend-id-screen .logo-section {
+  margin-left: -25em; }
+
+.show-extend-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-extend-id-screen .fund-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
-  display: none; }
+.show-extend-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-fund-id-screen .back-nav-bar {
-  display: block; }
+.show-fund-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-fund-id-screen .overview-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
-  display: none; }
+.show-fund-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-fund-id-screen .back-nav-bar {
-  display: block; }
+.show-fund-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-fund-id-screen .manage-addresses-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
-  display: none; }
+.show-fund-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-fund-id-screen .back-nav-bar {
-  display: block; }
+.show-fund-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-fund-id-screen .add-address-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
-  display: none; }
+.show-fund-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-fund-id-screen .back-nav-bar {
-  display: block; }
+.show-fund-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-fund-id-screen .register-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
-  display: none; }
+.show-fund-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-fund-id-screen .back-nav-bar {
-  display: block; }
+.show-fund-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-fund-id-screen .extend-id-screen-container {
-  display: none; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  display: block; }
+  transform: none; }
 
-.show-fund-id-screen .header-menu, .show-fund-id-screen .home-bar {
-  display: none; }
+.show-fund-id-screen .logo-section {
+  margin-left: -25em; }
 
-.show-fund-id-screen .back-nav-bar {
-  display: block; }
-
-.show-fund-id-screen .fund-id-screen-container {
-  display: none; }
+.show-fund-id-screen .header-menu {
+  transform: translateX(-100vw); }
 
 .show-fund-id-screen .fund-id-screen-container {
-  display: block; }
+  transform: translateX(-3000px);
+  height: 0;
+  margin: 0;
+  padding: 0; }
 
-.show-overview-screen .header-menu, .show-overview-screen .home-bar {
-  display: block; }
+.show-fund-id-screen .fund-id-screen-container {
+  transform: none; }
 
-.show-overview-screen .back-nav-bar {
-  display: none; }
+.show-fund-id-screen .logo-section {
+  margin-left: -25em; }
 
-.back-nav-bar, .home-bar {
-  background: rgba(0, 0, 0, 0.5);
-  padding: 10px; }
+.show-overview-screen .go-back-section {
+  margin-left: -34em; }
 
-.home-bar {
-  font-weight: 100;
-  background: #333;
-  text-transform: uppercase; }
+.show-overview-screen .logo-section {
+  margin-left: 0; }
 
-.back-nav-bar:hover {
-  background: rgba(0, 0, 0, 0.6); }
+.show-overview-screen .header-menu {
+  transform: none; }
 
-.close-pop-button {
-  color: white;
+/* loading overlays */
+#metamaskOverlay {
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
   width: 100%;
-  padding: 10px; }
-  .close-pop-button:focus, .close-pop-button:hover {
-    color: white;
-    text-decoration: none; }
+  color: white;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase; }
+  #metamaskOverlay.in-active {
+    display: none; }
+  #metamaskOverlay h6 {
+    font-weight: 100;
+    width: 100%; }
+  #metamaskOverlay button {
+    background: none;
+    border: none;
+    transition: 0.5s;
+    cursor: pointer; }
+    #metamaskOverlay button:hover {
+      color: #aaa;
+      transform: rotate(60deg); }
+    #metamaskOverlay button:focus {
+      border: none; }
+
+#loadingOverlay {
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  color: white;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase; }
+  #loadingOverlay h6 {
+    font-weight: 100; }
+  #loadingOverlay .loading-spinner {
+    transform: translateY(-0.2em) translateX(-2em); }
+  #loadingOverlay.in-active {
+    display: none; }
+
+.container.loading #body, .container.loading .header-menu {
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='3');
+  -webkit-filter: url(#blur-filter);
+  filter: url(#blur-filter);
+  -webkit-filter: blur(3px);
+  filter: blur(3px); }
+
+.container.require-login .page-container,
+.container.require-login .top-bar,
+.container.require-login .header-menu,
+.container.require-login .create-debt-bar,
+.container.require-login .add-friend-bar {
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='5');
+  -webkit-filter: url(#blur-filter);
+  filter: url(#blur-filter);
+  -webkit-filter: blur(5px);
+  filter: blur(5px); }
+
+#debtLoadingOverlay {
+  padding: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2000px;
+  width: 100%;
+  background-color: black;
+  color: white;
+  z-index: 99; }
+
+.loading-spinner {
+  color: #f00;
+  animation: color-bubble 2s linear 0s infinite; }
+  .loading-spinner:after, .loading-spinner:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 100%;
+    box-shadow: 0 0 0 3px;
+    animation: spinner-bubble 1.3s linear 0s infinite;
+    margin: auto;
+    width: 0.3em;
+    height: 0.3em;
+    opacity: 0; }
+  .loading-spinner:before {
+    animation: spinner-bubble 1.3s linear 2s infinite; }
+
+@keyframes color-bubble {
+  0% {
+    color: #fff; }
+  33% {
+    color: red; }
+  66% {
+    color: orange; }
+  100% {
+    color: #FEB825; } }
+
+@keyframes spinner-bubble {
+  from {
+    width: 0.3em;
+    height: 0.3em;
+    opacity: .8; }
+  to {
+    width: 1.5em;
+    height: 1.5em;
+    opacity: 0; } }
+
+@keyframes color-change {
+  0% {
+    background: #fff; }
+  33% {
+    background: #50B949; }
+  66% {
+    background: #EE2D24; }
+  100% {
+    background: #FEB825; } }
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg); } }
 
 .header-menu .row {
   padding: 5px;
@@ -468,6 +744,72 @@
     text-decoration: none; }
   .header-menu .row.active {
     padding-left: 10px; }
+
+.top-bar {
+  background: #ff5722;
+  line-height: 3em; }
+  .top-bar .logo-section {
+    text-transform: uppercase;
+    color: white; }
+    .top-bar .logo-section img {
+      height: 30px;
+      width: 30px; }
+  .top-bar .go-back-section a {
+    color: white; }
+    .top-bar .go-back-section a:hover {
+      color: white;
+      text-decoration: none; }
+      .top-bar .go-back-section a:hover i {
+        margin-left: -0.5em;
+        transition: all 0.3s; }
+  .top-bar .go-back-section, .top-bar .logo-section {
+    transition: all 1s ease; }
+  .top-bar .current-transactions {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: white;
+    opacity: 0; }
+    .top-bar .current-transactions.processing {
+      opacity: 1; }
+  .top-bar .transaction-spinner {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: auto;
+    position: absolute;
+    left: -1.5em;
+    top: 1.3em;
+    margin: auto;
+    border: 1px solid;
+    animation: rotate 0.9s linear 0s infinite, color-bubble 1s linear 0s infinite; }
+    .top-bar .transaction-spinner:after {
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      border-radius: 100%;
+      left: 9px;
+      top: 15px; }
+
+.header-menu {
+  transition: all 0.3s ease;
+  position: absolute;
+  bottom: 1em;
+  width: 95vw;
+  margin: auto; }
+  .header-menu a {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 100;
+    text-decoration: none;
+    border-radius: 1em;
+    transition: 1s ease; }
+    .header-menu a.active {
+      background-color: #e03702; }
+
+.top-bar {
+  font-size: 14px; }
 
 .myid-summary .card {
   background: rgba(0, 0, 0, 0.6);
@@ -492,50 +834,60 @@
     font-weight: 100; }
   .address-list .card:first-child {
     background: rgba(255, 255, 255, 0.1);
-    padding-left: 0; }
+    padding-left: 0;
+    border: 0; }
     .address-list .card:first-child .card-block {
       padding: 0; }
 
 .confirm-address-button, .confirm-unification-button {
   color: black;
+  text-transform: uppercase;
+  background: white;
   font-weight: bold;
   width: 100%;
   height: 100%;
   font-size: 10px;
-  background: none;
+  border-radius: 5px;
   border: none;
   padding: 10px; }
-
-.confirm-unification-button {
-  color: white;
-  background: rgba(255, 255, 255, 0.1); }
+  .confirm-address-button:hover, .confirm-unification-button:hover {
+    background: orange;
+    color: white; }
 
 .add-address-page .card {
   background: rgba(0, 0, 0, 0.6);
   margin-bottom: 10px;
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background: #333;
   padding-left: 0; }
-  .add-address-page .card .card-header {
-    background: rgba(0, 0, 0, 0.1);
-    padding: 10px 0 0 20px; }
-  .add-address-page .card .card-header h4 {
-    font-size: 16px;
-    font-weight: 300;
-    color: black; }
-  .add-address-page .card input[type=text] {
+  .add-address-page .card h4 {
+    font-size: 12px;
+    padding-top: 10px; }
+  .add-address-page .card input[type=text], .add-address-page .card input[type=number], .add-address-page .card select {
+    border: 0;
+    background: none;
+    border-bottom: 1px solid orange;
+    border-radius: 0;
     width: 100%;
-    border: 1px solid white;
-    margin: 0;
-    border-radius: 5px;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.1); }
-  .add-address-page .card .btn {
-    margin-top: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    color: white;
-    width: 100%; }
+    height: 30px;
+    margin-bottom: 20px;
+    color: white; }
+    .add-address-page .card input[type=text]::placeholder, .add-address-page .card input[type=number]::placeholder, .add-address-page .card select::placeholder {
+      color: #aaa; }
+    .add-address-page .card input[type=text]:focus, .add-address-page .card input[type=number]:focus, .add-address-page .card select:focus {
+      border: 0; }
+  .add-address-page .card button {
+    text-transform: uppercase;
+    width: 100%;
+    background: white;
+    color: black;
+    border: 0; }
+    .add-address-page .card button:disabled {
+      color: #ddd; }
+    .add-address-page .card button:hover {
+      background-color: orange;
+      color: white;
+      border-color: orange; }
 
 .extend-id-page .card {
   background: rgba(0, 0, 0, 0.6);
@@ -548,19 +900,30 @@
     font-size: 16px;
     font-weight: 300;
     color: white; }
-  .extend-id-page .card input[type=text] {
+  .extend-id-page .card input[type=text], .extend-id-page .card input[type=number], .extend-id-page .card select {
+    border: 0;
+    background: none;
+    border-bottom: 1px solid orange;
+    border-radius: 0;
     width: 100%;
-    border: 1px solid white;
-    margin: 0;
-    border-radius: 5px;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.1); }
-  .extend-id-page .card .btn {
-    margin-top: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    color: #ddd;
-    width: 100%; }
+    height: 30px;
+    margin-bottom: 20px; }
+    .extend-id-page .card input[type=text]::placeholder, .extend-id-page .card input[type=number]::placeholder, .extend-id-page .card select::placeholder {
+      color: #aaa; }
+    .extend-id-page .card input[type=text]:focus, .extend-id-page .card input[type=number]:focus, .extend-id-page .card select:focus {
+      border: 0; }
+  .extend-id-page .card button {
+    text-transform: uppercase;
+    width: 100%;
+    background: white;
+    color: black;
+    border: 0; }
+    .extend-id-page .card button:disabled {
+      color: #ddd; }
+    .extend-id-page .card button:hover {
+      background-color: orange;
+      color: white;
+      border-color: orange; }
 
 .funds-page .card {
   background: rgba(0, 0, 0, 0.6);
@@ -573,19 +936,31 @@
     font-size: 16px;
     font-weight: 300;
     color: white; }
-  .funds-page .card input[type=text] {
+  .funds-page .card input[type=text], .funds-page .card input[type=number], .funds-page .card select {
+    border: 0;
+    background: none;
+    border-bottom: 1px solid orange;
+    border-radius: 0;
     width: 100%;
-    border: 1px solid white;
-    margin: 0;
-    border-radius: 5px;
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.1); }
-  .funds-page .card .btn {
-    margin-top: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    color: #ddd;
-    width: 100%; }
+    height: 30px;
+    margin-bottom: 20px;
+    color: white; }
+    .funds-page .card input[type=text]::placeholder, .funds-page .card input[type=number]::placeholder, .funds-page .card select::placeholder {
+      color: #aaa; }
+    .funds-page .card input[type=text]:focus, .funds-page .card input[type=number]:focus, .funds-page .card select:focus {
+      border: 0; }
+  .funds-page .card button {
+    text-transform: uppercase;
+    width: 100%;
+    background: white;
+    color: black;
+    border: 0; }
+    .funds-page .card button:disabled {
+      color: #ddd; }
+    .funds-page .card button:hover {
+      background-color: orange;
+      color: white;
+      border-color: orange; }
 
 .create-id-page .card {
   background: rgba(0, 0, 0, 0.6);
@@ -614,57 +989,3 @@
     border: none;
     color: white;
     width: 100%; }
-
-/* general */
-body {
-  background-image: linear-gradient(-180deg, #FBDA61 0%, #002968 100%);
-  height: 100%;
-  color: white;
-  font-family: "Lato", Arial, sans-serif;
-  background-color: #a20846; }
-
-html {
-  height: 100%; }
-
-/* loading overlays */
-#metamaskOverlay {
-  padding: 20px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2000px;
-  width: 100%;
-  background-color: black;
-  color: white;
-  z-index: 100; }
-
-#loadingOverlay {
-  padding: 20px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2000px;
-  width: 100%;
-  background-color: black;
-  color: white;
-  z-index: 99; }
-
-#debtLoadingOverlay {
-  padding: 20px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 2000px;
-  width: 100%;
-  background-color: black;
-  color: white;
-  z-index: 99; }
-
-.active {
-  display: visible; }
-
-.inActive {
-  display: none; }
-
-.main-view {
-  margin-top: 20px; }

@@ -236,7 +236,7 @@ addAddressPage state =
         [
           HH.input [ HP.type_ HP.InputText
                    , HP.value $ ""
-                   , HP.class_ $ HH.ClassName "row"
+                   , HP.class_ $ HH.ClassName ""
                    , HP.placeholder $ "0x0"
                    , HE.onValueInput
                      (HE.input (\val → InputNewAddress val))
