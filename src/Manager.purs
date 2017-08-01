@@ -18,6 +18,7 @@ import Foundation.Blockchain           (handleFCall)
 import Foundation.Routes as R
 import Network.Eth.Foundation  as F
 import Network.Eth             as E
+import Data.Maybe
 
 data Query a
   = RefreshAddress a
@@ -82,7 +83,7 @@ component =
   render state =
     HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
-        page R.OverviewScreen (summary state.myId state.expiryDate (A.length state.addresses) state.funds)
+        page R.OverviewScreen (summary state.todoPending state.myId state.expiryDate (A.length state.addresses) state.funds)
       , page R.ManageAddressesScreen
           (addressesPage state.addresses state.sentPending state.todoPending)
       , page R.AddAddressScreen (addAddressPage state)
@@ -168,17 +169,25 @@ card cardTitle child =
             [child]
         ]
 
-summary ∷ Maybe F.FoundationId → Maybe DateTime → Int → Maybe E.Wei
+summary ∷ Maybe F.FoundationName → Maybe F.FoundationId → Maybe DateTime → Int → Maybe E.Wei
         → H.ComponentHTML Query
-summary optionalID expiryDate addressCount funds =
+summary pendingConfirmation optionalID expiryDate addressCount funds =
   let balance = fromMaybe (E.zeroWei) funds
   in case optionalID of
     Nothing →
-      HH.div
-        [HP.class_ (HH.ClassName "col myid-summary")]
-        [
-          (card "ID" $ HH.text $ "No ID found. Please register, or confirm an address in \"Manage Addresses\"")
-        ]
+      case pendingConfirmation of
+        Nothing →
+          HH.div
+            [HP.class_ (HH.ClassName "col myid-summary")]
+            [
+              (card "ID" $ HH.text $ "No ID found. Please register.")
+            ]
+        Just pendingName →
+          HH.div
+            [HP.class_ (HH.ClassName "col myid-summary")]
+            [
+              (card "Merge with existing id, or register." $ addAddressRequestBlock pendingName)
+            ]
     Just (F.FoundationId myId) →
       HH.div
         [HP.class_ (HH.ClassName "col myid-summary")]
@@ -236,7 +245,7 @@ addAddressPage state =
         [
           HH.input [ HP.type_ HP.InputText
                    , HP.value $ ""
-                   , HP.class_ $ HH.ClassName "row"
+                   , HP.class_ $ HH.ClassName ""
                    , HP.placeholder $ "0x0"
                    , HE.onValueInput
                      (HE.input (\val → InputNewAddress val))
@@ -270,7 +279,7 @@ fundsPage state =
       (card ("Deposit: " ⊕ E.weiShowEth state.fundAmountWei ⊕ " Eth") $
        HH.div [ HP.class_ (HH.ClassName "col") ]
        [ HH.input [ HP.type_ HP.InputText
-                  , HP.class_ $ HH.ClassName "row"
+                  , HP.class_ $ HH.ClassName ""
                   , HP.placeholder $ "Enter wei to deposit here"
                   , HP.value $ E.weiStr state.fundAmountWei
                   , HE.onValueInput

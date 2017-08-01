@@ -14,3 +14,97 @@
     padding-left: 10px;
   }
 }
+
+.top-bar {
+  background: #ff5722;
+  line-height: 3em;
+
+  .logo-section {
+    text-transform: uppercase;
+    color: white;
+
+    img {
+      height: 30px;
+      width: 30px;
+    }
+  }
+
+  .go-back-section a {
+    color: white;
+
+    &:hover {
+      color: white;
+      text-decoration: none;
+
+      i {
+        margin-left: -0.5em;
+        transition: all 0.3s;
+      }
+    }
+  }
+
+  .go-back-section, .logo-section {
+    transition: all 1s ease;
+  }
+
+  .current-transactions {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: white;
+    opacity: 0;
+
+    &.processing {
+      opacity: 1;
+    }
+  }
+
+  .transaction-spinner {
+     width: 20px;
+     height:  20px;
+     border-radius: 50%;
+     margin: auto;
+     position: absolute;
+     left: -1.5em;
+     top: 1.3em;
+     margin: auto;
+
+      border:1px solid;
+      animation: rotate 0.9s linear 0s infinite, color-bubble 1s linear 0s infinite;
+       &:after{
+        content: '';
+        position: absolute;
+         width: 5px;
+         height: 5px;
+         background: #fff;
+         border-radius: 100%;
+         left: 9px;
+        top: 15px;
+       }
+   }
+}
+
+.header-menu {
+  transition: all 0.3s ease;
+  position: absolute;
+  bottom: 1em;
+  width: 95vw;
+  margin: auto;
+
+  a {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 100;
+    text-decoration: none;
+    border-radius: 1em;
+    transition: 1s ease;
+
+    &.active {
+      background-color: #e03702;
+
+    }
+  }
+}
+
+.top-bar {
+  font-size: 14px;
+}
