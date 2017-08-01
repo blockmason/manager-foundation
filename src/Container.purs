@@ -27,7 +27,7 @@ import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
 import Foundation.Config       as C
-import Foundation.Blockchain   (handleFCall, hasNetworkError)
+import Foundation.Blockchain   (handleFCall, hasNetworkError, loadingOverlay)
 
 import Data.Array as A
 
@@ -194,16 +194,6 @@ topBar state =
           HH.span_ [HH.text $ "Immortalizing " <> show (A.length state.txs) <> " items..."]
         ]
     ]
-
-loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
-loadingOverlay loading =
-  HH.div [ HP.id_ "loadingOverlay"
-         , if loading then HP.class_ (HH.ClassName "active")
-           else HP.class_ (HH.ClassName "in-active")]
-  [
-    HH.i [HP.class_ (HH.ClassName "loading-spinner")][],
-    HH.h6_ [ HH.text "Loading..." ]
-  ]
 
 promptMetamask ∷ ∀ p. Boolean → H.HTML p Query
 promptMetamask loggedIn =

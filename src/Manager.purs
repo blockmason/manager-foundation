@@ -14,11 +14,10 @@ import Data.Int as I
 import Data.DateTime                   (DateTime(..))
 import Data.Formatter.DateTime as DTF
 
-import Foundation.Blockchain           (handleFCall)
+import Foundation.Blockchain           (handleFCall, loadingOverlay)
 import Foundation.Routes as R
 import Network.Eth.Foundation  as F
 import Network.Eth             as E
-import Data.Maybe
 
 data Query a
   = RefreshAddress a
@@ -81,7 +80,10 @@ component =
 
   render ∷ State → H.ComponentHTML Query
   render state =
-    HH.div [ HP.class_ (HH.ClassName "main-view")]
+    if state.loading
+    then loadingOverlay state.loading
+    else
+      HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
         page R.OverviewScreen (summary state.todoPending state.myId state.expiryDate (A.length state.addresses) state.funds)
       , page R.ManageAddressesScreen
