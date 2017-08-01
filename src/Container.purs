@@ -75,18 +75,15 @@ ui =
 
     render ∷ State → H.ParentHTML Query ChildQuery ChildSlot (AppMonad eff)
     render state =
-      HH.div [ HP.id_ "container", HP.class_ (HH.ClassName $ "container-fluid " <> (R.getRouteNameFor state.currentScreen)) ]
+      HH.div [ HP.id_ "container",
+               HP.class_ (HH.ClassName $
+                 "container " <>
+                 (R.getRouteNameFor state.currentScreen)  <>
+                 (if state.loading then " loading" else "") <>
+                 (if state.loggedIn then "" else " require-login")) ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
-      , HH.div [ HP.id_ "home-bar", HP.class_ (HH.ClassName "row home-bar")]
-        [
-          HH.text $ "Foundation Manager, Pending TXs: " <> show (A.length state.txs)
-        ]
-      , HH.div [ HP.id_ "back-nav-bar", HP.class_ (HH.ClassName "row back-nav-bar")]
-        [
-          HH.a [HP.href "#", HP.class_ (HH.ClassName "close-pop-button"), HE.onClick $ HE.input_ $ PreviousScreen]
-          [HH.i [ HP.class_ (HH.ClassName "fa fa-chevron-left")][], HH.text " Back"]
-        ]
+      , topBar state
       , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component
@@ -178,23 +175,49 @@ handleFoundationError fError =
     _  → do
       hLog fError
 
+topBar ∷ ∀ p. State → H.HTML p Query
+topBar state =
+  let processing = (A.length state.txs) /= 0
+  in
+    HH.div [ HP.class_ (HH.ClassName "row top-bar")]
+    [
+      HH.div [ HP.class_ (HH.ClassName "col logo-section")]
+      [
+        HH.text "Foundation Manager"
+      ]
+      , HH.div [HP.class_ (HH.ClassName "col go-back-section")]
+        [
+          HH.a [HP.href "#", HP.class_ (HH.ClassName "close-pop-button"), HE.onClick $ HE.input_ $ PreviousScreen]
+          [HH.i [ HP.class_ (HH.ClassName "fa fa-chevron-left")][], HH.text " Back"]
+        ]
+      , HH.div [HP.class_ (HH.ClassName $ "col-4 align-self-end current-transactions" <> if processing then " processing" else "") ]
+        [
+          HH.i [HP.class_ (HH.ClassName "transaction-spinner")][],
+          HH.span_ [HH.text $ "Immortalizing " <> show (A.length state.txs) <> " items..."]
+        ]
+    ]
+
 loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
 loadingOverlay loading =
   HH.div [ HP.id_ "loadingOverlay"
          , if loading then HP.class_ (HH.ClassName "active")
-           else HP.class_ (HH.ClassName "inActive")]
-  [ HH.h6_ [ HH.text "Loading Metamask..." ]]
+           else HP.class_ (HH.ClassName "in-active")]
+  [
+    HH.i [HP.class_ (HH.ClassName "loading-spinner")][],
+    HH.h6_ [ HH.text "Loading..." ]
+  ]
 
 promptMetamask ∷ ∀ p. Boolean → H.HTML p Query
 promptMetamask loggedIn =
   HH.div [ HP.id_ "metamaskOverlay"
-         , if loggedIn then HP.class_ (HH.ClassName "inActive")
+         , if loggedIn then HP.class_ (HH.ClassName "in-active")
            else HP.class_ (HH.ClassName "active")]
-  [ HH.div_
-    [ HH.h6_ [ HH.text "No internet connection or not logged in to Metamask." ]
+  [
+    HH.h6_ [ HH.text "Not logged in to Metamask." ]
     , HH.button [ HE.onClick $ HE.input_ $ RefreshMetamask
                 , HP.class_ $ HH.ClassName "btn-info"]
-      [ HH.text "Retry" ]]]
+      [ HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][] ]
+  ]
 
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do

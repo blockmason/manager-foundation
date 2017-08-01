@@ -7,60 +7,47 @@ $routes: (
   FundIDScreen: fund-id-screen
 );
 
+@each $route, $name in $routes {
+  .#{$name}-container {
+    transition: all 0.5s;
+    transform: translateX(0);
+  }
+}
+
 // generates the hide/show rules for each page. assumes that when one page is active, no other page is.
 @each $route, $name in $routes {
   .show-#{$name} {
     @each $_route, $_name in $routes {
-      .header-menu, .home-bar { //don't show the menu in child pages
-        display: none;
-      }
-
-      .back-nav-bar { //show back bar in child pages
-        display: block;
+      .header-menu { //don't show the menu in child pages
+        transform: translateX(-100vw);
       }
 
       .#{$_name}-container {
-        display: none;
+        transform: translateX(-3000px); height: 0; margin: 0; padding: 0;
       }
 
       .#{$name}-container {
-        display: block;
+        transform: none;
+      }
+
+      .logo-section {
+        margin-left: -25em;
       }
     }
   }
 }
 
 .show-overview-screen {
-  .header-menu, .home-bar {
-    display: block;
-  }
+  // don't show back section on main pages
+    .go-back-section {
+      margin-left: -34em;
+    }
 
-  .back-nav-bar {
-    display: none;
-  }
-}
+    .logo-section {
+      margin-left: 0;
+    }
 
-.back-nav-bar, .home-bar {
-  background: rgba(0,0,0,0.5);
-  padding: 10px;
-}
-
-.home-bar {
-  font-weight: 100;
-  background: #333;
-  text-transform: uppercase;
-}
-
-.back-nav-bar:hover {
-  background: rgba(0,0,0,0.6);
-}
-
-.close-pop-button {
-  color: white;
-  width: 100%;
-  padding: 10px;
-  &:focus, &:hover {
-    color: white;
-    text-decoration: none;
-  }
+    .header-menu {
+      transform: none;
+    }
 }
