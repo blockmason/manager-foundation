@@ -140,7 +140,7 @@ checkMM = do
 currentAddr ∷ MonadF E.EthAddress
 currentAddr = do
   checkMM
-  E.EthAddress <$> liftEff currentUserAddress
+  liftEff currentUserAddress
 
 foundationId ∷ MonadF (Maybe FoundationId)
 foundationId = do

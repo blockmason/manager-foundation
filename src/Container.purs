@@ -120,9 +120,7 @@ ui =
             H.modify (_ { loggedIn = false })
             pure next
           CheckMetamask → do
-            mmStatus ← H.liftEff MM.loggedIn
-            loggedIn ← H.gets _.loggedIn
-            checkMetamask loggedIn mmStatus
+            checkMetamask
             pure next
           CheckTxs  → do
             hLog "checking Tx"
@@ -196,18 +194,29 @@ promptMetamask loggedIn =
                 , HP.class_ $ HH.ClassName "btn-info"]
       [ HH.text "Retry" ]]]
 
+--check for loggedIn changes and user address changes
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do
   mmStatus ← H.liftEff MM.loggedIn
+  myAddr   ← H.liftEff MM.currentUserAddress
+  H.modify (_ { myAddr = Just myAddr })
   if mmStatus
     then do _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
             H.modify (_ { loggedIn = mmStatus })
     else do H.modify (_ { loggedIn = mmStatus })
 
-checkMetamask ∷ ∀ e. Boolean → Boolean
-              → H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
-checkMetamask loggedIn mmStatus =
-  if (loggedIn && mmStatus) then pure unit else refreshMetamask
+checkMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
+checkMetamask = do
+  mmStatus ← H.liftEff MM.loggedIn
+  loggedIn ← H.gets _.loggedIn
+  myAddr   ← H.gets _.myAddr
+  if (loggedIn && mmStatus)
+    then do
+      newAddr ← Just <$> (H.liftEff MM.currentUserAddress)
+      if isNothing myAddr || myAddr /= newAddr
+        then refreshMetamask
+        else pure unit
+    else refreshMetamask
 
 
 startCheckInterval maybeBus mmInterval txInterval = do

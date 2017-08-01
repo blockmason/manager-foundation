@@ -34,8 +34,8 @@ checkStatus = do
   res ← checkStatusImpl unit
   if res then pure LoggedIn else pure LoggedOut
 
-currentUserAddress ∷ ∀ e. Eff (metamask ∷ METAMASK | e) String
-currentUserAddress = currentUserImpl unit
+currentUserAddress ∷ ∀ e. Eff (metamask ∷ METAMASK | e) E.EthAddress
+currentUserAddress = E.eaMkAddr <$> currentUserImpl unit
 
 loggedIn ∷ ∀ e. Eff (metamask ∷ METAMASK | e) Boolean
 loggedIn = do
