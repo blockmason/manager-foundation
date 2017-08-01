@@ -5712,6 +5712,17 @@ var PS = {};
     };
   };
 
+  var replicatePolyfill = function (count) {
+    return function (value) {
+      var result = [];
+      var n = 0;
+      for (var i = 0; i < count; i++) {
+        result[n++] = value;
+      }
+      return result;
+    };
+  };
+
   // In browsers that have Array.prototype.fill we use it, as it's faster.
   exports.replicate = typeof Array.prototype.fill === "function" ?
       replicate :
