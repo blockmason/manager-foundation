@@ -6,7 +6,7 @@
   font-weight: 100;
 
   &:hover, &:focus {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.7);
     text-decoration: none;
   }
 
@@ -84,7 +84,7 @@
 }
 
 .header-menu {
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   position: absolute;
   bottom: 1em;
   width: 95vw;
