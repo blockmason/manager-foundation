@@ -14,8 +14,8 @@ import Data.Int as I
 import Data.DateTime                   (DateTime(..))
 import Data.Formatter.DateTime as DTF
 
-import Foundation.Blockchain           (handleFCall, loadingOverlay)
-import Foundation.Routes as R
+import Foundation.Blockchain           (handleFCall, loadingOverlay, formatDate)
+import Foundation.Routes       as R
 import Network.Eth.Foundation  as F
 import Network.Eth             as E
 
@@ -47,7 +47,6 @@ type State = { loading          ∷ Boolean
              , weiToExtend      ∷ E.Wei
              }
 
---type ScreenChange = R.Screen
 data Message
   = ScreenChange R.Screen
   | NewTX        E.TX

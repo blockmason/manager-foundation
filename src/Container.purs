@@ -120,7 +120,6 @@ ui =
             checkMetamask
             pure next
           CheckTxs  → do
-            hLog "checking Tx"
             txs ← H.gets _.txs
             bus ← H.gets _.errorBus
             statii ← H.liftAff $ sequence (MM.checkTxStatus <$> txs)
