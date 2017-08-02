@@ -2,7 +2,6 @@ $routes: (
   OverviewScreen: overview-screen,
   ManageAddressesScreen: manage-addresses-screen,
   AddAddressScreen: add-address-screen,
-  RegisterScreen: register-screen,
   ExtendIDScreen: extend-id-screen,
   FundIDScreen: fund-id-screen
 );
@@ -22,7 +21,7 @@ $routes: (
         transform: translateX(-100vw);
       }
 
-      .#{$_name}-container {
+      .#{$_name}-container, .register-screen-container {
         transform: translateX(-3000px); height: 0; margin: 0; padding: 0;
       }
 
@@ -35,6 +34,10 @@ $routes: (
       }
     }
   }
+}
+
+.require-foundation .main-view .register-screen-container {
+  transform: none; height: auto;
 }
 
 .show-overview-screen {

@@ -296,7 +296,7 @@ createIdPage state =
   HH.div
     [HP.class_ (HH.ClassName "col create-id-page")]
     [
-      (card "Make new id" $  HH.div
+      (card "Register new id" $  HH.div
         [HP.class_ (HH.ClassName "col")]
         [
           HH.input [ HP.type_ HP.InputText

@@ -27,6 +27,9 @@ html {
     font-size: 12px;
     font-weight: 100; }
 
+input {
+  outline: 0; }
+
 .overview-screen-container {
   transition: all 0.5s;
   transform: translateX(0); }
@@ -36,10 +39,6 @@ html {
   transform: translateX(0); }
 
 .add-address-screen-container {
-  transition: all 0.5s;
-  transform: translateX(0); }
-
-.register-screen-container {
   transition: all 0.5s;
   transform: translateX(0); }
 
@@ -54,7 +53,7 @@ html {
 .show-overview-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-overview-screen .overview-screen-container {
+.show-overview-screen .overview-screen-container, .show-overview-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -70,7 +69,7 @@ html {
 .show-overview-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-overview-screen .manage-addresses-screen-container {
+.show-overview-screen .manage-addresses-screen-container, .show-overview-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -86,7 +85,7 @@ html {
 .show-overview-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-overview-screen .add-address-screen-container {
+.show-overview-screen .add-address-screen-container, .show-overview-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -102,7 +101,7 @@ html {
 .show-overview-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-overview-screen .register-screen-container {
+.show-overview-screen .extend-id-screen-container, .show-overview-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -118,23 +117,7 @@ html {
 .show-overview-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-overview-screen .extend-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-overview-screen .overview-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-overview-screen .logo-section {
-  margin-left: -25em; }
-
-.show-overview-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-overview-screen .fund-id-screen-container {
+.show-overview-screen .fund-id-screen-container, .show-overview-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -150,7 +133,7 @@ html {
 .show-manage-addresses-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-manage-addresses-screen .overview-screen-container {
+.show-manage-addresses-screen .overview-screen-container, .show-manage-addresses-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -166,7 +149,7 @@ html {
 .show-manage-addresses-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-manage-addresses-screen .manage-addresses-screen-container {
+.show-manage-addresses-screen .manage-addresses-screen-container, .show-manage-addresses-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -182,7 +165,7 @@ html {
 .show-manage-addresses-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-manage-addresses-screen .add-address-screen-container {
+.show-manage-addresses-screen .add-address-screen-container, .show-manage-addresses-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -198,7 +181,7 @@ html {
 .show-manage-addresses-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-manage-addresses-screen .register-screen-container {
+.show-manage-addresses-screen .extend-id-screen-container, .show-manage-addresses-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -214,23 +197,7 @@ html {
 .show-manage-addresses-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-manage-addresses-screen .extend-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-manage-addresses-screen .logo-section {
-  margin-left: -25em; }
-
-.show-manage-addresses-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-manage-addresses-screen .fund-id-screen-container {
+.show-manage-addresses-screen .fund-id-screen-container, .show-manage-addresses-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -246,7 +213,7 @@ html {
 .show-add-address-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-add-address-screen .overview-screen-container {
+.show-add-address-screen .overview-screen-container, .show-add-address-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -262,7 +229,7 @@ html {
 .show-add-address-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-add-address-screen .manage-addresses-screen-container {
+.show-add-address-screen .manage-addresses-screen-container, .show-add-address-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -278,7 +245,7 @@ html {
 .show-add-address-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-add-address-screen .add-address-screen-container {
+.show-add-address-screen .add-address-screen-container, .show-add-address-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -294,7 +261,7 @@ html {
 .show-add-address-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-add-address-screen .register-screen-container {
+.show-add-address-screen .extend-id-screen-container, .show-add-address-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -310,7 +277,7 @@ html {
 .show-add-address-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-add-address-screen .extend-id-screen-container {
+.show-add-address-screen .fund-id-screen-container, .show-add-address-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -323,122 +290,10 @@ html {
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
 
-.show-add-address-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-add-address-screen .fund-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-add-address-screen .add-address-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-add-address-screen .logo-section {
-  margin-left: -25em; }
-
-.show-register-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-register-screen .overview-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-register-screen .register-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-register-screen .logo-section {
-  margin-left: -25em; }
-
-.show-register-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-register-screen .manage-addresses-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-register-screen .register-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-register-screen .logo-section {
-  margin-left: -25em; }
-
-.show-register-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-register-screen .add-address-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-register-screen .register-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-register-screen .logo-section {
-  margin-left: -25em; }
-
-.show-register-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-register-screen .register-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-register-screen .register-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-register-screen .logo-section {
-  margin-left: -25em; }
-
-.show-register-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-register-screen .extend-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-register-screen .register-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-register-screen .logo-section {
-  margin-left: -25em; }
-
-.show-register-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-register-screen .fund-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-register-screen .register-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-register-screen .logo-section {
-  margin-left: -25em; }
-
 .show-extend-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-extend-id-screen .overview-screen-container {
+.show-extend-id-screen .overview-screen-container, .show-extend-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -454,7 +309,7 @@ html {
 .show-extend-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-extend-id-screen .manage-addresses-screen-container {
+.show-extend-id-screen .manage-addresses-screen-container, .show-extend-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -470,7 +325,7 @@ html {
 .show-extend-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-extend-id-screen .add-address-screen-container {
+.show-extend-id-screen .add-address-screen-container, .show-extend-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -486,7 +341,7 @@ html {
 .show-extend-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-extend-id-screen .register-screen-container {
+.show-extend-id-screen .extend-id-screen-container, .show-extend-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -502,23 +357,7 @@ html {
 .show-extend-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-extend-id-screen .extend-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-extend-id-screen .extend-id-screen-container {
-  transform: none;
-  height: auto; }
-
-.show-extend-id-screen .logo-section {
-  margin-left: -25em; }
-
-.show-extend-id-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-extend-id-screen .fund-id-screen-container {
+.show-extend-id-screen .fund-id-screen-container, .show-extend-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -534,7 +373,7 @@ html {
 .show-fund-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-fund-id-screen .overview-screen-container {
+.show-fund-id-screen .overview-screen-container, .show-fund-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -550,7 +389,7 @@ html {
 .show-fund-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-fund-id-screen .manage-addresses-screen-container {
+.show-fund-id-screen .manage-addresses-screen-container, .show-fund-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -566,7 +405,7 @@ html {
 .show-fund-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-fund-id-screen .add-address-screen-container {
+.show-fund-id-screen .add-address-screen-container, .show-fund-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -582,7 +421,7 @@ html {
 .show-fund-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-fund-id-screen .register-screen-container {
+.show-fund-id-screen .extend-id-screen-container, .show-fund-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -598,7 +437,7 @@ html {
 .show-fund-id-screen .header-menu {
   transform: translateX(-100vw); }
 
-.show-fund-id-screen .extend-id-screen-container {
+.show-fund-id-screen .fund-id-screen-container, .show-fund-id-screen .register-screen-container {
   transform: translateX(-3000px);
   height: 0;
   margin: 0;
@@ -611,21 +450,9 @@ html {
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
 
-.show-fund-id-screen .header-menu {
-  transform: translateX(-100vw); }
-
-.show-fund-id-screen .fund-id-screen-container {
-  transform: translateX(-3000px);
-  height: 0;
-  margin: 0;
-  padding: 0; }
-
-.show-fund-id-screen .fund-id-screen-container {
+.require-foundation .main-view .register-screen-container {
   transform: none;
   height: auto; }
-
-.show-fund-id-screen .logo-section {
-  margin-left: -25em; }
 
 .show-overview-screen .go-back-section {
   margin-left: -40em; }
@@ -995,30 +822,34 @@ html {
       border-color: orange; }
 
 .create-id-page .card {
-  background: rgba(0, 0, 0, 0.6);
   margin-bottom: 10px;
   font-size: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background: black;
   padding-left: 0; }
   .create-id-page .card .card-header {
     background: rgba(0, 0, 0, 0.1);
     padding: 10px 0 0 20px; }
   .create-id-page .card .card-header h4 {
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 300;
-    color: black;
+    color: white;
     text-transform: uppercase; }
   .create-id-page .card input[type=text] {
     width: 100%;
-    border: 1px solid white;
+    border: 0;
+    border-bottom: 1px solid orange;
     margin: 0;
-    border-radius: 5px;
     padding: 8px;
-    background: rgba(255, 255, 255, 0.1); }
+    background: transparent;
+    color: white; }
   .create-id-page .card .btn {
     margin-top: 10px;
-    background: rgba(0, 0, 0, 0.5);
+    background: #333;
     border: none;
     color: white;
     width: 100%;
-    font-size: 12px; }
+    font-size: 12px;
+    text-transform: uppercase; }
+    .create-id-page .card .btn:hover {
+      background: orange;
+      color: white; }
