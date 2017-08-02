@@ -80,7 +80,8 @@ ui =
                  "container " <>
                  (R.getRouteNameFor state.currentScreen)  <>
                  (if state.loading then " loading" else "") <>
-                 (if state.loggedIn then "" else " require-login")) ]
+                 (if state.loggedIn then "" else " require-login") <>
+                 (if isNothing state.myId then " require-foundation" else "")) ]
       [ promptMetamask state.loggedIn
       , loadingOverlay state.loading
       , topBar state
@@ -252,9 +253,7 @@ menu currentScreen myId =
     Nothing →
       HH.div
         [ HP.class_ (HH.ClassName "header-menu col")]
-        [
-            menuItem R.RegisterScreen currentScreen
-        ]
+        []
     Just _ →
       HH.div
         [ HP.class_ (HH.ClassName "header-menu col")]

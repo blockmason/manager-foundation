@@ -2,7 +2,6 @@ $routes: (
   OverviewScreen: overview-screen,
   ManageAddressesScreen: manage-addresses-screen,
   AddAddressScreen: add-address-screen,
-  RegisterScreen: register-screen,
   ExtendIDScreen: extend-id-screen,
   FundIDScreen: fund-id-screen
 );
@@ -22,12 +21,12 @@ $routes: (
         transform: translateX(-100vw);
       }
 
-      .#{$_name}-container {
+      .#{$_name}-container, .register-screen-container {
         transform: translateX(-3000px); height: 0; margin: 0; padding: 0;
       }
 
       .#{$name}-container {
-        transform: none;
+        transform: none; height: auto;
       }
 
       .logo-section {
@@ -37,10 +36,14 @@ $routes: (
   }
 }
 
+.require-foundation .main-view .register-screen-container {
+  transform: none; height: auto;
+}
+
 .show-overview-screen {
   // don't show back section on main pages
     .go-back-section {
-      margin-left: -34em;
+      margin-left: -40em;
     }
 
     .logo-section {

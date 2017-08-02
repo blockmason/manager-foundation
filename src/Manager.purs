@@ -286,7 +286,7 @@ fundsPage state =
   HH.div
     [HP.class_ (HH.ClassName "col funds-page")]
     [
-      (card "Balance" $ HH.text $ (maybe "" show state.funds) ⊕ " Wei"),
+      (card "Balance" $ HH.text $ (E.weiShowEth $ fromMaybe (E.zeroWei) state.funds) ⊕ " Eth"),
       (card ("Deposit: " ⊕ E.weiShowEth state.fundAmountWei ⊕ " Eth") $
        HH.div [ HP.class_ (HH.ClassName "col") ]
        [ HH.input [ HP.type_ HP.InputText
@@ -307,7 +307,7 @@ createIdPage state =
   HH.div
     [HP.class_ (HH.ClassName "col create-id-page")]
     [
-      (card "Make new id" $  HH.div
+      (card "Register new id" $  HH.div
         [HP.class_ (HH.ClassName "col")]
         [
           HH.input [ HP.type_ HP.InputText
