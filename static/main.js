@@ -11569,7 +11569,8 @@ var PS = {};
   var Unsafe_Coerce = PS["Unsafe.Coerce"];
   var prop = function (dictIsProp) {
       return Unsafe_Coerce.unsafeCoerce(Halogen_HTML_Core.prop(dictIsProp));
-  };                                                        
+  };                                                                   
+  var src = prop(Halogen_HTML_Core.stringIsProp)("src");    
   var type_ = function (dictIsProp) {
       return prop(dictIsProp)("type");
   };
@@ -11587,6 +11588,7 @@ var PS = {};
   exports["id_"] = id_;
   exports["placeholder"] = placeholder;
   exports["prop"] = prop;
+  exports["src"] = src;
   exports["type_"] = type_;
   exports["value"] = value;
 })(PS["Halogen.HTML.Properties"] = PS["Halogen.HTML.Properties"] || {});
@@ -11611,6 +11613,9 @@ var PS = {};
   var h6 = element("h6");
   var h6_ = h6([  ]);    
   var i = element("i");
+  var img = function (props) {
+      return element("img")(props)([  ]);
+  };
   var input = function (props) {
       return element("input")(props)([  ]);
   };
@@ -11627,6 +11632,7 @@ var PS = {};
   exports["h6"] = h6;
   exports["h6_"] = h6_;
   exports["i"] = i;
+  exports["img"] = img;
   exports["input"] = input;
   exports["span"] = span;
   exports["span_"] = span_;
@@ -12734,7 +12740,7 @@ var PS = {};
   })();
   var topBar = function (state) {
       var processing = Data_Array.length(state.txs) !== 0;
-      return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("row top-bar") ])([ Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col logo-section") ])([ Halogen_HTML_Core.text("Foundation Manager") ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col go-back-section") ])([ Halogen_HTML_Elements.a([ Halogen_HTML_Properties.href("#"), Halogen_HTML_Properties.class_("close-pop-button"), Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(PreviousScreen.create)) ])([ Halogen_HTML_Elements.i([ Halogen_HTML_Properties.class_("fa fa-chevron-left") ])([  ]), Halogen_HTML_Core.text(" Back") ]) ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_(Halogen_HTML_Core.ClassName("col-4 align-self-end current-transactions" + (function () {
+      return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("row top-bar") ])([ Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col logo-section") ])([ Halogen_HTML_Elements.img([ Halogen_HTML_Properties.src("Foundation@1x.png") ]), Halogen_HTML_Core.text("Foundation Manager") ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col go-back-section") ])([ Halogen_HTML_Elements.a([ Halogen_HTML_Properties.href("#"), Halogen_HTML_Properties.class_("close-pop-button"), Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(PreviousScreen.create)) ])([ Halogen_HTML_Elements.i([ Halogen_HTML_Properties.class_("fa fa-chevron-left") ])([  ]), Halogen_HTML_Core.text(" Back") ]) ]), Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_(Halogen_HTML_Core.ClassName("col-4 align-self-end current-transactions" + (function () {
           if (processing) {
               return " processing";
           };
@@ -12769,7 +12775,7 @@ var PS = {};
                                   });
                               });
                           };
-                          throw new Error("Failed pattern match at Foundation.Container line 236, column 3 - line 241, column 16: " + [ maybeBus.constructor.name ]);
+                          throw new Error("Failed pattern match at Foundation.Container line 237, column 3 - line 242, column 16: " + [ maybeBus.constructor.name ]);
                       };
                   };
               };
@@ -12845,7 +12851,7 @@ var PS = {};
           if (myId instanceof Data_Maybe.Just) {
               return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen), menuItem(Foundation_Routes.FundIDScreen.value)(currentScreen) ]);
           };
-          throw new Error("Failed pattern match at Foundation.Container line 252, column 3 - line 265, column 10: " + [ myId.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 253, column 3 - line 266, column 10: " + [ myId.constructor.name ]);
       };
   };
   var handleFoundationError = function (dictBind) {

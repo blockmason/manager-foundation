@@ -618,7 +618,8 @@ input {
     color: white; }
     .top-bar .logo-section img {
       height: 30px;
-      width: 30px; }
+      width: 30px;
+      margin-right: 6px; }
   .top-bar .go-back-section a {
     color: white; }
     .top-bar .go-back-section a:hover {

@@ -181,6 +181,7 @@ topBar state =
     [
       HH.div [ HP.class_ (HH.ClassName "col logo-section")]
       [
+        HH.img [HP.src "Foundation@1x.png"],
         HH.text "Foundation Manager"
       ]
       , HH.div [HP.class_ (HH.ClassName "col go-back-section")]
