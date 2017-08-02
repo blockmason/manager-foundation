@@ -27,7 +27,7 @@ import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
 import Foundation.Config       as C
-import Foundation.Blockchain   (handleFCall, hasNetworkError, loadingOverlay)
+import Foundation.Blockchain   (handleCall, hasNetworkError, loadingOverlay)
 
 import Data.Array as A
 
@@ -102,7 +102,7 @@ ui =
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
         runTests
-        myId        ← handleFCall (Just bus) Nothing F.foundationId
+        myId        ← handleCall (Just bus) Nothing FoundationError F.foundationId
         H.modify (_ { myId = myId })
         refreshMetamask
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
