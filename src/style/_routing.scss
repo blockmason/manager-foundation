@@ -27,7 +27,7 @@ $routes: (
       }
 
       .#{$name}-container {
-        transform: none;
+        transform: none; height: auto; 
       }
 
       .logo-section {
