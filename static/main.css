@@ -12,7 +12,7 @@ html {
 
 .container {
   background-image: url("45-degree-fabric-light.png");
-  max-width: 600px;
+  width: 550px;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.3);
   height: 100vh;
   overflow-y: scroll; }
@@ -61,7 +61,8 @@ html {
   padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-overview-screen .logo-section {
   margin-left: -25em; }
@@ -76,7 +77,8 @@ html {
   padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-overview-screen .logo-section {
   margin-left: -25em; }
@@ -91,7 +93,8 @@ html {
   padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-overview-screen .logo-section {
   margin-left: -25em; }
@@ -106,7 +109,8 @@ html {
   padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-overview-screen .logo-section {
   margin-left: -25em; }
@@ -121,7 +125,8 @@ html {
   padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-overview-screen .logo-section {
   margin-left: -25em; }
@@ -136,7 +141,8 @@ html {
   padding: 0; }
 
 .show-overview-screen .overview-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-overview-screen .logo-section {
   margin-left: -25em; }
@@ -151,7 +157,8 @@ html {
   padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-manage-addresses-screen .logo-section {
   margin-left: -25em; }
@@ -166,7 +173,8 @@ html {
   padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-manage-addresses-screen .logo-section {
   margin-left: -25em; }
@@ -181,7 +189,8 @@ html {
   padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-manage-addresses-screen .logo-section {
   margin-left: -25em; }
@@ -196,7 +205,8 @@ html {
   padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-manage-addresses-screen .logo-section {
   margin-left: -25em; }
@@ -211,7 +221,8 @@ html {
   padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-manage-addresses-screen .logo-section {
   margin-left: -25em; }
@@ -226,7 +237,8 @@ html {
   padding: 0; }
 
 .show-manage-addresses-screen .manage-addresses-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-manage-addresses-screen .logo-section {
   margin-left: -25em; }
@@ -241,7 +253,8 @@ html {
   padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
@@ -256,7 +269,8 @@ html {
   padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
@@ -271,7 +285,8 @@ html {
   padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
@@ -286,7 +301,8 @@ html {
   padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
@@ -301,7 +317,8 @@ html {
   padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
@@ -316,7 +333,8 @@ html {
   padding: 0; }
 
 .show-add-address-screen .add-address-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-add-address-screen .logo-section {
   margin-left: -25em; }
@@ -331,7 +349,8 @@ html {
   padding: 0; }
 
 .show-register-screen .register-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-register-screen .logo-section {
   margin-left: -25em; }
@@ -346,7 +365,8 @@ html {
   padding: 0; }
 
 .show-register-screen .register-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-register-screen .logo-section {
   margin-left: -25em; }
@@ -361,7 +381,8 @@ html {
   padding: 0; }
 
 .show-register-screen .register-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-register-screen .logo-section {
   margin-left: -25em; }
@@ -376,7 +397,8 @@ html {
   padding: 0; }
 
 .show-register-screen .register-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-register-screen .logo-section {
   margin-left: -25em; }
@@ -391,7 +413,8 @@ html {
   padding: 0; }
 
 .show-register-screen .register-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-register-screen .logo-section {
   margin-left: -25em; }
@@ -406,7 +429,8 @@ html {
   padding: 0; }
 
 .show-register-screen .register-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-register-screen .logo-section {
   margin-left: -25em; }
@@ -421,7 +445,8 @@ html {
   padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-extend-id-screen .logo-section {
   margin-left: -25em; }
@@ -436,7 +461,8 @@ html {
   padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-extend-id-screen .logo-section {
   margin-left: -25em; }
@@ -451,7 +477,8 @@ html {
   padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-extend-id-screen .logo-section {
   margin-left: -25em; }
@@ -466,7 +493,8 @@ html {
   padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-extend-id-screen .logo-section {
   margin-left: -25em; }
@@ -481,7 +509,8 @@ html {
   padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-extend-id-screen .logo-section {
   margin-left: -25em; }
@@ -496,7 +525,8 @@ html {
   padding: 0; }
 
 .show-extend-id-screen .extend-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-extend-id-screen .logo-section {
   margin-left: -25em; }
@@ -511,7 +541,8 @@ html {
   padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
@@ -526,7 +557,8 @@ html {
   padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
@@ -541,7 +573,8 @@ html {
   padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
@@ -556,7 +589,8 @@ html {
   padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
@@ -571,7 +605,8 @@ html {
   padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
@@ -586,13 +621,14 @@ html {
   padding: 0; }
 
 .show-fund-id-screen .fund-id-screen-container {
-  transform: none; }
+  transform: none;
+  height: auto; }
 
 .show-fund-id-screen .logo-section {
   margin-left: -25em; }
 
 .show-overview-screen .go-back-section {
-  margin-left: -34em; }
+  margin-left: -40em; }
 
 .show-overview-screen .logo-section {
   margin-left: 0; }
@@ -742,7 +778,7 @@ html {
   color: white;
   font-weight: 100; }
   .header-menu .row:hover, .header-menu .row:focus {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.7);
     text-decoration: none; }
   .header-menu .row.active {
     padding-left: 10px; }
@@ -795,9 +831,8 @@ html {
       top: 15px; }
 
 .header-menu {
-  transition: all 0.3s ease;
-  position: absolute;
-  bottom: 1em;
+  transition: all 0.1s ease;
+  bottom: -5em;
   width: 95vw;
   margin: auto; }
   .header-menu a {

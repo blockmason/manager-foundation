@@ -27,7 +27,7 @@ $routes: (
       }
 
       .#{$name}-container {
-        transform: none; height: auto; 
+        transform: none; height: auto;
       }
 
       .logo-section {
@@ -40,7 +40,7 @@ $routes: (
 .show-overview-screen {
   // don't show back section on main pages
     .go-back-section {
-      margin-left: -34em;
+      margin-left: -40em;
     }
 
     .logo-section {
