@@ -14,11 +14,10 @@ import Data.Int as I
 import Data.DateTime                   (DateTime(..))
 import Data.Formatter.DateTime as DTF
 
-import Foundation.Blockchain           (handleFCall)
-import Foundation.Routes as R
+import Foundation.Blockchain        (handleCall, loadingOverlay, formatDate, handleTx)
+import Foundation.Routes       as R
 import Network.Eth.Foundation  as F
 import Network.Eth             as E
-import Data.Maybe
 
 data Query a
   = RefreshAddress a
@@ -48,7 +47,6 @@ type State = { loading          ∷ Boolean
              , weiToExtend      ∷ E.Wei
              }
 
---type ScreenChange = R.Screen
 data Message
   = ScreenChange R.Screen
   | NewTX        E.TX
@@ -81,7 +79,10 @@ component =
 
   render ∷ State → H.ComponentHTML Query
   render state =
-    HH.div [ HP.class_ (HH.ClassName "main-view")]
+    if state.loading
+    then loadingOverlay state.loading
+    else
+      HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
         page R.OverviewScreen (summary state.todoPending state.myId state.expiryDate (A.length state.addresses) state.funds)
       , page R.ManageAddressesScreen
@@ -108,7 +109,9 @@ component =
       H.raise $ ScreenChange route
       pure next
     ConfirmUnification name next → do
-      handleTx $ F.confirmPendingUnification name
+      s ← H.get
+      handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+        F.confirmPendingUnification name
       pure next
     InputNewAddress addrs next → do
       if ((S.length addrs) == 42) --
@@ -116,28 +119,36 @@ component =
         else H.modify (_ { newAddress = Left addrs })
       pure next
     AddNewAddress eitherAddr next → do
+      s ← H.get
       case eitherAddr of
         Left _      → pure next
         Right addr  → do
           H.modify (_ { newAddress = Left "" })
-          handleTx $ F.addPendingUnification addr
+          handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+            F.addPendingUnification addr
           pure next
     ExtendId next → do
-      handleTx $ F.extendIdOneYear
+      s ← H.get
+      handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+        F.extendIdOneYear
       pure next
     InputFundAmount strWei next → do
       H.modify (_ { fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do
       H.modify (_ { loading = true })
-      handleTx $ F.depositWei weiAmount
+      s ← H.get
+      handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+        F.depositWei weiAmount
       H.modify (_ { loading = false })
       pure next
     InputNewName nameStr next → do
       H.modify (_ { newName = nameStr })
       pure next
     CreateNewId name next → do
-      handleTx $ F.createId $ F.fnMkName name
+      s ← H.get
+      handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+        F.createId $ F.fnMkName name
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -316,24 +327,13 @@ createIdPage state =
 loadFromBlockchain myId = do
   eb ← H.gets _.errorBus
   H.modify (_ { loading = true })
-  sentPending ← handleFCall eb Nothing F.sentPending
-  todoPending ← handleFCall eb Nothing F.todoPending
-  expiryDate  ← handleFCall eb Nothing F.expirationDate
-  depWei      ← handleFCall eb Nothing F.getDepositWei
-  weiToExtend ← handleFCall eb E.zeroWei F.getWeiToExtend
+  sentPending ← handleCall eb Nothing FoundationError F.sentPending
+  todoPending ← handleCall eb Nothing FoundationError F.todoPending
+  expiryDate  ← handleCall eb Nothing FoundationError F.expirationDate
+  depWei      ← handleCall eb Nothing FoundationError F.getDepositWei
+  weiToExtend ← handleCall eb E.zeroWei FoundationError F.getWeiToExtend
   let addrs = maybe [] F.fiGetAddrs myId
   H.modify (_ { loading = false, addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
               , funds = depWei, expiryDate = expiryDate
               , weiToExtend = weiToExtend })
-
-formatDate ∷ DateTime → String
-formatDate = (either (const "") id) ∘ (DTF.formatDateTime "YYYY-MM-DD")
-
-watchTx tx = if E.isBlank tx then pure unit else H.raise $ NewTX tx
-
-handleTx f = do
-  s ← H.get
-  tx ← handleFCall s.errorBus E.blankTx f
-  watchTx tx
-  H.raise $ ScreenChange R.OverviewScreen

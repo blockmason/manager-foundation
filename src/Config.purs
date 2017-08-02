@@ -1,5 +1,5 @@
 module Foundation.Config where
 
 
-checkMMInterval = 1000
-checkTxInterval = 9000
+checkMMInterval = 800
+checkTxInterval = 7000

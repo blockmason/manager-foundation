@@ -27,7 +27,7 @@ import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
 import Foundation.Config       as C
-import Foundation.Blockchain   (handleFCall, hasNetworkError)
+import Foundation.Blockchain   (handleCall, hasNetworkError, loadingOverlay)
 
 import Data.Array as A
 
@@ -103,7 +103,7 @@ ui =
         H.liftAff $ delay (Milliseconds (toNumber 1500))
         H.modify (_ { loading = false })
         runTests
-        myId        ← handleFCall (Just bus) Nothing F.foundationId
+        myId        ← handleCall (Just bus) Nothing FoundationError F.foundationId
         H.modify (_ { myId = myId })
         refreshMetamask
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
@@ -118,12 +118,9 @@ ui =
             H.modify (_ { loggedIn = false })
             pure next
           CheckMetamask → do
-            mmStatus ← H.liftEff MM.loggedIn
-            loggedIn ← H.gets _.loggedIn
-            checkMetamask loggedIn mmStatus
+            checkMetamask
             pure next
           CheckTxs  → do
-            hLog "checking Tx"
             txs ← H.gets _.txs
             bus ← H.gets _.errorBus
             statii ← H.liftAff $ sequence (MM.checkTxStatus <$> txs)
@@ -198,16 +195,6 @@ topBar state =
         ]
     ]
 
-loadingOverlay ∷ ∀ p i. Boolean → H.HTML p i
-loadingOverlay loading =
-  HH.div [ HP.id_ "loadingOverlay"
-         , if loading then HP.class_ (HH.ClassName "active")
-           else HP.class_ (HH.ClassName "in-active")]
-  [
-    HH.i [HP.class_ (HH.ClassName "loading-spinner")][],
-    HH.h6_ [ HH.text "Loading..." ]
-  ]
-
 promptMetamask ∷ ∀ p. Boolean → H.HTML p Query
 promptMetamask loggedIn =
   HH.div [ HP.id_ "metamaskOverlay"
@@ -220,18 +207,29 @@ promptMetamask loggedIn =
       [ HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][] ]
   ]
 
+--check for loggedIn changes and user address changes
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do
   mmStatus ← H.liftEff MM.loggedIn
+  myAddr   ← H.liftEff MM.currentUserAddress
+  H.modify (_ { myAddr = Just myAddr })
   if mmStatus
     then do _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
             H.modify (_ { loggedIn = mmStatus })
     else do H.modify (_ { loggedIn = mmStatus })
 
-checkMetamask ∷ ∀ e. Boolean → Boolean
-              → H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
-checkMetamask loggedIn mmStatus =
-  if (loggedIn && mmStatus) then pure unit else refreshMetamask
+checkMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
+checkMetamask = do
+  mmStatus ← H.liftEff MM.loggedIn
+  loggedIn ← H.gets _.loggedIn
+  myAddr   ← H.gets _.myAddr
+  if (loggedIn && mmStatus)
+    then do
+      newAddr ← Just <$> (H.liftEff MM.currentUserAddress)
+      if isNothing myAddr || myAddr /= newAddr
+        then refreshMetamask
+        else pure unit
+    else refreshMetamask
 
 
 startCheckInterval maybeBus mmInterval txInterval = do
