@@ -175,7 +175,9 @@ handleFoundationError fError =
 
 topBar ∷ ∀ p. State → H.HTML p Query
 topBar state =
-  let processing = (A.length state.txs) /= 0
+  let numTxs     = A.length state.txs
+      processing = numTxs /= 0
+      itemStr    = if numTxs == 1 then "item" else "items"
   in
     HH.div [ HP.class_ (HH.ClassName "row top-bar")]
     [
@@ -192,7 +194,8 @@ topBar state =
       , HH.div [HP.class_ (HH.ClassName $ "col-4 align-self-end current-transactions" <> if processing then " processing" else "") ]
         [
           HH.i [HP.class_ (HH.ClassName "transaction-spinner")][],
-          HH.span_ [HH.text $ "Immortalizing " <> show (A.length state.txs) <> " items..."]
+          HH.span_ [HH.text $
+                    "Writing " <> show (A.length state.txs) <> " " <> itemStr <> "..."]
         ]
     ]
 

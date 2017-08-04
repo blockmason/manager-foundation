@@ -102,7 +102,7 @@ exports.addPendingUnificationImpl = function(callback) {
 exports.confirmPendingUnificationImpl = function(callback) {
     return function(foundationId) {
         return function() {
-            var data = fContract.confirmPendingUnification(foundationId);
+            var data = fContract.confirmPendingUnification.getData(foundationId);
             sendFoundationTx(data, 0, callback);
         };
     };
