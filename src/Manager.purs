@@ -143,7 +143,9 @@ component =
       H.modify (_ { loading = false })
       pure next
     InputNewName nameStr next → do
-      H.modify (_ { newName = nameStr })
+      if F.fiStrValidId (S.toLower nameStr) || S.length nameStr < 4
+        then H.modify (_ { newName = S.toLower nameStr })
+        else H.modify (_ { newName = "" })
       pure next
     CreateNewId name next → do
       s ← H.get
@@ -311,14 +313,15 @@ createIdPage state =
         [HP.class_ (HH.ClassName "col")]
         [
           HH.input [ HP.type_ HP.InputText
-                   , HP.value $ ""
+                   , HP.value $ state.newName
                    , HP.class_ $ HH.ClassName "row"
                    , HP.placeholder $ "Enter an id"
                    , HE.onValueInput
                      (HE.input (\val → InputNewName val))
                    ]
         , HH.button [ HE.onClick $ HE.input_ $ CreateNewId state.newName
-                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                    , HP.class_ $ HH.ClassName "btn btn-secondary"
+                    , HP.enabled $ F.fiStrValidId state.newName]
           [ HH.text "Create Foundation ID" ]
         ]
       )

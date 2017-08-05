@@ -8,6 +8,7 @@ module Network.Eth.Foundation
 
        , fiBlankId
        , fiGetName
+       , fiStrValidId
        , fiGetAddrs
        , fnGetName
        , fnMkName
@@ -44,6 +45,9 @@ import Control.Monad.Except.Trans  (ExceptT, throwError, runExceptT, lift)
 import Data.Either                 (Either(..))
 import Data.Maybe                  (Maybe(..), maybe, isJust)
 import Data.String                 as S
+import Data.String.Regex.Unsafe    as RU
+import Data.String.Regex           as R
+import Data.String.Regex.Flags     as RF
 import Data.Array                  as A
 import Data.Int                    (round, toNumber, fromString)
 import Data.DateTime.Instant       (instant, toDateTime)
@@ -92,6 +96,11 @@ instance showFoundationId ∷ Show FoundationId where
   show (FoundationId fi) = case isValid (FoundationId fi) of
     true  → show fi.name <> ", " <> show fi.addrs
     false → "NoValidFoundationId"
+
+fiStrValidId ∷ String → Boolean
+fiStrValidId s = S.length s > 3 && S.length s < 33 && R.test idRegex s
+idRegex ∷ R.Regex
+idRegex = RU.unsafeRegex "^([a-z]|\\d|-|\\.)+$" RF.noFlags
 
 fiGetName ∷ FoundationId → FoundationName
 fiGetName (FoundationId fi) = fi.name
