@@ -101,11 +101,11 @@ ui =
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
         H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
         H.liftAff $ delay (Milliseconds (toNumber 1500))
-        H.modify (_ { loading = false })
         runTests
         myId        ← handleCall (Just bus) Nothing FoundationError F.foundationId
         H.modify (_ { myId = myId })
         refreshMetamask
+        H.modify (_ { loading = false })
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
         pure next
       HandleMsg msg next →

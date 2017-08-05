@@ -12976,29 +12976,29 @@ var PS = {};
                           return $84;
                       }))(function () {
                           return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Aff_Class.liftAff(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(Control_Monad_Aff.delay(Data_Int.toNumber(1500))))(function () {
-                              return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v2) {
-                                  var $87 = {};
-                                  for (var $88 in v2) {
-                                      if ({}.hasOwnProperty.call(v2, $88)) {
-                                          $87[$88] = v2[$88];
-                                      };
-                                  };
-                                  $87.loading = false;
-                                  return $87;
-                              }))(function () {
-                                  return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(runTests(Halogen_Query_HalogenM.applicativeHalogenM))(function () {
-                                      return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Foundation_Blockchain.handleCall(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(new Data_Maybe.Just(v1))(Data_Maybe.Nothing.value)(Foundation_Types.FoundationError.create)(Network_Eth_Foundation.foundationId))(function (v2) {
-                                          return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v3) {
-                                              var $91 = {};
-                                              for (var $92 in v3) {
-                                                  if ({}.hasOwnProperty.call(v3, $92)) {
-                                                      $91[$92] = v3[$92];
-                                                  };
+                              return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(runTests(Halogen_Query_HalogenM.applicativeHalogenM))(function () {
+                                  return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Foundation_Blockchain.handleCall(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Halogen_Query_HalogenM.monadAffHalogenM(Control_Monad_Aff_Class.monadAffAff))(new Data_Maybe.Just(v1))(Data_Maybe.Nothing.value)(Foundation_Types.FoundationError.create)(Network_Eth_Foundation.foundationId))(function (v2) {
+                                      return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v3) {
+                                          var $88 = {};
+                                          for (var $89 in v3) {
+                                              if ({}.hasOwnProperty.call(v3, $89)) {
+                                                  $88[$89] = v3[$89];
                                               };
-                                              $91.myId = v2;
-                                              return $91;
-                                          }))(function () {
-                                              return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
+                                          };
+                                          $88.myId = v2;
+                                          return $88;
+                                      }))(function () {
+                                          return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
+                                              return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (v3) {
+                                                  var $91 = {};
+                                                  for (var $92 in v3) {
+                                                      if ({}.hasOwnProperty.call(v3, $92)) {
+                                                          $91[$92] = v3[$92];
+                                                      };
+                                                  };
+                                                  $91.loading = false;
+                                                  return $91;
+                                              }))(function () {
                                                   return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(startCheckInterval(Halogen_Query_HalogenM.applicativeHalogenM)(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(new Data_Maybe.Just(v1))(Foundation_Config.checkMMInterval)(Foundation_Config.checkTxInterval))(function () {
                                                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
                                                   });
