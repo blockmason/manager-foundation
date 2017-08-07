@@ -237,14 +237,11 @@ depositWei w = do
     Nothing → throwError NoFoundationId
     Just fi → (liftAff $ makeAff (\_ s → depositWeiImpl s ((fnGetName ∘ fiGetName) fi) (E.weiStr w))) >>= (E.rawToTX TxError)
 
-withdrawDeposit ∷ MonadF E.TX
-withdrawDeposit = do
-  mId ← foundationId
-  case mId of
-    Nothing → throwError NoFoundationId
-    Just fi → do
-      tx ← liftAff $ makeAff (\_ s → withdrawDepositImpl s (fiStrName fi))
-      E.rawToTX TxError tx
+withdrawDeposit ∷ E.Wei → MonadF E.TX
+withdrawDeposit w = do
+  checkMM
+  tx ← liftAff $ makeAff (\_ s → withdrawDepositImpl s (E.weiStr w))
+  E.rawToTX TxError tx
 
 getDepositWei ∷ MonadF (Maybe E.Wei)
 getDepositWei = do

@@ -130,9 +130,9 @@ exports.depositWeiImpl = function(callback) {
 };
 
 exports.withdrawDepositImpl = function(callback) {
-    return function(foundationId) {
+    return function(weiAmountStr) {
         return function() {
-            var data = fContract.withdrawDeposit.getData(foundationId);
+            var data = fContract.withdrawDeposit.getData(weiAmountStr);
             sendFoundationTx(data, 0, callback);
         };
     };

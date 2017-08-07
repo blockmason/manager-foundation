@@ -32,6 +32,7 @@ data Query a
   | ExtendId a
   | InputFundAmount String a
   | FundId E.Wei a
+  | WithdrawDeposit a
 
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
@@ -142,6 +143,16 @@ component =
         F.depositWei weiAmount
       H.modify (_ { loading = false })
       pure next
+    WithdrawDeposit next → do
+      s ← H.get
+      case s.funds of
+        Just funds → do
+          H.modify (_ { loading = true })
+          handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+            F.withdrawDeposit funds
+          H.modify (_ { loading = false })
+          pure next
+        Nothing → pure next
     InputNewName nameStr next → do
       if F.fiStrValidId (S.toLower nameStr) || S.length nameStr < 4
         then H.modify (_ { newName = S.toLower nameStr })
@@ -149,6 +160,7 @@ component =
       pure next
     CreateNewId name next → do
       s ← H.get
+      H.modify (_ { newName = "" })
       handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
         F.createId $ F.fnMkName name
       pure next
@@ -221,7 +233,8 @@ addressesPage addresses sentPending todoPending =
            HH.button [ HE.onClick $ HE.input_ $ GoToPage R.AddAddressScreen
                      , HP.class_ $ HH.ClassName "confirm-address-button"]
            [ HH.text "Add Address" ])
-        ] ⊕
+        ]
+        ⊕
         (maybe []
          (\sp → [(card "Waiting for confirmation from:" $ HH.text $ show sp)])
          sentPending)
@@ -288,8 +301,8 @@ fundsPage state =
   HH.div
     [HP.class_ (HH.ClassName "col funds-page")]
     [
-      (card "Balance" $ HH.text $ (E.weiShowEth $ fromMaybe (E.zeroWei) state.funds) ⊕ " Eth"),
-      (card ("Deposit: " ⊕ E.weiShowEth state.fundAmountWei ⊕ " Eth") $
+      (card "Balance" $ HH.text $ (E.weiShowEth $ fromMaybe (E.zeroWei) state.funds) ⊕ " Eth")
+    , (card ("Deposit: " ⊕ E.weiShowEth state.fundAmountWei ⊕ " Eth") $
        HH.div [ HP.class_ (HH.ClassName "col") ]
        [ HH.input [ HP.type_ HP.InputText
                   , HP.class_ $ HH.ClassName ""
@@ -302,6 +315,11 @@ fundsPage state =
                    , HP.class_ $ HH.ClassName "btn btn-secondary" ]
          [ HH.text "Deposit ETH" ]
         ])
+      , (card "Withdrawal" $
+         HH.div [ HP.class_ $ HH.ClassName "col" ]
+         [ HH.button [ HE.onClick $ HE.input_ $ WithdrawDeposit
+                     , HP.class_ $ HH.ClassName "btn btn-secondary" ]
+           [ HH.text "Withdraw All ETH" ]])
     ]
 
 createIdPage ∷ State → H.ComponentHTML Query

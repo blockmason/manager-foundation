@@ -82,7 +82,7 @@ ui =
                  (if state.loading then " loading" else "") <>
                  (if state.loggedIn then "" else " require-login") <>
                  (if isNothing state.myId then " require-foundation" else "")) ]
-      [ promptMetamask state.loggedIn
+      [ promptMetamask (state.loggedIn || state.loading)
       , loadingOverlay state.loading
       , topBar state
       , HH.div [ HP.id_ "body" ]
@@ -100,7 +100,7 @@ ui =
         bus ← H.liftAff $ Bus.make
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
         H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
-        H.liftAff $ delay (Milliseconds (toNumber 1500))
+        H.liftAff $ delay (Milliseconds (toNumber 2500))
         runTests
         myId        ← handleCall (Just bus) Nothing FoundationError F.foundationId
         H.modify (_ { myId = myId })
@@ -200,9 +200,9 @@ topBar state =
     ]
 
 promptMetamask ∷ ∀ p. Boolean → H.HTML p Query
-promptMetamask loggedIn =
+promptMetamask overlayInactive =
   HH.div [ HP.id_ "metamaskOverlay"
-         , if loggedIn then HP.class_ (HH.ClassName "in-active")
+         , if overlayInactive then HP.class_ (HH.ClassName "in-active")
            else HP.class_ (HH.ClassName "active")]
   [
     HH.h6_ [ HH.text "Not logged in to Metamask." ]
@@ -214,13 +214,13 @@ promptMetamask loggedIn =
 --check for loggedIn changes and user address changes
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do
-  mmStatus ← H.liftEff MM.loggedIn
-  myAddr   ← H.liftEff MM.currentUserAddress
+  mmLoggedIn ← H.liftEff MM.loggedIn
+  myAddr     ← H.liftEff MM.currentUserAddress
   H.modify (_ { myAddr = Just myAddr })
-  if mmStatus
+  if mmLoggedIn
     then do _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
-            H.modify (_ { loggedIn = mmStatus })
-    else do H.modify (_ { loggedIn = mmStatus })
+            H.modify (_ { loggedIn = true })
+    else do H.modify (_ { loggedIn = false })
 
 checkMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 checkMetamask = do
