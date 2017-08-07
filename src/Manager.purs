@@ -91,7 +91,7 @@ component =
       , page R.AddAddressScreen (addAddressPage state)
       , page R.RegisterScreen (createIdPage state)
       , page R.ExtendIDScreen (extendIdPage state.expiryDate state.weiToExtend)
-      , page R.FundIDScreen (fundsPage state)
+--      , page R.FundIDScreen (fundsPage state)
       ]
 
   eval ∷ Query ~> H.ComponentDSL State Query Message (AppMonad eff)

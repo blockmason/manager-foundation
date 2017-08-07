@@ -100,11 +100,7 @@ ui =
         bus ← H.liftAff $ Bus.make
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
         H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
-        H.liftAff $ delay (Milliseconds (toNumber 2500))
-        runTests
-        myId        ← handleCall (Just bus) Nothing FoundationError F.foundationId
-        H.modify (_ { myId = myId })
-        refreshMetamask
+        loadWeb3Loop C.web3Delay 10
         H.modify (_ { loading = false })
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
         pure next
@@ -115,7 +111,7 @@ ui =
             pure next
           NetworkError → do
             hLog NetworkError
-            H.modify (_ { loggedIn = false })
+            H.modify (_ { loggedIn = false, loading = false })
             pure next
           CheckMetamask → do
             checkMetamask
@@ -282,3 +278,24 @@ runTests = do
   pure unit
 --  (H.liftAff $ F.runMonadF F.getPendingUnification) >>= hLog
 --  (H.liftAff $ F.runMonadF F.foundationId) >>= hLog
+
+--keep checking if metamask is loaded
+loadWeb3Loop delayMs numTriesLeft = do
+  b ← H.gets _.errorBus
+  case b of
+    Nothing  → pure unit
+    Just bus →
+      if numTriesLeft > 0
+      then do
+        hLog "Retrying"
+        H.liftAff $ delay (Milliseconds (toNumber delayMs))
+        mmLoggedIn ← H.liftEff MM.loggedIn
+        if mmLoggedIn
+          then do
+            myId ← handleCall (Just bus) Nothing FoundationError F.foundationId
+            H.modify (_ { myId = myId })
+            refreshMetamask
+          else loadWeb3Loop delayMs (numTriesLeft - 1)
+      else do
+        H.liftAff $ Bus.write NetworkError bus
+        pure unit
