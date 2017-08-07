@@ -334,6 +334,7 @@ createIdPage state =
                    , HP.value $ state.newName
                    , HP.class_ $ HH.ClassName "row"
                    , HP.placeholder $ "Enter an id"
+                   , HP.attr (HH.AttrName "maxlength") "32"
                    , HE.onValueInput
                      (HE.input (\val → InputNewName val))
                    ]

@@ -11193,10 +11193,16 @@ var PS = {};
               return Data_Bifunctor.bimap(Halogen_VDom_Types.bifunctorVDom)(Data_Functor.map(Data_Functor.functorArray)(Data_Functor.map(Halogen_VDom_DOM_Prop.functorProp)(Data_Functor.map(Halogen_Query_InputF.functorInputF)(g))))(f)(v);
           };
       };
-  });
+  });                                                                            
+  var attr = function (ns) {
+      return function (v) {
+          return Halogen_VDom_DOM_Prop.Attribute.create(ns)(v);
+      };
+  };
   exports["ClassName"] = ClassName;
   exports["HTML"] = HTML;
   exports["IsProp"] = IsProp;
+  exports["attr"] = attr;
   exports["element"] = element;
   exports["handler"] = handler;
   exports["prop"] = prop;
@@ -11744,6 +11750,8 @@ var PS = {};
   var class_ = function ($9) {
       return prop(Halogen_HTML_Core.stringIsProp)("className")(Data_Newtype.unwrap(Halogen_HTML_Core.newtypeClassName)($9));
   };
+  var attr = Unsafe_Coerce.unsafeCoerce(Halogen_HTML_Core.attr(Data_Maybe.Nothing.value));
+  exports["attr"] = attr;
   exports["class_"] = class_;
   exports["disabled"] = disabled;
   exports["enabled"] = enabled;
@@ -12464,7 +12472,7 @@ var PS = {};
       };
   };
   var createIdPage = function (state) {
-      return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col create-id-page") ])([ card("Register new id")(Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col") ])([ Halogen_HTML_Elements.input([ Halogen_HTML_Properties.type_(Halogen_HTML_Core.inputTypeIsProp)(DOM_HTML_Indexed_InputType.InputText.value), Halogen_HTML_Properties.value(state.newName), Halogen_HTML_Properties.class_("row"), Halogen_HTML_Properties.placeholder("Enter an id"), Halogen_HTML_Events.onValueInput(Halogen_HTML_Events.input(function (val) {
+      return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col create-id-page") ])([ card("Register new id")(Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col") ])([ Halogen_HTML_Elements.input([ Halogen_HTML_Properties.type_(Halogen_HTML_Core.inputTypeIsProp)(DOM_HTML_Indexed_InputType.InputText.value), Halogen_HTML_Properties.value(state.newName), Halogen_HTML_Properties.class_("row"), Halogen_HTML_Properties.placeholder("Enter an id"), Halogen_HTML_Properties.attr("maxlength")("32"), Halogen_HTML_Events.onValueInput(Halogen_HTML_Events.input(function (val) {
           return InputNewName.create(val);
       })) ]), Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(CreateNewId.create(state.newName))), Halogen_HTML_Properties.class_("btn btn-secondary"), Halogen_HTML_Properties.enabled(Network_Eth_Foundation.fiStrValidId(state.newName)) ])([ Halogen_HTML_Core.text("Create Foundation ID") ]) ])) ]);
   };
