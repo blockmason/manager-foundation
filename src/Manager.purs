@@ -134,10 +134,10 @@ component =
           pure next
     DeleteAddress address next → do
       s ← H.get
-      H.liftEff $ UIStates.toggleLoading(".add-address-button")
+      H.liftEff $ UIStates.toggleLoading(".delete-address-button")
       handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
         F.deleteAddr address
-      H.liftEff $ UIStates.toggleLoading(".add-address-button")
+      H.liftEff $ UIStates.toggleLoading(".delete-address-button")
       pure next
     ExtendId next → do
       s ← H.get
