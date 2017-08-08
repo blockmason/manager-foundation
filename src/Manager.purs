@@ -18,6 +18,8 @@ import Foundation.Blockchain        (handleCall, loadingOverlay, formatDate, han
 import Foundation.Routes       as R
 import Network.Eth.Foundation  as F
 import Network.Eth             as E
+import UI.UIStatesKit          as UIStates
+
 
 data Query a
   = RefreshAddress a
@@ -80,9 +82,6 @@ component =
 
   render ∷ State → H.ComponentHTML Query
   render state =
-    if state.loading
-    then loadingOverlay state.loading
-    else
       HH.div [ HP.class_ (HH.ClassName "main-view")]
       [
         page R.OverviewScreen (summary state.todoPending state.myId state.expiryDate (A.length state.addresses) state.funds)
@@ -111,8 +110,10 @@ component =
       pure next
     ConfirmUnification name next → do
       s ← H.get
+      H.liftEff $ UIStates.toggleLoading(".confirm-unification-button")
       handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
         F.confirmPendingUnification name
+      H.liftEff $ UIStates.toggleLoading(".confirm-unification-button")
       pure next
     InputNewAddress addrs next → do
       if ((S.length addrs) == 42) --
@@ -125,32 +126,36 @@ component =
         Left _      → pure next
         Right addr  → do
           H.modify (_ { newAddress = Left "" })
+          H.liftEff $ UIStates.toggleLoading(".add-address-button")
           handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
             F.addPendingUnification addr
+          H.liftEff $ UIStates.toggleLoading(".add-address-button")
           pure next
     ExtendId next → do
       s ← H.get
+      H.liftEff $ UIStates.toggleLoading(".extend-id-button")
       handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
         F.extendIdOneYear
+      H.liftEff $ UIStates.toggleLoading(".extend-id-button")
       pure next
     InputFundAmount strWei next → do
       H.modify (_ { fundAmountWei = E.mkWei strWei })
       pure next
     FundId weiAmount next → do
-      H.modify (_ { loading = true })
+      H.liftEff $ UIStates.toggleLoading(".fund-id-button")
       s ← H.get
       handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
         F.depositWei weiAmount
-      H.modify (_ { loading = false })
+      H.liftEff $ UIStates.toggleLoading(".fund-id-button")
       pure next
     WithdrawDeposit next → do
       s ← H.get
       case s.funds of
         Just funds → do
-          H.modify (_ { loading = true })
+          H.liftEff $ UIStates.toggleLoading(".withdraw-deposit-button")
           handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
             F.withdrawDeposit funds
-          H.modify (_ { loading = false })
+          H.liftEff $ UIStates.toggleLoading(".withdraw-deposit-button")
           pure next
         Nothing → pure next
     InputNewName nameStr next → do
@@ -161,8 +166,10 @@ component =
     CreateNewId name next → do
       s ← H.get
       H.modify (_ { newName = "" })
+      H.liftEff $ UIStates.toggleLoading(".create-id-button")
       handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
         F.createId $ F.fnMkName name
+      H.liftEff $ UIStates.toggleLoading(".create-id-button")
       pure next
 
 page ∷ R.Screen → H.ComponentHTML Query → H.ComponentHTML Query
@@ -248,7 +255,7 @@ addressesPage addresses sentPending todoPending =
           HH.div [ HP.class_ (HH.ClassName "col") ]
           [ HH.text $ show fName
           , HH.button [ HE.onClick $ HE.input_ $ ConfirmUnification fName
-                      , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                      , HP.class_ $ HH.ClassName "btn btn-secondary confirm-unification-button"]
             [ HH.text "Confirm Address Link" ]
           ]
 
@@ -278,7 +285,7 @@ addAddressPage state =
                    ]
         , HH.button [ HE.onClick $ HE.input_ $ AddNewAddress state.newAddress
                     , HP.disabled $ isLeft state.newAddress
-                    , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                    , HP.class_ $ HH.ClassName "btn btn-secondary add-address-button"]
           [ HH.text "Add Address" ]
         ]
       )
@@ -292,7 +299,7 @@ extendIdPage expiryDate weiToExtend =
       (card "Expires" $ HH.text $ maybe "" formatDate expiryDate )
     , (card "Extend for 1 Year" $
        HH.button [ HE.onClick $ HE.input_ $ ExtendId
-                 , HP.class_ $ HH.ClassName "btn btn-secondary"]
+                 , HP.class_ $ HH.ClassName "btn btn-secondary extend-id-button"]
        [ HH.text $ "Extend for " ⊕ E.weiShowEth weiToExtend ⊕ " ETH" ])
     ]
 
@@ -312,13 +319,13 @@ fundsPage state =
                     (HE.input (\val → InputFundAmount val))
                   ]
        , HH.button [ HE.onClick $ HE.input_ $ FundId state.fundAmountWei
-                   , HP.class_ $ HH.ClassName "btn btn-secondary" ]
+                   , HP.class_ $ HH.ClassName "btn btn-secondary fund-id-button" ]
          [ HH.text "Deposit ETH" ]
         ])
       , (card "Withdrawal" $
          HH.div [ HP.class_ $ HH.ClassName "col" ]
          [ HH.button [ HE.onClick $ HE.input_ $ WithdrawDeposit
-                     , HP.class_ $ HH.ClassName "btn btn-secondary" ]
+                     , HP.class_ $ HH.ClassName "btn btn-secondary withdraw-deposit-button" ]
            [ HH.text "Withdraw All ETH" ]])
     ]
 
@@ -339,7 +346,7 @@ createIdPage state =
                      (HE.input (\val → InputNewName val))
                    ]
         , HH.button [ HE.onClick $ HE.input_ $ CreateNewId state.newName
-                    , HP.class_ $ HH.ClassName "btn btn-secondary"
+                    , HP.class_ $ HH.ClassName "btn btn-secondary create-id-button"
                     , HP.enabled $ F.fiStrValidId state.newName]
           [ HH.text "Create Foundation ID" ]
         ]
@@ -348,14 +355,15 @@ createIdPage state =
 
 loadFromBlockchain myId = do
   eb ← H.gets _.errorBus
-  H.modify (_ { loading = true })
+  H.liftEff $ UIStates.toggleLoading(".main-view")
   sentPending ← handleCall eb Nothing FoundationError F.sentPending
   todoPending ← handleCall eb Nothing FoundationError F.todoPending
   expiryDate  ← handleCall eb Nothing FoundationError F.expirationDate
   depWei      ← handleCall eb Nothing FoundationError F.getDepositWei
   weiToExtend ← handleCall eb E.zeroWei FoundationError F.getWeiToExtend
   let addrs = maybe [] F.fiGetAddrs myId
-  H.modify (_ { loading = false, addresses = addrs
+  H.modify (_ { addresses = addrs
               , sentPending = sentPending, todoPending = todoPending
               , funds = depWei, expiryDate = expiryDate
               , weiToExtend = weiToExtend })
+  H.liftEff $ UIStates.toggleLoading(".main-view")

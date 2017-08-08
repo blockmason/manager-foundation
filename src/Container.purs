@@ -27,7 +27,8 @@ import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
 import Foundation.Config       as C
-import Foundation.Blockchain   (handleCall, hasNetworkError, loadingOverlay)
+import Foundation.Blockchain   (handleCall, hasNetworkError)
+import UI.UIStatesKit          as UIStates
 
 import Data.Array as A
 
@@ -40,7 +41,6 @@ data Query a
   | SetScreen R.Screen a
 
 type State = { loggedIn ∷ Boolean
-             , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
              , txs      ∷ Array E.TX
              , currentScreen ∷ R.Screen
@@ -65,7 +65,6 @@ ui =
 
     initialState ∷ State
     initialState = { loggedIn: true
-                   , loading: true
                    , errorBus: Nothing
                    , txs: []
                    , currentScreen: R.OverviewScreen
@@ -78,13 +77,9 @@ ui =
       HH.div [ HP.id_ "container",
                HP.class_ (HH.ClassName $
                  "container " <>
-                 (R.getRouteNameFor state.currentScreen)  <>
-                 (if state.loading then " loading" else "") <>
-                 (if state.loggedIn then "" else " require-login") <>
-                 (if isNothing state.myId then " require-foundation" else "")) ]
-      [ promptMetamask (state.loggedIn || state.loading)
-      , loadingOverlay state.loading
-      , topBar state
+                 (R.getRouteNameFor state.currentScreen)) ]
+      [
+        topBar state
       , HH.div [ HP.id_ "body" ]
         [
           HH.slot' CP.cp1 unit MainView.component
@@ -99,9 +94,10 @@ ui =
       Init next → do
         bus ← H.liftAff $ Bus.make
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
-        H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
+        H.liftEff $ UIStates.toggleLoading(".container")
+        H.modify (_ { loggedIn = true, errorBus = Just bus })
         loadWeb3Loop C.web3Delay 10
-        H.modify (_ { loading = false })
+        H.liftEff $ UIStates.toggleLoading(".container")
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
         pure next
       HandleMsg msg next →
@@ -111,7 +107,7 @@ ui =
             pure next
           NetworkError → do
             hLog NetworkError
-            H.modify (_ { loggedIn = false, loading = false })
+            H.modify (_ { loggedIn = false})
             pure next
           CheckMetamask → do
             checkMetamask

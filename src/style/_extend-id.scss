@@ -7,7 +7,7 @@
     background: rgba(0,0,0,0.1);
     padding: 10px 0 0 20px;
   }
-  
+
 
   input[type=text], input[type=number], select {
     border: 0;
@@ -43,6 +43,10 @@
       background-color: $highlight;
       color: white;
       border-color: $highlight;
+
+      &.loading {
+        color: $highlight;
+      }
     }
   }
 }
