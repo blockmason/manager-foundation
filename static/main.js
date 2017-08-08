@@ -13296,7 +13296,7 @@ var PS = {};
           return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("no-errors") ])([  ]);
       };
       if (state.errorToDisplay instanceof Data_Maybe.Just && state.errorToDisplay.value0 instanceof Foundation_Types.NetworkError) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("errorOverlay") ])([ Halogen_HTML_Elements.h6_([ Halogen_HTML_Core.text("Cannot Connect to Metamask. Try Logging in Again.") ]), Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(RefreshMetamask.create)), Halogen_HTML_Properties.class_("error-action") ])([ Halogen_HTML_Elements.i([ Halogen_HTML_Properties.class_("fa fa-refresh") ])([  ]) ]) ]);
+          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.id_("errorOverlay") ])([ Halogen_HTML_Elements.h6_([ Halogen_HTML_Core.text("Can't connect to Metamask. Check Metamask or internet connection.") ]), Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(RefreshMetamask.create)), Halogen_HTML_Properties.class_("error-action") ])([ Halogen_HTML_Elements.i([ Halogen_HTML_Properties.class_("fa fa-refresh") ])([  ]) ]) ]);
       };
       if (state.errorToDisplay instanceof Data_Maybe.Just && state.errorToDisplay.value0 instanceof Foundation_Types.FoundationError) {
           if (state.errorToDisplay.value0.value0 instanceof Network_Eth_Foundation.NoMetamask) {
