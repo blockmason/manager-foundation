@@ -12,7 +12,7 @@ html {
 
 .container {
   background-image: url("45-degree-fabric-light.png");
-  width: 550px;
+  max-width: 550px;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.3);
   height: 100vh;
   overflow-y: scroll; }
