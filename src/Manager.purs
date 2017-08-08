@@ -31,6 +31,7 @@ data Query a
   | InputNewName String a
   | CreateNewId String a
   | AddNewAddress (Either String E.EthAddress) a
+  | DeleteAddress E.EthAddress a
   | ExtendId a
   | InputFundAmount String a
   | FundId E.Wei a
@@ -131,6 +132,13 @@ component =
             F.addPendingUnification addr
           H.liftEff $ UIStates.toggleLoading(".add-address-button")
           pure next
+    DeleteAddress address next → do
+      s ← H.get
+      H.liftEff $ UIStates.toggleLoading(".add-address-button")
+      handleTx NewTX s (ScreenChange R.OverviewScreen) FoundationError $
+        F.deleteAddr address
+      H.liftEff $ UIStates.toggleLoading(".add-address-button")
+      pure next
     ExtendId next → do
       s ← H.get
       H.liftEff $ UIStates.toggleLoading(".extend-id-button")
@@ -250,7 +258,7 @@ addressesPage addresses sentPending todoPending =
          (\tp → [(card "Confirmation required for id:" $ idConfirmation tp)])
          todoPending)
         ⊕
-        ((\address → card "Unified Address" $ HH.text $ show address) <$> addresses)
+        (displayAddressBlock <$> addresses)
   where idConfirmation fName =
           HH.div [ HP.class_ (HH.ClassName "col") ]
           [ HH.text $ show fName
@@ -258,6 +266,18 @@ addressesPage addresses sentPending todoPending =
                       , HP.class_ $ HH.ClassName "btn btn-secondary confirm-unification-button"]
             [ HH.text "Confirm Address Link" ]
           ]
+
+displayAddressBlock ∷ E.EthAddress → H.ComponentHTML Query
+displayAddressBlock address =
+  card "Unified Address" $
+  HH.div [ HP.class_ (HH.ClassName "") ]
+  [
+    HH.text $ show address,
+    HH.button [ HE.onClick $ HE.input_ $ DeleteAddress address
+                , HP.class_ $ HH.ClassName "delete-address-button"]
+              [ HH.i [HP.class_ $ HH.ClassName "fa fa-trash"][]]
+  ]
+
 
 addAddressRequestBlock ∷ F.FoundationName → H.ComponentHTML Query
 addAddressRequestBlock name =

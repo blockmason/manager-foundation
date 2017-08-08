@@ -624,9 +624,9 @@ button {
     font-size: 10px;
     text-transform: uppercase;
     color: white;
-    opacity: 0; }
+    display: none; }
     .top-bar .current-transactions.processing {
-      opacity: 1; }
+      display: block; }
   .top-bar .transaction-spinner {
     width: 20px;
     height: 20px;
@@ -703,6 +703,13 @@ button {
     border: 0; }
     .address-list .card:first-child .card-block {
       padding: 0; }
+  .address-list .card .delete-address-button {
+    color: #aaa;
+    border: 1px solid #aaa;
+    padding: 0.5em;
+    background: transparent;
+    border-radius: 5px;
+    float: right; }
 
 .confirm-address-button, .confirm-unification-button {
   color: black;

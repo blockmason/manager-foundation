@@ -23,6 +23,15 @@ $highlight: orange;
       padding: 0;
     }
   }
+
+  .delete-address-button {
+    color: #aaa;
+    border: 1px solid #aaa;
+    padding: 0.5em;
+    background: transparent;
+    border-radius: 5px;
+    float: right;
+  }
 }
 
 .confirm-address-button, .confirm-unification-button {
