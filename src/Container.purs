@@ -101,7 +101,7 @@ ui =
         H.liftEff $ UIStates.turnOnLoading(".container")
         H.modify (_ { loggedIn = true, errorBus = Just bus })
         loadWeb3Loop C.web3Delay 10
-        H.liftEff $ UIStates.clearAllLoading(Just ".container")
+        H.liftEff $ UIStates.clearAllLoading(Nothing)
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
         pure next
       HandleMsg msg next →
