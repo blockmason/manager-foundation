@@ -236,8 +236,12 @@ refreshMetamask = do
   myAddr     ← H.liftEff MM.currentUserAddress
   H.modify (_ { myAddr = Just myAddr })
   if mmLoggedIn
-    then do _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
-            H.modify (_ { loggedIn = true })
+    then do
+      eb ← H.gets _.errorBus
+      myId ← handleCall eb Nothing FoundationError F.foundationId
+      H.modify (_ { myId = myId })
+      _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
+      H.modify (_ { loggedIn = true })
     else do H.modify (_ { loggedIn = false })
 
 checkMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
@@ -313,10 +317,7 @@ loadWeb3Loop delayMs numTriesLeft = do
         H.liftAff $ delay (Milliseconds (toNumber delayMs))
         mmLoggedIn ← H.liftEff MM.loggedIn
         if mmLoggedIn
-          then do
-            myId ← handleCall (Just bus) Nothing FoundationError F.foundationId
-            H.modify (_ { myId = myId })
-            refreshMetamask
+          then refreshMetamask
           else loadWeb3Loop delayMs (numTriesLeft - 1)
       else do
         H.liftAff $ Bus.write NetworkError bus
