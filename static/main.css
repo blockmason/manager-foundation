@@ -647,6 +647,16 @@ button {
       border-radius: 100%;
       left: 9px;
       top: 15px; }
+  .top-bar .reload-button {
+    display: none;
+    color: white;
+    text-align: right; }
+    .top-bar .reload-button.show-reload {
+      display: block; }
+    .top-bar .reload-button i {
+      transition: 0.5s ease; }
+    .top-bar .reload-button i:hover {
+      transform: rotate(30deg); }
 
 .header-menu {
   transition: all 0.1s ease;
