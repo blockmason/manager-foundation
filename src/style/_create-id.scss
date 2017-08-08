@@ -38,6 +38,10 @@
     &:hover {
       background: orange;
       color: white;
+
+      &.loading {
+        color: orange;
+      }
     }
   }
 

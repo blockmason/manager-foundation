@@ -52,10 +52,10 @@
     font-size: 10px;
     text-transform: uppercase;
     color: white;
-    opacity: 0;
+    display: none;
 
     &.processing {
-      opacity: 1;
+      display: block;
     }
   }
 
@@ -82,11 +82,28 @@
         top: 15px;
        }
    }
+
+   .reload-button {
+      display: none;
+      color: white;
+      text-align: right;
+
+      &.show-reload {
+        display: block;
+      }
+
+      i {
+        transition: 0.5s ease;
+      }
+      i:hover {
+        transform: rotate(30deg);
+      }
+    }
 }
 
 .header-menu {
   transition: all 0.1s ease;
-  bottom: -4em;
+  bottom: -2em;
   width: 95vw;
   margin: auto;
 

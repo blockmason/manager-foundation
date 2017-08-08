@@ -1,6 +1,6 @@
 
 /* loading overlays */
-#metamaskOverlay {
+#errorOverlay {
   padding: 20px;
   position: absolute;
   top: 0;
@@ -13,6 +13,11 @@
   justify-content: center;
   align-items: center;
   text-transform: uppercase;
+  background: rgba(0,0,0,0.7);
+
+  & ~ * {
+    opacity: 0.3;
+  }
 
   &.in-active {
     display: none;
@@ -23,84 +28,55 @@
     width: 100%;
   }
 
-  button {
-    background: none;
-    border: none;
-    transition: 0.5s;
-    cursor: pointer;
-
-    &:hover {
-      color: #aaa;
-      transform: rotate(60deg);
-    }
-
-    &:focus {
-      border: none;
-    }
+  .error-action {
+    color: white;
+    display: block;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background: transparent;
   }
 }
 
-#loadingOverlay {
-    padding: 20px;
+#no-errors {
+  display: none;
+}
+
+.error-notification {
+    background-color: red;
+    color: white;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100vw;
+    height: 1.5em;
+    font-size: 12px;
+    padding-left: 1em;
     position: absolute;
     top: 0;
     left: 0;
-    height: 100vh;
-    width: 100%;
-    color: white;
-    z-index: 99;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-transform: uppercase;
-
-    h6 {
-      font-weight: 100;
-    }
-
-    .loading-spinner {
-      transform: translateY(-0.2em) translateX(-2em);
-    }
-
-    &.in-active {
-      display: none;
-    }
 }
 
-.container.loading {
-  #body, .header-menu {
-    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='3');
-    -webkit-filter: url(#blur-filter);
-    filter: url(#blur-filter);
-    -webkit-filter: blur(3px);
-    filter: blur(3px);
-  }
-}
+.loading {
+    color: transparent;
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;right: 0;top: 0;bottom: 0;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 100%;
+      border: 3px solid white;
+      border-right-color: rgba(255,255,255,0.2);
+      animation: spinner-bubble 0.8s linear 0s infinite;
+      margin: auto;
+      opacity: 0;
+      z-index: 2;
+    }
 
-.container.require-login {
-  .page-container,
-  .top-bar,
-  .header-menu,
-  .create-debt-bar,
-  .add-friend-bar {
-    filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='5');
-    -webkit-filter: url(#blur-filter);
-    filter: url(#blur-filter);
-    -webkit-filter: blur(5px);
-    filter: blur(5px);
-  }
-}
-
-#debtLoadingOverlay {
-    padding: 20px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 2000px;
-    width: 100%;
-    background-color: black;
-    color: white;
-    z-index: 99;
+    * {
+      transition: opacity 1s ease;
+      opacity: 0;
+    }
 }
 
 .loading-spinner {
@@ -134,14 +110,12 @@
 
 @keyframes spinner-bubble {
   from{
-    width: 0.3em;
-    height: 0.3em;
-    opacity: .8;
+    opacity: 1;
+    transform: rotate(0deg);
   }
   to{
-     width: 1.5em;
-     height: 1.5em;
-    opacity: 0;
+     opacity: 0.3;
+     transform: rotate(360deg);
   }
 }
 

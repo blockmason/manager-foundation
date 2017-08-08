@@ -13,9 +13,8 @@ html {
 }
 
 .container {
-  // background-image: linear-gradient(-180deg, #0F2422 0%, #1C4737 100%);
   background-image: url('45-degree-fabric-light.png');
-  width: 550px;
+  max-width: 550px;
   box-shadow: 0 0 5px 5px rgba(0,0,0,0.3);
   height: 100vh;
   overflow-y: scroll;
@@ -37,4 +36,8 @@ html {
 
 input {
   outline: 0;
+}
+
+button {
+  position: relative;
 }

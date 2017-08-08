@@ -27,7 +27,8 @@ import Network.Eth.Foundation  as F
 import Foundation.Manager      as MainView
 import Foundation.Routes       as R
 import Foundation.Config       as C
-import Foundation.Blockchain   (handleCall, hasNetworkError, loadingOverlay)
+import Foundation.Blockchain   (handleCall, hasNetworkError)
+import UI.UIStatesKit          as UIStates
 
 import Data.Array as A
 
@@ -40,8 +41,8 @@ data Query a
   | SetScreen R.Screen a
 
 type State = { loggedIn ∷ Boolean
-             , loading  ∷ Boolean
              , errorBus ∷ ContainerMsgBus
+             , errorToDisplay ∷ Maybe ContainerMsg
              , txs      ∷ Array E.TX
              , currentScreen ∷ R.Screen
              , history  ∷ Array R.Screen
@@ -65,8 +66,8 @@ ui =
 
     initialState ∷ State
     initialState = { loggedIn: true
-                   , loading: true
                    , errorBus: Nothing
+                   , errorToDisplay: Nothing
                    , txs: []
                    , currentScreen: R.OverviewScreen
                    , history: []
@@ -78,12 +79,10 @@ ui =
       HH.div [ HP.id_ "container",
                HP.class_ (HH.ClassName $
                  "container " <>
-                 (R.getRouteNameFor state.currentScreen)  <>
-                 (if state.loading then " loading" else "") <>
-                 (if state.loggedIn then "" else " require-login") <>
+                 (R.getRouteNameFor state.currentScreen) <>
                  (if isNothing state.myId then " require-foundation" else "")) ]
-      [ promptMetamask (state.loggedIn || state.loading)
-      , loadingOverlay state.loading
+      [
+        errorOverlay state
       , topBar state
       , HH.div [ HP.id_ "body" ]
         [
@@ -99,19 +98,21 @@ ui =
       Init next → do
         bus ← H.liftAff $ Bus.make
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
-        H.modify (_ { loggedIn = true, loading = true, errorBus = Just bus })
+        H.liftEff $ UIStates.turnOnLoading(".container")
+        H.modify (_ { loggedIn = true, errorBus = Just bus })
         loadWeb3Loop C.web3Delay 10
-        H.modify (_ { loading = false })
+        H.liftEff $ UIStates.clearAllLoading(Just ".container")
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
         pure next
       HandleMsg msg next →
         case msg of
           (FoundationError fe) → do
+            H.modify (_ { errorToDisplay = Just msg})
             handleFoundationError fe
             pure next
           NetworkError → do
             hLog NetworkError
-            H.modify (_ { loggedIn = false, loading = false })
+            H.modify (_ { loggedIn = false, errorToDisplay = Just NetworkError})
             pure next
           CheckMetamask → do
             checkMetamask
@@ -193,19 +194,40 @@ topBar state =
           HH.span_ [HH.text $
                     "Writing " <> show (A.length state.txs) <> " " <> itemStr <> "..."]
         ]
+      , HH.a [HP.href "#", HE.onClick $ HE.input_ $ RefreshMetamask , HP.class_ (HH.ClassName $ "col-4 align-self-end reload-button" <> if processing then "" else " show-reload") ]
+        [
+          HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][]
+        ]
     ]
 
-promptMetamask ∷ ∀ p. Boolean → H.HTML p Query
-promptMetamask overlayInactive =
-  HH.div [ HP.id_ "metamaskOverlay"
-         , if overlayInactive then HP.class_ (HH.ClassName "in-active")
-           else HP.class_ (HH.ClassName "active")]
-  [
-    HH.h6_ [ HH.text "Not logged in to Metamask." ]
-    , HH.button [ HE.onClick $ HE.input_ $ RefreshMetamask
-                , HP.class_ $ HH.ClassName "btn-info"]
-      [ HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][] ]
-  ]
+errorOverlay ∷ ∀ p. State → H.HTML p Query
+errorOverlay state =
+  case state.errorToDisplay of
+    Nothing →
+      HH.div [ HP.id_ "no-errors"][]
+
+    Just NetworkError →
+      HH.div [ HP.id_ "errorOverlay"][
+        HH.h6_ [ HH.text "Cannot Connect to Metamask"],
+        HH.button [ HE.onClick $ HE.input_ $ RefreshMetamask
+                    , HP.class_ $ HH.ClassName "error-action"]
+          [ HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][]]
+        ]
+
+    Just (FoundationError e) →
+      case e of
+        F.NoMetamask →
+          HH.div [ HP.id_ "errorOverlay"][
+            HH.h6_ [ HH.text "No Metamask Detected"],
+            HH.button [ HE.onClick $ HE.input_ $ RefreshMetamask
+                        , HP.class_ $ HH.ClassName "error-action"]
+              [ HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][]]
+          ]
+        _ →
+          HH.div [ HP.id_ "no-errors"][]
+    Just genericError →
+      HH.div [ HP.class_ (HH.ClassName "row error-notification")]
+      [HH.text $ show genericError]
 
 --check for loggedIn changes and user address changes
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit

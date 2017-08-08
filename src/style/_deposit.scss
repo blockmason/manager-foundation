@@ -43,6 +43,10 @@
       background-color: $highlight;
       color: white;
       border-color: $highlight;
+
+      &.loading {
+        color: $highlight;
+      }
     }
   }
 }
