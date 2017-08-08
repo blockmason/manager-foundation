@@ -134,6 +134,7 @@ ui =
                   else pure unit
             pure next
       RefreshMetamask next → do
+        hLog "RefreshMetamask"
         refreshMetamask
         pure next
       SetScreen screen next → do
@@ -194,7 +195,8 @@ topBar state =
           HH.span_ [HH.text $
                     "Writing " <> show (A.length state.txs) <> " " <> itemStr <> "..."]
         ]
-      , HH.a [HP.href "#", HE.onClick $ HE.input_ $ RefreshMetamask , HP.class_ (HH.ClassName $ "col-4 align-self-end reload-button" <> if processing then "" else " show-reload") ]
+      , HH.a [HP.href "#", HE.onClick $ HE.input_ $ RefreshMetamask
+             , HP.class_ (HH.ClassName $ "col-4 align-self-end reload-button" <> if processing then "" else " show-reload") ]
         [
           HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][]
         ]
@@ -208,7 +210,7 @@ errorOverlay state =
 
     Just NetworkError →
       HH.div [ HP.id_ "errorOverlay"][
-        HH.h6_ [ HH.text "Cannot Connect to Metamask"],
+        HH.h6_ [ HH.text "Cannot Connect to Metamask. Try Logging in Again."],
         HH.button [ HE.onClick $ HE.input_ $ RefreshMetamask
                     , HP.class_ $ HH.ClassName "error-action"]
           [ HH.i [HP.class_ (HH.ClassName "fa fa-refresh")][]]
@@ -238,11 +240,12 @@ refreshMetamask = do
   if mmLoggedIn
     then do
       eb ← H.gets _.errorBus
+      H.modify (_ { loggedIn = true, errorToDisplay = Nothing })
       myId ← handleCall eb Nothing FoundationError F.foundationId
       H.modify (_ { myId = myId })
       _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
-      H.modify (_ { loggedIn = true })
-    else do H.modify (_ { loggedIn = false })
+      pure unit
+    else do H.modify (_ { loggedIn = false, errorToDisplay = Just NetworkError })
 
 checkMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 checkMetamask = do
