@@ -13189,9 +13189,9 @@ var PS = {};
               return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([  ]);
           };
           if (myId instanceof Data_Maybe.Just) {
-              return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen), menuItem(Foundation_Routes.FundIDScreen.value)(currentScreen) ]);
+              return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen) ]);
           };
-          throw new Error("Failed pattern match at Foundation.Container line 278, column 3 - line 291, column 10: " + [ myId.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 278, column 3 - line 290, column 10: " + [ myId.constructor.name ]);
       };
   };
   var loadWeb3Loop = function (delayMs) {
@@ -13220,7 +13220,7 @@ var PS = {};
                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(Data_Unit.unit);
                   });
               };
-              throw new Error("Failed pattern match at Foundation.Container line 311, column 3 - line 324, column 14: " + [ v.constructor.name ]);
+              throw new Error("Failed pattern match at Foundation.Container line 310, column 3 - line 323, column 14: " + [ v.constructor.name ]);
           });
       };
   };

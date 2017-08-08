@@ -287,7 +287,6 @@ menu currentScreen myId =
             menuItem R.ManageAddressesScreen currentScreen
           , menuItem R.AddAddressScreen currentScreen
           , menuItem R.ExtendIDScreen currentScreen
-          , menuItem R.FundIDScreen currentScreen
         ]
 
 menuItem ∷ ∀ p. R.Screen → R.Screen → H.HTML p Query
