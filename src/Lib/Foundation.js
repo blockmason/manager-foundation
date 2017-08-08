@@ -111,7 +111,7 @@ exports.confirmPendingUnificationImpl = function(callback) {
 exports.deleteAddrImpl = function(callback) {
     return function(addr) {
         return function() {
-            var data = fContract.deleteAddr(addr);
+            var data = fContract.deleteAddr.getData(addr);
             sendFoundationTx(data, 0, callback);
         };
     };

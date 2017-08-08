@@ -18,6 +18,7 @@ import Foundation.Blockchain        (handleCall, loadingOverlay, formatDate, han
 import Foundation.Routes       as R
 import Network.Eth.Foundation  as F
 import Network.Eth             as E
+import Network.Eth.Metamask    as MM
 import UI.UIStatesKit          as UIStates
 
 
@@ -40,6 +41,7 @@ data Query a
 type State = { loading          ∷ Boolean
              , errorBus         ∷ ContainerMsgBus
              , myId             ∷ Maybe F.FoundationId
+             , myAddress        ∷ Maybe E.EthAddress
              , addresses        ∷ Array E.EthAddress
              , sentPending      ∷ Maybe E.EthAddress
              , todoPending      ∷ Maybe F.FoundationName
@@ -70,6 +72,7 @@ component =
   initialState input = { loading: false
                        , errorBus: input.msgBus
                        , myId: input.myId
+                       , myAddress: Nothing
                        , addresses: []
                        , sentPending: Nothing
                        , todoPending: Nothing
@@ -87,7 +90,7 @@ component =
       [
         page R.OverviewScreen (summary state.todoPending state.myId state.expiryDate (A.length state.addresses) state.funds)
       , page R.ManageAddressesScreen
-          (addressesPage state.addresses state.sentPending state.todoPending)
+          (addressesPage state.myAddress state.addresses state.sentPending state.todoPending)
       , page R.AddAddressScreen (addAddressPage state)
       , page R.RegisterScreen (createIdPage state)
       , page R.ExtendIDScreen (extendIdPage state.expiryDate state.weiToExtend)
@@ -238,9 +241,9 @@ summary pendingConfirmation optionalID expiryDate addressCount funds =
           (card "Current Deposit" $ HH.text $ E.weiShowEth balance ⊕ " Eth" )
         ]
 
-addressesPage ∷ Array E.EthAddress → Maybe E.EthAddress → Maybe F.FoundationName
-              → H.ComponentHTML Query
-addressesPage addresses sentPending todoPending =
+addressesPage ∷ Maybe E.EthAddress → Array E.EthAddress → Maybe E.EthAddress
+              → Maybe F.FoundationName → H.ComponentHTML Query
+addressesPage myAddr addresses sentPending todoPending =
       HH.div
         [HP.class_ (HH.ClassName "col address-list")] $
         [
@@ -258,7 +261,7 @@ addressesPage addresses sentPending todoPending =
          (\tp → [(card "Confirmation required for id:" $ idConfirmation tp)])
          todoPending)
         ⊕
-        (displayAddressBlock <$> addresses)
+        ((displayAddressBlock myAddr) <$> addresses)
   where idConfirmation fName =
           HH.div [ HP.class_ (HH.ClassName "col") ]
           [ HH.text $ show fName
@@ -267,15 +270,16 @@ addressesPage addresses sentPending todoPending =
             [ HH.text "Confirm Address Link" ]
           ]
 
-displayAddressBlock ∷ E.EthAddress → H.ComponentHTML Query
-displayAddressBlock address =
+displayAddressBlock ∷ Maybe E.EthAddress → E.EthAddress → H.ComponentHTML Query
+displayAddressBlock myAddr address =
   card "Unified Address" $
   HH.div [ HP.class_ (HH.ClassName "") ]
-  [
-    HH.text $ show address,
-    HH.button [ HE.onClick $ HE.input_ $ DeleteAddress address
-                , HP.class_ $ HH.ClassName "delete-address-button"]
-              [ HH.i [HP.class_ $ HH.ClassName "fa fa-trash"][]]
+  [ HH.text $ show address
+  , if maybe false (\a → a == address) myAddr
+    then HH.text ""
+    else HH.button [ HE.onClick $ HE.input_ $ DeleteAddress address
+                   , HP.class_ $ HH.ClassName "delete-address-button" ]
+         [ HH.i [HP.class_ $ HH.ClassName "fa fa-trash"][]]
   ]
 
 
@@ -376,13 +380,14 @@ createIdPage state =
 loadFromBlockchain myId = do
   eb ← H.gets _.errorBus
   H.liftEff $ UIStates.toggleLoading(".main-view")
+  myAddr      ← H.liftEff MM.currentUserAddress
   sentPending ← handleCall eb Nothing FoundationError F.sentPending
   todoPending ← handleCall eb Nothing FoundationError F.todoPending
   expiryDate  ← handleCall eb Nothing FoundationError F.expirationDate
   depWei      ← handleCall eb Nothing FoundationError F.getDepositWei
   weiToExtend ← handleCall eb E.zeroWei FoundationError F.getWeiToExtend
   let addrs = maybe [] F.fiGetAddrs myId
-  H.modify (_ { addresses = addrs
+  H.modify (_ { addresses = addrs, myAddress = Just myAddr
               , sentPending = sentPending, todoPending = todoPending
               , funds = depWei, expiryDate = expiryDate
               , weiToExtend = weiToExtend })
