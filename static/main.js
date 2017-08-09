@@ -9791,7 +9791,9 @@ var PS = {};
   };
 
   var txResultToRaw = function(txResult) {
-      if ( txResult == null )
+      if ( txResult == null)
+          return "Pending";
+      else if ( txResult.blockNumber == null )
           return "Pending";
       else
           return "Done";
