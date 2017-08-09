@@ -321,7 +321,7 @@ extendIdPage expiryDate weiToExtend =
     [HP.class_ (HH.ClassName "col extend-id-page")]
     [
       (card "Expires" $ HH.text $ maybe "" formatDate expiryDate )
-    , (card "Extend for 1 Year" $
+    , (card "Extend for 1 Year from Today" $
        HH.button [ HE.onClick $ HE.input_ $ ExtendId
                  , HP.class_ $ HH.ClassName "btn btn-secondary extend-id-button"]
        [ HH.text $ "Extend for " ⊕ E.weiShowEth weiToExtend ⊕ " ETH" ])

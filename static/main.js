@@ -12587,7 +12587,7 @@ var PS = {};
   };
   var extendIdPage = function (expiryDate) {
       return function (weiToExtend) {
-          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col extend-id-page") ])([ card("Expires")(Halogen_HTML_Core.text(Data_Maybe.maybe("")(Foundation_Blockchain.formatDate)(expiryDate))), card("Extend for 1 Year")(Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(ExtendId.create)), Halogen_HTML_Properties.class_("btn btn-secondary extend-id-button") ])([ Halogen_HTML_Core.text("Extend for " + (Network_Eth.weiShowEth(weiToExtend) + " ETH")) ])) ]);
+          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col extend-id-page") ])([ card("Expires")(Halogen_HTML_Core.text(Data_Maybe.maybe("")(Foundation_Blockchain.formatDate)(expiryDate))), card("Extend for 1 Year from Today")(Halogen_HTML_Elements.button([ Halogen_HTML_Events.onClick(Halogen_HTML_Events.input_(ExtendId.create)), Halogen_HTML_Properties.class_("btn btn-secondary extend-id-button") ])([ Halogen_HTML_Core.text("Extend for " + (Network_Eth.weiShowEth(weiToExtend) + " ETH")) ])) ]);
       };
   };
   var addressesPage = function (myAddr) {
