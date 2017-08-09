@@ -170,7 +170,11 @@ idByAddr (E.EthAddress ea) = do
   checkMM
   name ← liftAff $ makeAff (\err succ → resolveToNameImpl succ ea)
   addrs ← liftAff $ makeAff (\err succ → resolveToAddrImpl succ name)
-  pure $ FoundationId { name: FoundationName name, addrs: E.EthAddress <$> addrs }
+  pure $ FoundationId { name: FoundationName name
+                      , addrs: E.EthAddress <$>
+                        A.filter
+                        (\a → "0x0000000000000000000000000000000000000000" /= a)
+                        addrs }
 
 areSameId ∷ E.EthAddress → E.EthAddress → MonadF Boolean
 areSameId (E.EthAddress ea1) (E.EthAddress ea2) = do

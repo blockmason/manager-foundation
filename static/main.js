@@ -10051,7 +10051,9 @@ var PS = {};
               })))(function (v2) {
                   return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))({
                       name: v1, 
-                      addrs: Data_Functor.map(Data_Functor.functorArray)(Network_Eth.EthAddress)(v2)
+                      addrs: Data_Functor.map(Data_Functor.functorArray)(Network_Eth.EthAddress)(Data_Array.filter(function (a) {
+                          return "0x0000000000000000000000000000000000000000" !== a;
+                      })(v2))
                   });
               });
           });
@@ -10078,7 +10080,7 @@ var PS = {};
                   };
               })))(Network_Eth.rawToTX(Control_Monad_Except_Trans.monadErrorExceptT(Control_Monad_Aff.monadAff))(TxError.value));
           };
-          throw new Error("Failed pattern match at Network.Eth.Foundation line 236, column 3 - line 238, column 126: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Network.Eth.Foundation line 240, column 3 - line 242, column 126: " + [ v.constructor.name ]);
       });
   };
   var expirationDate = (function () {
@@ -10098,7 +10100,7 @@ var PS = {};
                   return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(secsToDT(v1));
               });
           };
-          throw new Error("Failed pattern match at Network.Eth.Foundation line 271, column 3 - line 275, column 32: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Network.Eth.Foundation line 275, column 3 - line 279, column 32: " + [ v.constructor.name ]);
       });
   })();
   var extendIdOneYear = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
@@ -10115,7 +10117,7 @@ var PS = {};
                   return Network_Eth.rawToTX(Control_Monad_Except_Trans.monadErrorExceptT(Control_Monad_Aff.monadAff))(TxError.value)(v2);
               });
           };
-          throw new Error("Failed pattern match at Network.Eth.Foundation line 262, column 3 - line 266, column 27: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Network.Eth.Foundation line 266, column 3 - line 270, column 27: " + [ v.constructor.name ]);
       });
   });
   var getDepositWei = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
@@ -10131,7 +10133,7 @@ var PS = {};
               };
           })));
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 249, column 3 - line 252, column 69: " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 253, column 3 - line 256, column 69: " + [ v.constructor.name ]);
   });
   var sentPending = Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(foundationId)(function (v) {
       if (v instanceof Data_Maybe.Nothing) {
@@ -10150,7 +10152,7 @@ var PS = {};
               return Control_Applicative.pure(Control_Monad_Except_Trans.applicativeExceptT(Control_Monad_Aff.monadAff))(new Data_Maybe.Just(v1));
           });
       };
-      throw new Error("Failed pattern match at Network.Eth.Foundation line 202, column 3 - line 206, column 93: " + [ v.constructor.name ]);
+      throw new Error("Failed pattern match at Network.Eth.Foundation line 206, column 3 - line 210, column 93: " + [ v.constructor.name ]);
   });
   var isFreshAddr = function (ea) {
       return Control_Bind.bind(Control_Monad_Except_Trans.bindExceptT(Control_Monad_Aff.monadAff))(idByAddr(ea))(function (v) {
