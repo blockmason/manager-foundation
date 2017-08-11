@@ -130,7 +130,7 @@ ui =
                 if A.length pending /= A.length txs
                   then do
                     H.modify (_ { txs = (\(Tuple _ tx) → tx) <$> pending })
-                    refreshMetamask
+                    if A.length pending == 0 then refreshMetamask else pure unit
                   else pure unit
             pure next
       RefreshMetamask next → do
