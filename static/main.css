@@ -513,7 +513,10 @@ button {
   left: 0; }
 
 .loading {
-  color: transparent; }
+  color: transparent;
+  outline: 0; }
+  .loading:focus {
+    outline: 0; }
   .loading:before {
     content: '';
     position: absolute;

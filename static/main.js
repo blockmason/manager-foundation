@@ -13120,7 +13120,7 @@ var PS = {};
                                   });
                               });
                           };
-                          throw new Error("Failed pattern match at Foundation.Container line 265, column 3 - line 270, column 16: " + [ maybeBus.constructor.name ]);
+                          throw new Error("Failed pattern match at Foundation.Container line 266, column 3 - line 271, column 16: " + [ maybeBus.constructor.name ]);
                       };
                   };
               };
@@ -13206,7 +13206,7 @@ var PS = {};
           if (myId instanceof Data_Maybe.Just) {
               return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen) ]);
           };
-          throw new Error("Failed pattern match at Foundation.Container line 281, column 3 - line 293, column 10: " + [ myId.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 282, column 3 - line 294, column 10: " + [ myId.constructor.name ]);
       };
   };
   var loadWeb3Loop = function (delayMs) {
@@ -13235,7 +13235,7 @@ var PS = {};
                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(Data_Unit.unit);
                   });
               };
-              throw new Error("Failed pattern match at Foundation.Container line 313, column 3 - line 326, column 14: " + [ v.constructor.name ]);
+              throw new Error("Failed pattern match at Foundation.Container line 314, column 3 - line 327, column 14: " + [ v.constructor.name ]);
           });
       };
   };
@@ -13301,7 +13301,7 @@ var PS = {};
       if (state.errorToDisplay instanceof Data_Maybe.Just) {
           return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("row error-notification") ])([ Halogen_HTML_Core.text(Data_Show.show(Foundation_Types.showContainerMsg)(state.errorToDisplay.value0)) ]);
       };
-      throw new Error("Failed pattern match at Foundation.Container line 207, column 3 - line 232, column 36: " + [ state.errorToDisplay.constructor.name ]);
+      throw new Error("Failed pattern match at Foundation.Container line 208, column 3 - line 233, column 36: " + [ state.errorToDisplay.constructor.name ]);
   };
   var checkMetamask = Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Eff_Class.liftEff(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Network_Eth_Metamask.loggedIn))(function (v) {
       return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.gets(Halogen_Query_HalogenM.monadStateHalogenM)(function (v1) {
@@ -13469,8 +13469,10 @@ var PS = {};
           };
           if (v instanceof RefreshMetamask) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Foundation_Prelude.hLog(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(Data_Show.showString)("RefreshMetamask"))(function () {
-                  return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
-                      return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
+                  return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Eff_Class.liftEff(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(UI_UIStatesKit.turnOnLoading(".error-action")))(function () {
+                      return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(refreshMetamask)(function () {
+                          return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
+                      });
                   });
               });
           };
@@ -13539,7 +13541,7 @@ var PS = {};
                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value1);
                   });
               };
-              throw new Error("Failed pattern match at Foundation.Container line 145, column 9 - line 152, column 22: " + [ v.value0.constructor.name ]);
+              throw new Error("Failed pattern match at Foundation.Container line 146, column 9 - line 153, column 22: " + [ v.value0.constructor.name ]);
           };
           if (v instanceof PreviousScreen) {
               return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_State_Class.modify(Halogen_Query_HalogenM.monadStateHalogenM)(function (state) {
@@ -13556,7 +13558,7 @@ var PS = {};
                   return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(v.value0);
               });
           };
-          throw new Error("Failed pattern match at Foundation.Container line 97, column 12 - line 155, column 18: " + [ v.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 97, column 12 - line 156, column 18: " + [ v.constructor.name ]);
       };
       return Halogen_Component.lifecycleParentComponent(Data_Either.ordEither(Data_Ord.ordUnit)(Data_Ord.ordVoid))({
           initialState: Data_Function["const"](initialState), 

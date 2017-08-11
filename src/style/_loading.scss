@@ -57,7 +57,13 @@
 }
 
 .loading {
-    color: transparent;
+    color: rgba(0,0,0,0);
+    outline: 0;
+
+    &:focus {
+      outline: 0;
+    }
+
     &:before {
       content: '';
       position: absolute;

@@ -135,6 +135,7 @@ ui =
             pure next
       RefreshMetamask next → do
         hLog "RefreshMetamask"
+        H.liftEff $ UIStates.turnOnLoading(".error-action")
         refreshMetamask
         pure next
       SetScreen screen next → do
