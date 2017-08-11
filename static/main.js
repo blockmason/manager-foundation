@@ -5736,6 +5736,17 @@ var PS = {};
     };
   };
 
+  var replicatePolyfill = function (count) {
+    return function (value) {
+      var result = [];
+      var n = 0;
+      for (var i = 0; i < count; i++) {
+        result[n++] = value;
+      }
+      return result;
+    };
+  };
+
   // In browsers that have Array.prototype.fill we use it, as it's faster.
   exports.replicate = typeof Array.prototype.fill === "function" ?
       replicate :
@@ -12243,6 +12254,16 @@ var PS = {};
     }
   }
 
+  exports.turnOffLoadingImpl = function(selector) {
+    return function() {
+      if (selector) {
+        document.querySelectorAll(selector).forEach( function(el){
+          el.classList.remove('loading');
+        });
+      }
+    }
+  }
+
   exports.clearAllLoadingImpl = function(parentSelector) {
     return function() {
         var parent = parentSelector ? document.querySelector(parentSelector) : document
@@ -12266,6 +12287,9 @@ var PS = {};
   var turnOnLoading = function (selector) {
       return $foreign.turnOnLoadingImpl(selector);
   };
+  var turnOffLoading = function (selector) {
+      return $foreign.turnOffLoadingImpl(selector);
+  };
   var toggleLoading = function (selector) {
       return $foreign.toggleLoadingImpl(selector);
   };
@@ -12276,10 +12300,11 @@ var PS = {};
       if (maybeParentSelector instanceof Data_Maybe.Just) {
           return $foreign.clearAllLoadingImpl(maybeParentSelector.value0);
       };
-      throw new Error("Failed pattern match at UI.UIStatesKit line 38, column 3 - line 42, column 27: " + [ maybeParentSelector.constructor.name ]);
+      throw new Error("Failed pattern match at UI.UIStatesKit line 42, column 3 - line 46, column 27: " + [ maybeParentSelector.constructor.name ]);
   };
   exports["clearAllLoading"] = clearAllLoading;
   exports["toggleLoading"] = toggleLoading;
+  exports["turnOffLoading"] = turnOffLoading;
   exports["turnOnLoading"] = turnOnLoading;
 })(PS["UI.UIStatesKit"] = PS["UI.UIStatesKit"] || {});
 (function(exports) {
@@ -13120,7 +13145,7 @@ var PS = {};
                                   });
                               });
                           };
-                          throw new Error("Failed pattern match at Foundation.Container line 266, column 3 - line 271, column 16: " + [ maybeBus.constructor.name ]);
+                          throw new Error("Failed pattern match at Foundation.Container line 267, column 3 - line 272, column 16: " + [ maybeBus.constructor.name ]);
                       };
                   };
               };
@@ -13166,7 +13191,9 @@ var PS = {};
                                   return $67;
                               }))(function () {
                                   return Control_Bind.bind(Halogen_Query_HalogenM.bindHalogenM)(Halogen_Query["query'"](Data_Either.eqEither(Data_Eq.eqUnit)(Data_Eq.eqVoid))(Halogen_Component_ChildPath.cp1)(Data_Unit.unit)(new Foundation_Manager.ReloadAll(Data_Unit.unit)))(function (v4) {
-                                      return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(Data_Unit.unit);
+                                      return Control_Bind.discard(Control_Bind.discardUnit)(Halogen_Query_HalogenM.bindHalogenM)(Control_Monad_Eff_Class.liftEff(Halogen_Query_HalogenM.monadEffHalogenM(Control_Monad_Aff.monadEffAff))(UI_UIStatesKit.turnOffLoading(".error-action")))(function () {
+                                          return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(Data_Unit.unit);
+                                      });
                                   });
                               });
                           });
@@ -13206,7 +13233,7 @@ var PS = {};
           if (myId instanceof Data_Maybe.Just) {
               return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("header-menu col") ])([ menuItem(Foundation_Routes.ManageAddressesScreen.value)(currentScreen), menuItem(Foundation_Routes.AddAddressScreen.value)(currentScreen), menuItem(Foundation_Routes.ExtendIDScreen.value)(currentScreen) ]);
           };
-          throw new Error("Failed pattern match at Foundation.Container line 282, column 3 - line 294, column 10: " + [ myId.constructor.name ]);
+          throw new Error("Failed pattern match at Foundation.Container line 283, column 3 - line 295, column 10: " + [ myId.constructor.name ]);
       };
   };
   var loadWeb3Loop = function (delayMs) {
@@ -13235,7 +13262,7 @@ var PS = {};
                       return Control_Applicative.pure(Halogen_Query_HalogenM.applicativeHalogenM)(Data_Unit.unit);
                   });
               };
-              throw new Error("Failed pattern match at Foundation.Container line 314, column 3 - line 327, column 14: " + [ v.constructor.name ]);
+              throw new Error("Failed pattern match at Foundation.Container line 315, column 3 - line 328, column 14: " + [ v.constructor.name ]);
           });
       };
   };

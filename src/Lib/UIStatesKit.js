@@ -18,6 +18,16 @@ exports.turnOnLoadingImpl = function(selector) {
   }
 }
 
+exports.turnOffLoadingImpl = function(selector) {
+  return function() {
+    if (selector) {
+      document.querySelectorAll(selector).forEach( function(el){
+        el.classList.remove('loading');
+      });
+    }
+  }
+}
+
 exports.toggleErrorImpl = function(selector) {
   return function() {
       if (selector) {

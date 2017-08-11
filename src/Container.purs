@@ -245,6 +245,7 @@ refreshMetamask = do
       myId ← handleCall eb Nothing FoundationError F.foundationId
       H.modify (_ { myId = myId })
       _ ← H.query' CP.cp1 unit (MainView.ReloadAll unit)
+      H.liftEff $ UIStates.turnOffLoading(".error-action")
       pure unit
     else do H.modify (_ { loggedIn = false, errorToDisplay = Just NetworkError })
 
