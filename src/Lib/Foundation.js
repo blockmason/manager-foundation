@@ -22,10 +22,11 @@ exports.initImpl = function(dummyVal) {
 exports.resolveToAddrImpl = function(callback) {
     return function(foundationId) {
         return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.resolveToAddresses.call(foundationId);
-            }).then(function(res) {
-                callback(res.valueOf())();
+            fContract.resolveToAddresses(foundationId, function(e, r) {
+                if ( !e )
+                    callback(r)();
+                else
+                    console.error(e);
             });
         };
     };
@@ -34,10 +35,11 @@ exports.resolveToAddrImpl = function(callback) {
 exports.resolveToNameImpl = function(callback) {
     return function(addr) {
         return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.resolveToName.call(addr);
-            }).then(function(res) {
-                callback(b2s(res.valueOf()))();
+            fContract.resolveToName(addr, function(e, r) {
+                if ( !e )
+                    callback(b2s(r))();
+                else
+                    console.error(e);
             });
         };
     };
