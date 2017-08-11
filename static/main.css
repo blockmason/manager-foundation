@@ -656,7 +656,9 @@ button {
     .top-bar .reload-button i {
       transition: 0.5s ease; }
     .top-bar .reload-button i:hover {
-      transform: rotate(30deg); }
+      transform: rotate(60deg); }
+    .top-bar .reload-button:focus i {
+      animation: rotate 0.9s linear 0s 1; }
 
 .header-menu {
   transition: all 0.1s ease;

@@ -96,7 +96,10 @@
         transition: 0.5s ease;
       }
       i:hover {
-        transform: rotate(30deg);
+        transform: rotate(60deg);
+      }
+      &:focus i {
+        animation: rotate 0.9s linear 0s 1;
       }
     }
 }
