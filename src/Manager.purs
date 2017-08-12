@@ -380,7 +380,7 @@ createIdPage state =
 loadFromBlockchain myId = do
   eb ← H.gets _.errorBus
   H.liftEff $ UIStates.toggleLoading(".main-view")
-  myAddr      ← H.liftEff MM.currentUserAddress
+  myAddr      ← H.liftAff MM.currentUserAddress
   sentPending ← handleCall eb Nothing FoundationError F.sentPending
   todoPending ← handleCall eb Nothing FoundationError F.todoPending
   expiryDate  ← handleCall eb Nothing FoundationError F.expirationDate

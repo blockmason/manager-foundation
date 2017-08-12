@@ -141,7 +141,7 @@ foreign import expirationDateImpl  ∷ NumberLookupFn
 
 checkMM ∷ MonadF Unit
 checkMM = do
-  li ← liftEff loggedIn
+  li ← liftAff loggedIn
   if li
     then liftEff $ initImpl unit
     else throwError NoMetamask
@@ -149,7 +149,7 @@ checkMM = do
 currentAddr ∷ MonadF E.EthAddress
 currentAddr = do
   checkMM
-  liftEff currentUserAddress
+  liftAff currentUserAddress
 
 foundationId ∷ MonadF (Maybe FoundationId)
 foundationId = do

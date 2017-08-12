@@ -96,12 +96,10 @@ ui =
     eval ∷ Query ~> H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad eff)
     eval = case _ of
       Init next → do
-        hLog "start of whole app "
         bus ← H.liftAff $ Bus.make
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
         H.liftEff $ UIStates.turnOnLoading(".container")
         H.modify (_ { loggedIn = true, errorBus = Just bus })
-        hLog "before load loop"
         loadWeb3Loop C.web3Delay 10
         H.liftEff $ UIStates.clearAllLoading(Nothing)
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
@@ -238,8 +236,8 @@ errorOverlay state =
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do
   hLog "start refreshMM"
-  mmLoggedIn ← H.liftEff MM.loggedIn
-  myAddr     ← H.liftEff MM.currentUserAddress
+  mmLoggedIn ← H.liftAff MM.loggedIn
+  myAddr     ← H.liftAff MM.currentUserAddress
   H.modify (_ { myAddr = Just myAddr })
   hLog "got my address"
   if mmLoggedIn
@@ -255,12 +253,12 @@ refreshMetamask = do
 
 checkMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 checkMetamask = do
-  mmStatus ← H.liftEff MM.loggedIn
+  mmStatus ← H.liftAff MM.loggedIn
   loggedIn ← H.gets _.loggedIn
   myAddr   ← H.gets _.myAddr
   if (loggedIn && mmStatus)
     then do
-      newAddr ← Just <$> (H.liftEff MM.currentUserAddress)
+      newAddr ← Just <$> (H.liftAff MM.currentUserAddress)
       if isNothing myAddr || myAddr /= newAddr
         then refreshMetamask
         else pure unit
@@ -321,9 +319,10 @@ loadWeb3Loop delayMs numTriesLeft = do
     Just bus →
       if numTriesLeft > 0
       then do
-        hLog "About to try web3"
         H.liftAff $ delay (Milliseconds (toNumber delayMs))
-        mmLoggedIn ← H.liftEff MM.loggedIn
+        hLog "getting logged in"
+        mmLoggedIn ← H.liftAff MM.loggedIn
+        hLog "got logged in"
         if mmLoggedIn
           then refreshMetamask
           else loadWeb3Loop delayMs (numTriesLeft - 1)

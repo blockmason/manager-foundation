@@ -4,14 +4,14 @@
 var foundationAbi;
 var fContract;
 var fAddress;
-var myAddress;
+//var myAddress;
 
 exports.initImpl = function(dummyVal) {
     return function() {
         foundationAbi = web3.eth.contract(foundationConfig.abi);
         fContract = foundationAbi.at(foundationConfig.address);
         fAddress = foundationConfig.address;
-        myAddress = web3.eth.accounts[0];
+//        myAddress = web3.eth.accounts[0];
     };
 };
 
@@ -176,7 +176,7 @@ exports.expirationDateImpl = function(callback) {
 var sendFoundationTx = function(data, value, callback) {
     web3.eth.sendTransaction(
         {to: fAddress,
-         from: myAddress,
+//         from: myAddress,
          data: data,
          value: value},
         function(err, result) {
@@ -225,7 +225,7 @@ exports.printTransactionImpl = function(unit) {
          */
         var data = fContract.addPendingUnification.getData("0xB07cd7De89Fa764301b6cC5f41eCd1497b72a475");
         web3.eth.sendTransaction({to: fAddress,
-                                  from: myAddress,
+//                                  from: myAddress,
                                   data: data }, function(err, res) {
                                       console.log(res);
                                   });
