@@ -96,6 +96,7 @@ ui =
     eval ∷ Query ~> H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad eff)
     eval = case _ of
       Init next → do
+        hLog "start of whole app"
         bus ← H.liftAff $ Bus.make
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
         H.liftEff $ UIStates.turnOnLoading(".container")
