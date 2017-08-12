@@ -100,6 +100,7 @@ ui =
         H.subscribe $ busEventSource (flip HandleMsg ES.Listening) bus
         H.liftEff $ UIStates.turnOnLoading(".container")
         H.modify (_ { loggedIn = true, errorBus = Just bus })
+        hLog "before load loop"
         loadWeb3Loop C.web3Delay 10
         H.liftEff $ UIStates.clearAllLoading(Nothing)
         startCheckInterval (Just bus) C.checkMMInterval C.checkTxInterval
@@ -235,9 +236,11 @@ errorOverlay state =
 --check for loggedIn changes and user address changes
 refreshMetamask ∷ ∀ e. H.ParentDSL State Query ChildQuery ChildSlot Void (AppMonad e) Unit
 refreshMetamask = do
+  hLog "start refreshMM"
   mmLoggedIn ← H.liftEff MM.loggedIn
   myAddr     ← H.liftEff MM.currentUserAddress
   H.modify (_ { myAddr = Just myAddr })
+  hLog "got my address"
   if mmLoggedIn
     then do
       eb ← H.gets _.errorBus
