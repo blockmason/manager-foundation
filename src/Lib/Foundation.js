@@ -1,8 +1,6 @@
 "use strict";
 //requires web3; truffle-contract; Foundation configs, BigNumber.js
 
-var Foundation;
-
 var foundationAbi;
 var fContract;
 var fAddress;
@@ -14,8 +12,6 @@ exports.initImpl = function(dummyVal) {
         fContract = foundationAbi.at(foundationConfig.address);
         fAddress = foundationConfig.address;
         myAddress = web3.eth.accounts[0];
-        Foundation = TruffleContract(foundationConfig);
-        Foundation.setProvider(web3.currentProvider);
     };
 };
 
@@ -23,10 +19,8 @@ exports.resolveToAddrImpl = function(callback) {
     return function(foundationId) {
         return function() {
             fContract.resolveToAddresses(foundationId, function(e, r) {
-                if ( !e )
-                    callback(r)();
-                else
-                    console.error(e);
+                if ( !e ) callback(r)();
+                else      console.error(e);
             });
         };
     };
@@ -36,10 +30,8 @@ exports.resolveToNameImpl = function(callback) {
     return function(addr) {
         return function() {
             fContract.resolveToName(addr, function(e, r) {
-                if ( !e )
-                    callback(b2s(r))();
-                else
-                    console.error(e);
+                if ( !e ) callback(b2s(r))();
+                else      console.error(e);
             });
         };
     };
@@ -49,10 +41,9 @@ exports.areSameIdImpl = function(callback) {
     return function(addr1) {
         return function(addr2) {
             return function() {
-                Foundation.deployed().then(function(instance) {
-                    return instance.areSameId.call(addr1, addr2);
-                }).then(function(res) {
-                    callback(b2s(res.valueOf()))();
+                fContract.areSameId(addr1, addr2, function(e, r) {
+                    if ( !e ) callback(b2s(r))();
+                    else      console.error(e);
                 });
             };
         };
@@ -71,10 +62,9 @@ exports.createIdImpl = function(callback) {
 exports.sentPendingImpl = function(callback) {
     return function(foundationId) {
         return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.sentPending.call(foundationId);
-            }).then(function(r) {
-                callback(r.valueOf())();
+            fContract.sentPending(foundationId, function(e, r) {
+                if ( !e ) callback(r)();
+                else      console.error(e);
             });
         };
     };
@@ -83,10 +73,9 @@ exports.sentPendingImpl = function(callback) {
 exports.todoPendingImpl = function(callback) {
     return function(addr) {
         return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.todoPending.call(addr);
-            }).then(function(r) {
-                callback(b2s(r.valueOf()))();
+            fContract.todoPending(addr, function(e, r) {
+                if ( !e ) callback(b2s(r))();
+                else      console.error(e);
             });
         };
     };
@@ -142,10 +131,9 @@ exports.withdrawDepositImpl = function(callback) {
 
 exports.getWeiToExtendImpl = function(callback) {
     return function() {
-        Foundation.deployed().then(function(ins) {
-            return ins.getWeiToExtend.call();
-        }).then(function(r) {
-            callback(r.valueOf())();
+        fContract.getWeiToExtend(function(e, r) {
+            if ( !e ) callback(r.valueOf())();
+            else      console.error(e);
         });
     };
 };
@@ -165,10 +153,9 @@ exports.extendIdOneYearImpl = function(callback) {
 exports.getDepositWeiImpl = function(callback) {
     return function(foundationId) {
         return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.getDepositWei.call(foundationId);
-            }).then(function(r) {
-                callback(r.valueOf())();
+            fContract.getDepositWei(foundationId, function(e, r) {
+                if ( !e ) callback(r.valueOf())();
+                else      console.error(e);
             });
         };
     };
@@ -177,10 +164,9 @@ exports.getDepositWeiImpl = function(callback) {
 exports.expirationDateImpl = function(callback) {
     return function(foundationId) {
         return function() {
-            Foundation.deployed().then(function(instance) {
-                return instance.getExpirationDate.call(foundationId);
-            }).then(function(r) {
-                callback(parseInt(r.valueOf()))();
+            fContract.getExpirationDate(foundationId, function(e, r) {
+                if ( !e ) callback(parseInt(r))();
+                else      console.error(e);
             });
         };
     };
