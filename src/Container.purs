@@ -321,7 +321,7 @@ loadWeb3Loop delayMs numTriesLeft = do
     Just bus →
       if numTriesLeft > 0
       then do
-        hLog "Retrying"
+        hLog "About to try web3"
         H.liftAff $ delay (Milliseconds (toNumber delayMs))
         mmLoggedIn ← H.liftEff MM.loggedIn
         if mmLoggedIn
