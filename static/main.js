@@ -12622,7 +12622,7 @@ var PS = {};
                           throw new Error("Failed pattern match at Foundation.Manager line 221, column 7 - line 233, column 14: " + [ pendingConfirmation.constructor.name ]);
                       };
                       if (optionalID instanceof Data_Maybe.Just) {
-                          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col myid-summary") ])([ card("ID")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showFoundationName)(optionalID.value0.name))), card("Expires")(Halogen_HTML_Core.text(Data_Maybe.maybe("")(Foundation_Blockchain.formatDate)(expiryDate))), card("Addresses")(Halogen_HTML_Core.text(Data_Show.show(Data_Show.showInt)(addressCount) + " associated")), card("Current Deposit")(Halogen_HTML_Core.text(Network_Eth.weiShowEth(balance) + " Eth")) ]);
+                          return Halogen_HTML_Elements.div([ Halogen_HTML_Properties.class_("col myid-summary") ])([ card("ID")(Halogen_HTML_Core.text(Data_Show.show(Network_Eth_Foundation.showFoundationName)(optionalID.value0.name))), card("Expires")(Halogen_HTML_Core.text(Data_Maybe.maybe("")(Foundation_Blockchain.formatDate)(expiryDate))), card("Addresses")(Halogen_HTML_Core.text(Data_Show.show(Data_Show.showInt)(addressCount) + " associated")) ]);
                       };
                       throw new Error("Failed pattern match at Foundation.Manager line 219, column 6 - line 242, column 10: " + [ optionalID.constructor.name ]);
                   };

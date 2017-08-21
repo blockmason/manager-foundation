@@ -235,10 +235,10 @@ summary pendingConfirmation optionalID expiryDate addressCount funds =
       HH.div
         [HP.class_ (HH.ClassName "col myid-summary")]
         [
-          (card "ID" $ HH.text $ show myId.name),
-          (card "Expires" $ HH.text $ maybe "" formatDate expiryDate ),
-          (card "Addresses" $ HH.text $ show addressCount ⊕ " associated"),
-          (card "Current Deposit" $ HH.text $ E.weiShowEth balance ⊕ " Eth" )
+          (card "ID" $ HH.text $ show myId.name)
+        , (card "Expires" $ HH.text $ maybe "" formatDate expiryDate )
+        , (card "Addresses" $ HH.text $ show addressCount ⊕ " associated")
+--        , (card "Current Deposit" $ HH.text $ E.weiShowEth balance ⊕ " Eth" )
         ]
 
 addressesPage ∷ Maybe E.EthAddress → Array E.EthAddress → Maybe E.EthAddress
